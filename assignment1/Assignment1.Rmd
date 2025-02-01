@@ -1,0 +1,72 @@
+---
+title: 'MUSA 5080 Assignment 1: Census Data Analysis With R Markdown'
+author: "Zhanchao Yang"
+date: "`r Sys.Date()`"
+output: 
+  prettydoc::html_pretty:
+    theme: cayman
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(prettydoc)
+library(tidyverse)
+library(tidycensus)
+library(knitr)
+```
+
+## Part 1: Set Up Your R Markdown File (1 point):
+
+- Create a new R Markdown filed called "Assignment 1: Census Data Analysis"
+- Include your name and date in the YAML header.
+- Set the output format to 'html_document' with a theme of your choice.
+
+## Part 2: Retrieving Census Data (1 points):
+
+- Retrieve 2020 ACS 5-year data for any state of your choosing at the county level. Include the following variables:
+  - Median household income (`B19013_001`)
+  - Total Population (`B01003_001`)
+- Add a chunk option to suppress messages and warnings.
+
+```{r, message=FALSE, warning=FALSE}
+pop2022 <- get_acs(
+  geography="county",
+  variables=c(median_income ="B19013_001", 
+              tot_pop= "B01003_001"),
+  state="NY",
+  year=2020,
+  survey= "acs5",
+  output="wide"
+)
+```
+
+
+## Part 3: Processing and Analyzing Data (4 points):
+
+- Add a new column named `MOE_Percentage` that calculates the percentage of the margin of error relative to the estimate for median household income (`MOE / Estimate * 100`).
+- Identify counties where `MOE_Percentage` is greater than 10%. Flag these counties in a new column called 'Unreliable_Estimates'
+
+```{r}
+pop2022 <- pop2022 %>% 
+  mutate(MOE_Percentage = (median_incomeM/ median_incomeE) * 100,
+         Unreliable_Estimates = if_else(MOE_Percentage > 10, "Yes", "No"))
+```
+
+- Using `knitr::kable()`, create a table showing the top 5 counties by MOE percentage along with their median household income, margin of error, and MOE percentage.
+- Write a short comment in your R Markdown: imagine you are the state's data analyst, and you want to let others know about MOEs and their potential impact on analyses. Use your results to support your comment.
+
+
+
+## Part 4: Exploring Racial Demographics (4 points)
+
+- Retrieve 2020 5-year ACS data for the same state at the tract level. Include the following variables:
+  - White alone (`B03002_003`).
+  - Black or African American alone (`B03002_004`).
+  - Hispanic or Latino (`B03002_012`).
+  - Total population (`B03002_001`).
+- Calculate the percentage of each racial group for each county. Reshape the data to long format using `pivot_longer()`
+- Identify the county with the highest percentage of Hispanic or Latino population and display its name
+- Use `group_by()` and `summarize ()` to calculate the average percentage of each racial group across all counties in your state.
+- Finally, perform an analysis on the MOEs for the race\ethnicity variables at the tract level. Calculate and flag high MOE tracts and write a small commentary discussing the implications of your findings. As the state's data scientist, provide guidance on when and where other planners might need to pay attention to MOEs or whether it is fine to just drop that field from their analyses. Who might be impacted and in which ways? (1 paragraph max). **Support your discussion with your data.**
+
