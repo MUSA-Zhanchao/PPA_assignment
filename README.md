@@ -1,2 +1,2 @@
-# MUSA550_PPA_assignment
+# MUSA550 PPA Assignment
 Assignment Repo for PPA
