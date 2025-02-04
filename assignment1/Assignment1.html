@@ -12,7 +12,7 @@
 
 <meta name="author" content="Zhanchao Yang" />
 
-<meta name="date" content="2025-02-01" />
+<meta name="date" content="2025-02-04" />
 
 <title>MUSA 5080 Assignment 1: Census Data Analysis With R Markdown</title>
 
@@ -142,7 +142,7 @@ pointer-events: auto;
 <h1 class="title toc-ignore project-name">MUSA 5080 Assignment 1: Census
 Data Analysis With R Markdown</h1>
 <h4 class="author project-author">Zhanchao Yang</h4>
-<h4 class="date project-date">2025-02-01</h4>
+<h4 class="date project-date">2025-02-04</h4>
 </section>
 
 
@@ -210,11 +210,84 @@ median household income (<code>MOE / Estimate * 100</code>).</li>
 <li>Using <code>knitr::kable()</code>, create a table showing the top 5
 counties by MOE percentage along with their median household income,
 margin of error, and MOE percentage.</li>
-<li>Write a short comment in your R Markdown: imagine you are the
-state’s data analyst, and you want to let others know about MOEs and
-their potential impact on analyses. Use your results to support your
-comment.</li>
 </ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>pop2022 <span class="sc">%&gt;%</span> </span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(MOE_Percentage)) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="fu">select</span>(GEOID,NAME, median_incomeE, median_incomeM, MOE_Percentage) <span class="sc">%&gt;%</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
+<table>
+<colgroup>
+<col width="7%" />
+<col width="33%" />
+<col width="19%" />
+<col width="19%" />
+<col width="19%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">GEOID</th>
+<th align="left">NAME</th>
+<th align="right">median_incomeE</th>
+<th align="right">median_incomeM</th>
+<th align="right">MOE_Percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">36041</td>
+<td align="left">Hamilton County, New York</td>
+<td align="right">60625</td>
+<td align="right">10526</td>
+<td align="right">17.362474</td>
+</tr>
+<tr class="even">
+<td align="left">36097</td>
+<td align="left">Schuyler County, New York</td>
+<td align="right">53291</td>
+<td align="right">4447</td>
+<td align="right">8.344749</td>
+</tr>
+<tr class="odd">
+<td align="left">36039</td>
+<td align="left">Greene County, New York</td>
+<td align="right">56681</td>
+<td align="right">4389</td>
+<td align="right">7.743335</td>
+</tr>
+<tr class="even">
+<td align="left">36023</td>
+<td align="left">Cortland County, New York</td>
+<td align="right">59194</td>
+<td align="right">3852</td>
+<td align="right">6.507416</td>
+</tr>
+<tr class="odd">
+<td align="left">36035</td>
+<td align="left">Fulton County, New York</td>
+<td align="right">51663</td>
+<td align="right">3298</td>
+<td align="right">6.383679</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Write a short comment in your R Markdown - imagine you are
+the state’s data analyst, and you want to let others know about MOEs and
+their potential impact on analyses. Use your results to support your
+comment.</strong></li>
+</ul>
+<p>The margin of error (MOE) measures the uncertainty associated with
+the estimate. When the margin of error is bigger, the estimate becomes
+less reliable. In this analysis, we identified the top 5 counties with
+the highest MOE percentage for median household income. These counties
+have a higher level of uncertainty in their estimates, which may impact
+the reliability of the data. For instance, the median income MOE in
+Hamilton County, NY, is 10,226 dollars, which indicates the estimated
+median household income falls within a range of 60,625 ± 10,226—a
+relatively broad interval, with a 95% confidence level. It is crucial to
+consider the MOE when interpreting the data and making decisions based
+on it.</p>
 </div>
 <div id="part-4-exploring-racial-demographics-4-points" class="section level2">
 <h2>Part 4: Exploring Racial Demographics (4 points)</h2>
@@ -227,10 +300,47 @@ Include the following variables:
 <li>Hispanic or Latino (<code>B03002_012</code>).</li>
 <li>Total population (<code>B03002_001</code>).</li>
 </ul></li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>race2022 <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="at">geography=</span><span class="st">&quot;tract&quot;</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="at">variables=</span><span class="fu">c</span>(<span class="at">white =</span> <span class="st">&quot;B03002_003&quot;</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>              <span class="at">black =</span> <span class="st">&quot;B03002_004&quot;</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>              <span class="at">hispanic =</span> <span class="st">&quot;B03002_012&quot;</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>              <span class="at">tot_pop =</span> <span class="st">&quot;B03002_001&quot;</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="at">state=</span><span class="st">&quot;NY&quot;</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="at">year=</span><span class="dv">2020</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  <span class="at">survey=</span> <span class="st">&quot;acs5&quot;</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>  <span class="at">output=</span><span class="st">&quot;wide&quot;</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>)</span></code></pre></div>
+<ul>
 <li>Calculate the percentage of each racial group for each county.
 Reshape the data to long format using <code>pivot_longer()</code></li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>race2022 <span class="ot">&lt;-</span> race2022 <span class="sc">%&gt;%</span> </span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">countyFIPS=</span> <span class="fu">substr</span>(GEOID, <span class="dv">1</span>, <span class="dv">5</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>race2022couty<span class="ot">&lt;-</span>race2022 <span class="sc">%&gt;%</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="fu">group_by</span>(countyFIPS)<span class="sc">%&gt;%</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">whitetot=</span><span class="fu">sum</span>(whiteE), </span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>            <span class="at">blacktot=</span><span class="fu">sum</span>(blackE), </span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>            <span class="at">hispanictot=</span><span class="fu">sum</span>(hispanicE), </span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>            <span class="at">tot_pop=</span><span class="fu">sum</span>(tot_popE))<span class="sc">%&gt;%</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">whiteP=</span>whitetot<span class="sc">/</span>tot_pop<span class="sc">*</span><span class="dv">100</span>, </span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>         <span class="at">blackP=</span>blacktot<span class="sc">/</span>tot_pop<span class="sc">*</span><span class="dv">100</span>, </span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>         <span class="at">hispanicP=</span>hispanictot<span class="sc">/</span>tot_pop<span class="sc">*</span><span class="dv">100</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>  <span class="fu">select</span>(countyFIPS, whiteP, blackP, hispanicP)<span class="sc">%&gt;%</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(whiteP, blackP, hispanicP), </span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;name&quot;</span>, </span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;percentage&quot;</span>)</span></code></pre></div>
+<ul>
 <li>Identify the county with the highest percentage of Hispanic or
 Latino population and display its name</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>highest_hispanic <span class="ot">&lt;-</span> race2022couty <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">filter</span>(name <span class="sc">==</span> <span class="st">&quot;hispanicP&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(percentage)) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>)</span></code></pre></div>
+<ul>
 <li>Use <code>group_by()</code> and <code>summarize ()</code> to
 calculate the average percentage of each racial group across all
 counties in your state.</li>
