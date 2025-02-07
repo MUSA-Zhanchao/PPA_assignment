@@ -113,14 +113,59 @@ race2022couty<-race2022 %>%
 ```
 
 - Identify the county with the highest percentage of Hispanic or Latino population and display its name
-```{r}
+```{r, message=FALSE, warning=FALSE}
 highest_hispanic <- race2022couty %>% 
   filter(name == "hispanicP") %>% 
   arrange(desc(percentage)) %>% 
   slice(1)
 
+fips_name <- read.csv("data/county_fips.csv")
+highest_hispanic_name <- fips_name %>% 
+  filter(County.FIPS == highest_hispanic$countyFIPS) %>% 
+  select(County.Name,County.FIPS)
+highest_hispanic_name$County.FIPS<- as.character(highest_hispanic_name$County.FIPS)
+
+left_join(highest_hispanic_name, highest_hispanic, by = c("County.FIPS" = "countyFIPS"))%>%
+  rename(Hispanic_percentage=percentage)%>%
+  select(County.Name, Hispanic_percentage)%>%
+  knitr::kable()
 ```
 
-- Use `group_by()` and `summarize ()` to calculate the average percentage of each racial group across all counties in your state.
-- Finally, perform an analysis on the MOEs for the race\ethnicity variables at the tract level. Calculate and flag high MOE tracts and write a small commentary discussing the implications of your findings. As the state's data scientist, provide guidance on when and where other planners might need to pay attention to MOEs or whether it is fine to just drop that field from their analyses. Who might be impacted and in which ways? (1 paragraph max). **Support your discussion with your data.**
 
+- Use `group_by()` and `summarize ()` to calculate the average percentage of each racial group across all counties in your state.
+
+```{r}
+race2022couty %>% 
+  group_by(name) %>% 
+  summarize(avg_percentage = mean(percentage)) %>% 
+  knitr::kable()
+```
+
+- Finally, perform an analysis on the MOEs for the race/ethnicity variables at the tract level. Calculate and flag high MOE tracts and write a small commentary discussing the implications of your findings. As the state's data scientist, provide guidance on when and where other planners might need to pay attention to MOEs or whether it is fine to just drop that field from their analyses. Who might be impacted and in which ways? (1 paragraph max). **Support your discussion with your data.**
+
+```{r, message=FALSE,warning=FALSE}
+race2022_tract<-race2022%>%
+  mutate(MOE_percentage= (whiteM/whiteE)*100)%>%
+  mutate(Unreliable_Estimates = if_else(MOE_percentage > 10,"Yes", "No"))%>%
+  select(NAME, whiteE, whiteM, MOE_percentage, Unreliable_Estimates)%>%
+  filter(whiteE>0)%>%
+  arrange(desc(MOE_percentage))
+
+race2022_tract %>%
+  slice(1:5)%>%
+  knitr::kable()
+```
+
+```{r,message=FALSE, warning=FALSE}
+race2022_tract %>%
+  arrange(order(MOE_percentage)) %>%
+  slice(1:5) %>%
+  knitr::kable()
+
+```
+
+### Discussion
+
+The Margin of Error (MOE) measures the uncertainty associated with the estimate. Since some census tracts have a relatively small white population, the MOE percentage tends to be higher. For example, in Census Tract 284, Queens County, NY, the estimate of the white population is 1, but the MOE for this estimate is 5. In this way, the MOE percentage of this census tract is 500, which indicates the unreliable estimation of the white population in the census tracts. 
+
+Planners should exercise caution when using racial data in small or sparsely populated tracts, where a high MOE percentage could mislead the conclusions about community racial composition. Instead of dropping the MOE entirely, the planner should always calculate the MOE percentage (`Estimate/MOE*100`), especially looking at subdivision population data at census tract or census block levels. When there is a high MOE, planners should consider using alternative sources to verify the data or aggregate the data across multiple census tracts to draw conclusions. This is important for policy implication and resource allocation, as unreliable estimates could misdirect funding and services and disproportionately affect minority communities.

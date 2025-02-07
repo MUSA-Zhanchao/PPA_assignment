@@ -12,7 +12,7 @@
 
 <meta name="author" content="Zhanchao Yang" />
 
-<meta name="date" content="2025-02-04" />
+<meta name="date" content="2025-02-06" />
 
 <title>MUSA 5080 Assignment 1: Census Data Analysis With R Markdown</title>
 
@@ -142,7 +142,7 @@ pointer-events: auto;
 <h1 class="title toc-ignore project-name">MUSA 5080 Assignment 1: Census
 Data Analysis With R Markdown</h1>
 <h4 class="author project-author">Zhanchao Yang</h4>
-<h4 class="date project-date">2025-02-04</h4>
+<h4 class="date project-date">2025-02-06</h4>
 </section>
 
 
@@ -156,7 +156,10 @@ Census Data (1 points):</a></li>
 <li><a href="#part-3-processing-and-analyzing-data-4-points" id="toc-part-3-processing-and-analyzing-data-4-points">Part 3:
 Processing and Analyzing Data (4 points):</a></li>
 <li><a href="#part-4-exploring-racial-demographics-4-points" id="toc-part-4-exploring-racial-demographics-4-points">Part 4: Exploring
-Racial Demographics (4 points)</a></li>
+Racial Demographics (4 points)</a>
+<ul>
+<li><a href="#discussion" id="toc-discussion">Discussion</a></li>
+</ul></li>
 </ul>
 </div>
 </div>
@@ -339,20 +342,218 @@ Latino population and display its name</li>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>highest_hispanic <span class="ot">&lt;-</span> race2022couty <span class="sc">%&gt;%</span> </span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">filter</span>(name <span class="sc">==</span> <span class="st">&quot;hispanicP&quot;</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(percentage)) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>)</span></code></pre></div>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>fips_name <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/county_fips.csv&quot;</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>highest_hispanic_name <span class="ot">&lt;-</span> fips_name <span class="sc">%&gt;%</span> </span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="fu">filter</span>(County.FIPS <span class="sc">==</span> highest_hispanic<span class="sc">$</span>countyFIPS) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>  <span class="fu">select</span>(County.Name,County.FIPS)</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>highest_hispanic_name<span class="sc">$</span>County.FIPS<span class="ot">&lt;-</span> <span class="fu">as.character</span>(highest_hispanic_name<span class="sc">$</span>County.FIPS)</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="fu">left_join</span>(highest_hispanic_name, highest_hispanic, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;County.FIPS&quot;</span> <span class="ot">=</span> <span class="st">&quot;countyFIPS&quot;</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Hispanic_percentage=</span>percentage)<span class="sc">%&gt;%</span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>  <span class="fu">select</span>(County.Name, Hispanic_percentage)<span class="sc">%&gt;%</span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">County.Name</th>
+<th align="right">Hispanic_percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Bronx</td>
+<td align="right">56.043</td>
+</tr>
+</tbody>
+</table>
 <ul>
 <li>Use <code>group_by()</code> and <code>summarize ()</code> to
 calculate the average percentage of each racial group across all
 counties in your state.</li>
-<li>Finally, perform an analysis on the MOEs for the racevariables at
-the tract level. Calculate and flag high MOE tracts and write a small
-commentary discussing the implications of your findings. As the state’s
-data scientist, provide guidance on when and where other planners might
-need to pay attention to MOEs or whether it is fine to just drop that
-field from their analyses. Who might be impacted and in which ways? (1
-paragraph max). <strong>Support your discussion with your
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>race2022couty <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">group_by</span>(name) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">avg_percentage =</span> <span class="fu">mean</span>(percentage)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">name</th>
+<th align="right">avg_percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">blackP</td>
+<td align="right">5.737881</td>
+</tr>
+<tr class="even">
+<td align="left">hispanicP</td>
+<td align="right">8.047394</td>
+</tr>
+<tr class="odd">
+<td align="left">whiteP</td>
+<td align="right">80.315756</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Finally, perform an analysis on the MOEs for the race/ethnicity
+variables at the tract level. Calculate and flag high MOE tracts and
+write a small commentary discussing the implications of your findings.
+As the state’s data scientist, provide guidance on when and where other
+planners might need to pay attention to MOEs or whether it is fine to
+just drop that field from their analyses. Who might be impacted and in
+which ways? (1 paragraph max). <strong>Support your discussion with your
 data.</strong></li>
 </ul>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>race2022_tract<span class="ot">&lt;-</span>race2022<span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">MOE_percentage=</span> (whiteM<span class="sc">/</span>whiteE)<span class="sc">*</span><span class="dv">100</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Unreliable_Estimates =</span> <span class="fu">if_else</span>(MOE_percentage <span class="sc">&gt;</span> <span class="dv">10</span>,<span class="st">&quot;Yes&quot;</span>, <span class="st">&quot;No&quot;</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="fu">select</span>(NAME, whiteE, whiteM, MOE_percentage, Unreliable_Estimates)<span class="sc">%&gt;%</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="fu">filter</span>(whiteE<span class="sc">&gt;</span><span class="dv">0</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(MOE_percentage))</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>race2022_tract <span class="sc">%&gt;%</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
+<table>
+<colgroup>
+<col width="47%" />
+<col width="7%" />
+<col width="7%" />
+<col width="15%" />
+<col width="22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">NAME</th>
+<th align="right">whiteE</th>
+<th align="right">whiteM</th>
+<th align="right">MOE_percentage</th>
+<th align="left">Unreliable_Estimates</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Census Tract 478.02, Queens County, New York</td>
+<td align="right">7</td>
+<td align="right">41</td>
+<td align="right">585.7143</td>
+<td align="left">Yes</td>
+</tr>
+<tr class="even">
+<td align="left">Census Tract 254.01, Queens County, New York</td>
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">500.0000</td>
+<td align="left">Yes</td>
+</tr>
+<tr class="odd">
+<td align="left">Census Tract 294, Queens County, New York</td>
+<td align="right">46</td>
+<td align="right">151</td>
+<td align="right">328.2609</td>
+<td align="left">Yes</td>
+</tr>
+<tr class="even">
+<td align="left">Census Tract 121.02, Bronx County, New York</td>
+<td align="right">2</td>
+<td align="right">5</td>
+<td align="right">250.0000</td>
+<td align="left">Yes</td>
+</tr>
+<tr class="odd">
+<td align="left">Census Tract 213.02, Bronx County, New York</td>
+<td align="right">2</td>
+<td align="right">5</td>
+<td align="right">250.0000</td>
+<td align="left">Yes</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>race2022_tract <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">order</span>(MOE_percentage)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
+<table>
+<colgroup>
+<col width="47%" />
+<col width="7%" />
+<col width="7%" />
+<col width="15%" />
+<col width="22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">NAME</th>
+<th align="right">whiteE</th>
+<th align="right">whiteM</th>
+<th align="right">MOE_percentage</th>
+<th align="left">Unreliable_Estimates</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Census Tract 615, Saratoga County, New York</td>
+<td align="right">3529</td>
+<td align="right">27</td>
+<td align="right">0.7650893</td>
+<td align="left">No</td>
+</tr>
+<tr class="even">
+<td align="left">Census Tract 267, Oneida County, New York</td>
+<td align="right">5280</td>
+<td align="right">60</td>
+<td align="right">1.1363636</td>
+<td align="left">No</td>
+</tr>
+<tr class="odd">
+<td align="left">Census Tract 401.02, Cayuga County, New York</td>
+<td align="right">2986</td>
+<td align="right">34</td>
+<td align="right">1.1386470</td>
+<td align="left">No</td>
+</tr>
+<tr class="even">
+<td align="left">Census Tract 119.03, Broome County, New York</td>
+<td align="right">2597</td>
+<td align="right">32</td>
+<td align="right">1.2321910</td>
+<td align="left">No</td>
+</tr>
+<tr class="odd">
+<td align="left">Census Tract 9703, Wyoming County, New York</td>
+<td align="right">3217</td>
+<td align="right">38</td>
+<td align="right">1.1812247</td>
+<td align="left">No</td>
+</tr>
+</tbody>
+</table>
+<div id="discussion" class="section level3">
+<h3>Discussion</h3>
+<p>The Margin of Error (MOE) measures the uncertainty associated with
+the estimate. Since some census tracts have a relatively small white
+population, the MOE percentage tends to be higher. For example, in
+Census Tract 284, Queens County, NY, the estimate of the white
+population is 1, but the MOE for this estimate is 5. In this way, the
+MOE percentage of this census tract is 500, which indicates the
+unreliable estimation of the white population in the census tracts.</p>
+<p>Planners should exercise caution when using racial data in small or
+sparsely populated tracts, where a high MOE percentage could mislead the
+conclusions about community racial composition. Instead of dropping the
+MOE entirely, the planner should always calculate the MOE percentage
+(<code>Estimate/MOE*100</code>), especially looking at subdivision
+population data at census tract or census block levels. When there is a
+high MOE, planners should consider using alternative sources to verify
+the data or aggregate the data across multiple census tracts to draw
+conclusions. This is important for policy implication and resource
+allocation, as unreliable estimates could misdirect funding and services
+and disproportionately affect minority communities.</p>
+</div>
 </div>
 </section>
 
