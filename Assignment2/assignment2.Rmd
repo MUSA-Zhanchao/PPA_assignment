@@ -1,0 +1,33 @@
+---
+title: 'Assignment 2: Neighborhood Indicators'
+author: "Zhanchao Yang"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: journal
+    toc: true
+    toc_float: 
+      collapsed: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(sf)
+```
+
+# Select the Data
+
+```{r}
+
+```
+
+# Process & clean the Data
+
+# Perfrom Spatial Operations
+
+# Visulization and Mapping
+
+# Discussion
+
