@@ -154,11 +154,14 @@ R Markdown File (1 point):</a></li>
 <li><a href="#part-2-retrieving-census-data-1-points" id="toc-part-2-retrieving-census-data-1-points">Part 2: Retrieving
 Census Data (1 points):</a></li>
 <li><a href="#part-3-processing-and-analyzing-data-4-points" id="toc-part-3-processing-and-analyzing-data-4-points">Part 3:
-Processing and Analyzing Data (4 points):</a></li>
+Processing and Analyzing Data (4 points):</a>
+<ul>
+<li><a href="#discussion" id="toc-discussion">Discussion</a></li>
+</ul></li>
 <li><a href="#part-4-exploring-racial-demographics-4-points" id="toc-part-4-exploring-racial-demographics-4-points">Part 4: Exploring
 Racial Demographics (4 points)</a>
 <ul>
-<li><a href="#discussion" id="toc-discussion">Discussion</a></li>
+<li><a href="#discussion-1" id="toc-discussion-1">Discussion</a></li>
 </ul></li>
 </ul>
 </div>
@@ -274,11 +277,13 @@ margin of error, and MOE percentage.</li>
 </tr>
 </tbody>
 </table>
+<div id="discussion" class="section level3">
+<h3>Discussion</h3>
 <ul>
-<li><strong>Write a short comment in your R Markdown - imagine you are
-the state’s data analyst, and you want to let others know about MOEs and
+<li>write a short comment in your R Markdown - imagine you are the
+state’s data analyst, and you want to let others know about MOEs and
 their potential impact on analyses. Use your results to support your
-comment.</strong></li>
+comment.</li>
 </ul>
 <p>The margin of error (MOE) measures the uncertainty associated with
 the estimate. When the margin of error is bigger, the estimate becomes
@@ -291,6 +296,7 @@ median household income falls within a range of 60,625 ± 10,226—a
 relatively broad interval, with a 95% confidence level. It is crucial to
 consider the MOE when interpreting the data and making decisions based
 on it.</p>
+</div>
 </div>
 <div id="part-4-exploring-racial-demographics-4-points" class="section level2">
 <h2>Part 4: Exploring Racial Demographics (4 points)</h2>
@@ -533,7 +539,7 @@ data.</strong></li>
 </tr>
 </tbody>
 </table>
-<div id="discussion" class="section level3">
+<div id="discussion-1" class="section level3">
 <h3>Discussion</h3>
 <p>The Margin of Error (MOE) measures the uncertainty associated with
 the estimate. Since some census tracts have a relatively small white
@@ -541,7 +547,12 @@ population, the MOE percentage tends to be higher. For example, in
 Census Tract 284, Queens County, NY, the estimate of the white
 population is 1, but the MOE for this estimate is 5. In this way, the
 MOE percentage of this census tract is 500, which indicates the
-unreliable estimation of the white population in the census tracts.</p>
+unreliable estimation of the white population in the census tracts.
+Conversely, the white population estimate in 267, Oneida County, NY, is
+5280. The MOE of this estimate is 60, which is much higher than the
+Census tract 284. However, the MOE percentage of this census tract is
+1.13 because of the larger white population. So, the MOE becomes even
+more critical when the estimate is small.</p>
 <p>Planners should exercise caution when using racial data in small or
 sparsely populated tracts, where a high MOE percentage could mislead the
 conclusions about community racial composition. Instead of dropping the

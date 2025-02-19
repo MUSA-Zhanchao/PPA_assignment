@@ -63,7 +63,9 @@ pop2022 %>%
   knitr::kable()
 ```
 
-- **Write a short comment in your R Markdown - imagine you are the state's data analyst, and you want to let others know about MOEs and their potential impact on analyses. Use your results to support your comment.**
+### Discussion
+
+- write a short comment in your R Markdown - imagine you are the state's data analyst, and you want to let others know about MOEs and their potential impact on analyses. Use your results to support your comment.
 
 The margin of error (MOE) measures the uncertainty associated with the estimate. When the margin of error is bigger, the estimate becomes less reliable. In this analysis, we identified the top 5 counties with the highest MOE percentage for median household income. These counties have a higher level of uncertainty in their estimates, which may impact the reliability of the data. For instance, the median income MOE in Hamilton County, NY, is 10,226 dollars, which indicates the estimated median household income falls within a range of  60,625 ± 10,226—a relatively broad interval, with a 95% confidence level. It is crucial to consider the MOE when interpreting the data and making decisions based on it.
 
@@ -166,6 +168,6 @@ race2022_tract %>%
 
 ### Discussion
 
-The Margin of Error (MOE) measures the uncertainty associated with the estimate. Since some census tracts have a relatively small white population, the MOE percentage tends to be higher. For example, in Census Tract 284, Queens County, NY, the estimate of the white population is 1, but the MOE for this estimate is 5. In this way, the MOE percentage of this census tract is 500, which indicates the unreliable estimation of the white population in the census tracts. 
+The Margin of Error (MOE) measures the uncertainty associated with the estimate. Since some census tracts have a relatively small white population, the MOE percentage tends to be higher. For example, in Census Tract 284, Queens County, NY, the estimate of the white population is 1, but the MOE for this estimate is 5. In this way, the MOE percentage of this census tract is 500, which indicates the unreliable estimation of the white population in the census tracts. Conversely,  the white population estimate in 267, Oneida County, NY, is 5280. The MOE of this estimate is 60, which is much higher than the Census tract 284. However, the MOE percentage of this census tract is 1.13 because of the larger white population. So, the MOE becomes even more critical when the estimate is small.
 
 Planners should exercise caution when using racial data in small or sparsely populated tracts, where a high MOE percentage could mislead the conclusions about community racial composition. Instead of dropping the MOE entirely, the planner should always calculate the MOE percentage (`Estimate/MOE*100`), especially looking at subdivision population data at census tract or census block levels. When there is a high MOE, planners should consider using alternative sources to verify the data or aggregate the data across multiple census tracts to draw conclusions. This is important for policy implication and resource allocation, as unreliable estimates could misdirect funding and services and disproportionately affect minority communities.
