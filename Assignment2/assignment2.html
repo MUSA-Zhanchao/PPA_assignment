@@ -11,7 +11,7 @@
 
 <meta name="author" content="Zhanchao Yang" />
 
-<meta name="date" content="2025-02-11" />
+<meta name="date" content="2025-02-19" />
 
 <title>Assignment 2: Neighborhood Indicators</title>
 
@@ -1493,13 +1493,61 @@ border-radius: 0px;
 
 <h1 class="title toc-ignore">Assignment 2: Neighborhood Indicators</h1>
 <h4 class="author">Zhanchao Yang</h4>
-<h4 class="date">2025-02-11</h4>
+<h4 class="date">2025-02-19</h4>
 
 </div>
 
 
 <div id="select-the-data" class="section level1">
 <h1>Select the Data</h1>
+<div id="neighborhood-boundaries-and-analysis-unitslevels" class="section level2">
+<h2>Neighborhood boundaries and analysis units/levels</h2>
+<p>In this study, I intend to analysis the neighborhoods indicators in
+the city of Philadelphia at the census tract level. Census tracts
+closely align with neighborhood boundaries and effectively reflect
+economic and social dynamics. Compared to block-level data, census
+tracts have relatively lower margin of errors when using American
+Community Survey (ACS) data, as the sample size is larger.</p>
+<p>However, there are several limitations to this approach. First,
+neighborhood boundaries don’t always align with the census tract
+boundaries and may cross multiple tracts. Second, census tracts level
+analysis fails to notice smaller trends within specific neighborhood
+blocks. For example, in one particular census tract, one block group may
+have well transit coverage, while another block group may have limited
+access to public transportation. This can lead to an overgeneralization
+of neighborhood trends.</p>
+</div>
+<div id="datasets-selection" class="section level2">
+<h2>Datasets selection</h2>
+<p>The datasets I used to calculate the economic indicators including
+following:</p>
+<ul>
+<li><p>Median household income at the census tract level across
+Philadelphia, gathered from the 2022 5-year American Communities Survey
+(ACS) data.</p></li>
+<li><p>The violent crime rate at the census tract level across
+Philadelphia gathered from the Philadelphia Police Department.</p></li>
+<li><p>The bus ridership data aggregated at census tract level across
+Philadelphia gathered from the SEPTA.</p></li>
+</ul>
+</div>
+<div id="justification" class="section level2">
+<h2>Justification</h2>
+<p>The median household income is a key indicator for measuring the
+residents’ neighborhood financial well-being. A neighborhood with a
+relatively higher median income always indicates residents have
+sufficient funds to address their daily needs and enjoy a better quality
+of life. The number of violent crimes is a key indicator of public
+safety. A lower number of crimes suggests that the neighborhood is safe
+for everyone. The bus ridership data is a key indicator of public
+transportation availability. A higher number of bus ridership indicates
+that the neighborhood has a better public transportation connection and
+more vibrant economic activities, as visitors and residents frequently
+flow in and out.</p>
+</div>
+<div id="limitations" class="section level2">
+<h2>Limitations</h2>
+</div>
 </div>
 <div id="process-clean-the-data" class="section level1">
 <h1>Process &amp; clean the Data</h1>
