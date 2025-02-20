@@ -5,6 +5,7 @@ date: "`r Sys.Date()`"
 output: 
   html_document:
     theme: journal
+    highlight: tango
     toc: true
     toc_float: 
       collapsed: true
@@ -37,8 +38,28 @@ The datasets I used to calculate the economic indicators including following:
 
 - The bus ridership data aggregated at census tract level across Philadelphia gathered from the SEPTA.
 
-```{r}
+### Load ACS median income data
 
+```{r, results='hide', warning=FALSE, message=FALSE}
+# Load the ACS data
+income<- get_acs(
+  geography = "tract",
+  variables = c(income= "B19013_001"),
+  state = "PA",
+  county = "Philadelphia",
+  year = 2022,
+  survey = "acs5",
+  output = "wide",
+  geometry = TRUE
+)
+```
+### Load violent crime data and ridership data
+
+```{r, results='hide', warning=FALSE, message=FALSE}
+# Load the violent crime data
+incident<- st_read("data/incident/incidents_part1_part2.shp")
+# load the ridership data
+ridership <- read_csv("data/bus.csv")
 ```
 
 ## Justification 
@@ -48,6 +69,49 @@ The median household income is a key indicator for measuring the residents' neig
 
 
 # Process & clean the Data
+
+### Cleaning the income data
+
+Convert median income into the CRS 4326 and filter out the census tracts with the missing income data 
+
+```{r, messge=FALSE, warning=FALSE}
+income <- income %>% 
+  st_transform(crs = 4326) %>% 
+  filter(!is.na(incomeE))%>%
+  select(-GEOID, -NAME)
+```
+
+### Cleaning the violent crime data
+
+Remove unnecessary columns and convert the data into the CRS 4326
+```{r, warning=FALSE, message=FALSE}
+incident <- incident %>% 
+  st_transform(crs = 4326) %>% 
+  select(text_gener, geometry)
+```
+
+### Cleaning the ridership data
+
+Step 1: Based a latitude and longitude of each stop points, converted the csv into a sf object
+```{r, warning=FALSE, message=FALSE}
+ridership <- ridership %>% 
+  st_as_sf(coords = c("Lon", "Lat"), crs = 4326)
+```
+
+Step 2: First, calculate a variable called the `workday ridership` by summing the on and off ridership together; Second, calculate another new variable called the `weekend ridership` by summing the on and off ridership of Saturday and Sunday together and divded by 2; Finally, calculate a new variable called the `total ridership` by summing the `workday ridership` and `weekend ridership` together, which reflect the neighborhood dynamics for both weekend and weekdays.
+
+```{r, warning=FALSE, message=FALSE}
+ridership <- ridership %>% 
+  mutate(workday_ridership = Weekday_On + Weekday_Of,
+         weekend_ridership = (Saturday_O + Saturday_1 + Sunday_Ons + Sunday_Off)/2,
+         total_ridership = workday_ridership + weekend_ridership) 
+```
+
+Step 3: cleaning the data only include the variable necessary for the analysis
+```{r, warning=FALSE, message=FALSE}
+ridership <- ridership %>% 
+  select(total_ridership, workday_ridership, weekend_ridership, geometry)
+```
 
 # Perfrom Spatial Operations
 
