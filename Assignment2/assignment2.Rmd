@@ -117,7 +117,7 @@ ridership <- ridership %>%
 
 # Perfrom Spatial Operations
 
-### Step 1: sptial join all data together
+### Step 1: Sptial join all data together
 
 income + bus ridership
 ```{r, warning=FALSE, message=FALSE}
@@ -135,6 +135,77 @@ income_ridership_crime<-income_ridership%>%
   group_by(GEOID)%>%
   summarise(income = mean(income), total_ridership = sum(total_ridership), crime = n())
 ```
+
+### Step 2: Using `st_buffer` to calculate the bus coverage
+
+filter the bus stop points that within the Philadelphia boundary
+```{r}
+clipped_index <- st_within(ridership, income, sparse = FALSE)
+
+bus_stops <- ridership[apply(clipped_index, 1, any), ]
+```
+
+In this analysis, 200 meters is used as the walking distance to calculate the bus coverage. The bus coverage is defined as the area that is within 200 meters of the bus station.
+
+```{r}
+bus_coverage <- bus_stops %>%
+  st_buffer(dist = 200) %>% 
+  st_union()
+```
+
+### Step 3: Calculate the bus coverage percentage 
+
+intersect the bus coverage with the census tracts
+
+```{r}
+census_tracts <- st_make_valid(income)
+bus_coverage <- st_make_valid(bus_coverage)
+```
+
+```{r, warning=FALSE, message=FALSE}
+intersect <- st_intersection(census_tracts, bus_coverage)
+```
+
+calculate the census tracts area
+```{r}
+census_tracts$tract_area <- st_area(census_tracts)
+```
+
+Calculate coverage area in each census tracts
+```{r}
+intersect$coverage_area <- st_area(intersect)
+```
+
+calculate the bus coverage percentage
+```{r}
+intersect$coverage_percentage <- intersect$coverage_area / census_tracts$tract_area *100
+```
+
+### Step 4: Categorize the bus coverage
+
+```{r}
+intersect$percentage<- as.numeric(intersect$coverage_percentage)
+
+bus_area<- intersect%>%
+  mutate(coverage = case_when(
+    percentage < 30 ~ "Low",
+    percentage >= 30 & percentage < 70 ~ "Medium",
+    percentage >= 70 ~ "High"
+  ))%>%
+  select(GEOID, coverage)
+```
+
+### Step 5: Join the bus coverage percentage back 
+```{r}
+bus_area<- bus_area%>%
+  st_drop_geometry()
+
+income_ridership_crime_bus<-income_ridership_crime%>%
+  left_join(bus_area, by = "GEOID")
+```
+
+### Step 6: Composite all individual variable together
+
 
 # Visulization and Mapping
 
