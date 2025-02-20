@@ -34,9 +34,11 @@ The datasets I used to calculate the economic indicators including following:
 
 - Median household income at the census tract level across Philadelphia, gathered from the 2022 5-year American Communities Survey (ACS) data.
 
-- The violent crime rate at the census tract level across Philadelphia gathered from the Philadelphia Police Department.
+- The violent crime number and locations across Philadelphia gathered from the Philadelphia Police Department.
 
-- The bus ridership data aggregated at census tract level across Philadelphia gathered from the SEPTA.
+- The bus ridership data of each individual station across Philadelphia gathered from the SEPTA.
+
+- The bus coverage (walking distance)
 
 ### Load ACS median income data
 
@@ -78,7 +80,7 @@ Convert median income into the CRS 4326 and filter out the census tracts with th
 income <- income %>% 
   st_transform(crs = 4326) %>% 
   filter(!is.na(incomeE))%>%
-  select(-GEOID, -NAME)
+  select(-NAME)
 ```
 
 ### Cleaning the violent crime data
@@ -114,6 +116,25 @@ ridership <- ridership %>%
 ```
 
 # Perfrom Spatial Operations
+
+### Step 1: sptial join all data together
+
+income + bus ridership
+```{r, warning=FALSE, message=FALSE}
+income_ridership<-income%>%
+  st_join(ridership)%>%
+  group_by(GEOID)%>%
+  summarise(income = mean(incomeE), total_ridership = sum(total_ridership))
+```
+
+income+ riderhip+ violent crime
+
+```{r}
+income_ridership_crime<-income_ridership%>%
+  st_join(incident)%>%
+  group_by(GEOID)%>%
+  summarise(income = mean(income), total_ridership = sum(total_ridership), crime = n())
+```
 
 # Visulization and Mapping
 

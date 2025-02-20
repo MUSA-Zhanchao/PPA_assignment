@@ -1596,10 +1596,11 @@ following:</p>
 <li><p>Median household income at the census tract level across
 Philadelphia, gathered from the 2022 5-year American Communities Survey
 (ACS) data.</p></li>
-<li><p>The violent crime rate at the census tract level across
-Philadelphia gathered from the Philadelphia Police Department.</p></li>
-<li><p>The bus ridership data aggregated at census tract level across
+<li><p>The violent crime number and locations across Philadelphia
+gathered from the Philadelphia Police Department.</p></li>
+<li><p>The bus ridership data of each individual station across
 Philadelphia gathered from the SEPTA.</p></li>
+<li><p>The bus coverage (walking distance)</p></li>
 </ul>
 <div id="load-acs-median-income-data" class="section level3">
 <h3>Load ACS median income data</h3>
@@ -1650,7 +1651,7 @@ tracts with the missing income data</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>income <span class="ot">&lt;-</span> income <span class="sc">%&gt;%</span> </span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(incomeE))<span class="sc">%&gt;%</span></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>GEOID, <span class="sc">-</span>NAME)</span></code></pre></div>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>NAME)</span></code></pre></div>
 </div>
 <div id="cleaning-the-violent-crime-data" class="section level3">
 <h3>Cleaning the violent crime data</h3>
@@ -1686,6 +1687,19 @@ analysis</p>
 </div>
 <div id="perfrom-spatial-operations" class="section level1">
 <h1>Perfrom Spatial Operations</h1>
+<div id="step-1-sptial-join-all-data-together" class="section level3">
+<h3>Step 1: sptial join all data together</h3>
+<p>income + bus ridership</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>income_ridership<span class="ot">&lt;-</span>income<span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">st_join</span>(ridership)<span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="fu">group_by</span>(GEOID)<span class="sc">%&gt;%</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">income =</span> <span class="fu">mean</span>(incomeE), <span class="at">total_ridership =</span> <span class="fu">sum</span>(total_ridership))</span></code></pre></div>
+<p>income+ riderhip+ violent crime</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>income_ridership_crime<span class="ot">&lt;-</span>income_ridership<span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">st_join</span>(incident)<span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="fu">group_by</span>(GEOID)<span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">income =</span> <span class="fu">mean</span>(income), <span class="at">total_ridership =</span> <span class="fu">sum</span>(total_ridership), <span class="at">crime =</span> <span class="fu">n</span>())</span></code></pre></div>
+</div>
 </div>
 <div id="visulization-and-mapping" class="section level1">
 <h1>Visulization and Mapping</h1>
