@@ -193,7 +193,7 @@ intersect$percentage<- as.numeric(intersect$coverage_percentage)
 
 bus_area<- intersect%>%
   mutate(coverage = ntile(percentage, 5))%>%
-  select(GEOID, coverage)
+  select(GEOID,percentage,coverage)
 ```
 
 ### Step 5: Join the bus coverage percentage back 
@@ -276,7 +276,7 @@ ggplot(income_ridership_crime_bus, aes(fill = composite_cat))+
     "Very High"="#f07167"),
     breaks = c("Very Low", "Low", "Medium", "High", "Very High")
     )+
-  labs(title = "Neighborhood Indicators in Philadelphia", 
+  labs(title = "Neighborhood Index in Philadelphia", 
        subtitle= "Based on bus ridership and coverage, median income and violent crime number at census tract level", fill = "Neighborhood Index")+
   theme(
         legend.text = element_text(size = 10),
@@ -323,4 +323,24 @@ ggplot(longer, aes(fill = Values))+
 ```
 
 # Discussion
+
+## Q1: How things went? What spatial patterns do you observe and do they make sense?
+
+The calculating process went smoothly. The only downside is that it takes too long to calculate the buffer of the bus stops and bus coverage. Also, compare to desktop GIS, like ArcGIS and QGIS, the spatial analysis using R has pros and cons. Using R, we can wrangling data more quickly, especially when dealing with multiple datasets. However, we cannot visualize the layer directly in R, especially during the processing stage. 
+
+The spatial patterns of the composite neighborhood index generally make sense. The center city Philadelphia and South Philadelphia generally have better transit connectivity, more vibrant population flows during the day, and generally higher income. In comparison, the Northeastern Philadelphia generally have lower income, less transit connectivity, and higher crime numbers.
+
+## Q2: How well does your index capture what you are trying to measure and how useful do you think it is?
+
+In general, I want the index to measure the overall quality of life in each neighborhood. I think the index capture several key factors contributing to people's quality of life, including income, public transportation accessibility and connectivity, and public safety. It could be useful to people who are new to Philadelphia and want to choose a safe place to live.
+
+However, the index may not fully capture the neighborhood's quality of life. For example, the index does not include the housing price, poverty rate, and other factors. 
+
+But overall, I think the index did a great job in get a people a sense of Philadelphia. 
+
+## Q3: What limitations are there to your index.
+
+As mentioned before, the index cannot get the detailed vibe within each census tracts. There may be some internal differences within each census tracts. Second, only four variable could not cover everything people need to know about the neighborhood. For example, the index does not include the housing price, poverty rate, and other factors. Lastly, some predictors or index variables are closely correlated. For example, the bus coverage and bus ridership are closely correlated, as a neighborhood with better bus coverage may have higher bus ridership. This may lean to issues of multicollinearity.
+
+
 
