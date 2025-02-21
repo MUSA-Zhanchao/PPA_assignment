@@ -219,7 +219,12 @@ categorize each individual variable into 5 categories based on the quantile, and
 ```{r}
 income_ridership_crime_bus<-income_ridership_crime_bus%>%
   mutate(income_cat= ntile(income, 5))%>%
-  mutate(crime_cat= ntile(crime, 5))%>%
+  mutate(crime_ca= ntile(crime, 5))%>%
+  mutate(crime_cat= ifelse(crime_ca==1,5,
+                           ifelse(crime_ca==2,4,
+                                  ifelse(crime_ca==3,3,
+                                         ifelse(crime_ca==4,2,1)))))%>%
+  select(-crime_ca)%>%
   mutate(total_ridership_cat= ntile(total_ridership, 5))
 ```
 
@@ -250,20 +255,27 @@ Roughly divided the composite variable into 5 categories based the composite var
 income_ridership_crime_bus<-income_ridership_crime_bus%>%
   mutate(composite_cat= case_when(composite <= 7 ~ "Very Low",
                                   composite > 7 & composite <= 10 ~ "Low",
-                                  composite > 10 & composite <= 14 ~ "Medium",
-                                  composite > 14 & composite <= 18 ~ "High",
-                                  composite > 18 ~ "Very High"))
+                                  composite > 10 & composite <= 13 ~ "Medium",
+                                  composite > 13 & composite <= 16 ~ "High",
+                                  composite > 16 ~ "Very High"))
 ```
 
 
 # Visulization and Mapping
 
-### Composite Neighborhood Index Map
+## Composite Neighborhood Index Map
 
 ```{r, fig.width= 12, fig.height= 11, warning=FALSE, message=FALSE}
 ggplot(income_ridership_crime_bus, aes(fill = composite_cat))+
   geom_sf()+
-  scale_fill_manual(values = c("Very Low" = "#0081a7", "Low" = "#00afb9", "Medium" = "#fdfcdc", "High" = "#fed9b7", "Very High"="#f07167"))+
+  scale_fill_manual(values = c(
+    "Very Low" = "#0081a7", 
+    "Low" = "#00afb9", 
+    "Medium" = "#fdfcdc", 
+    "High" = "#fed9b7", 
+    "Very High"="#f07167"),
+    breaks = c("Very Low", "Low", "Medium", "High", "Very High")
+    )+
   labs(title = "Neighborhood Indicators in Philadelphia", 
        subtitle= "Based on bus ridership and coverage, median income and violent crime number at census tract level", fill = "Neighborhood Index")+
   theme(
@@ -278,10 +290,36 @@ ggplot(income_ridership_crime_bus, aes(fill = composite_cat))+
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill = NA, size = 0.8)) 
 ```
-### Datiled map shows each neighborhood index predictors
 
-```{r}
 
+## Map series shwoing individual predictors
+
+```{r, fig.width= 11, fig.height= 11, warning=FALSE, message=FALSE}
+longer<-income_ridership_crime_bus%>%
+  pivot_longer(cols = c(income_cat, total_ridership_cat, crime_cat, coverage), names_to = "Predictors", values_to = "Values")
+
+ggplot(longer, aes(fill = Values))+
+  geom_sf()+
+  facet_wrap(~Predictors, ncol = 2)+
+  labs(title = "Neighborhood Indicators in Philadelphia", 
+       subtitle= "Based on bus ridership and coverage, median income and violent crime number at census tract level", 
+       fill = "Values")+
+  scale_fill_gradientn(
+    colors = c( "#0081a7",  "#00afb9", "#fdfcdc", "#fed9b7", "#f07167"),
+    limits = c(1,5),          
+    breaks = c(1,5),          # Where to place tick marks
+    labels = c("Low", "High")) +
+  theme(
+        legend.text = element_text(size = 10),
+        legend.title = element_text(size = 14),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        plot.subtitle = element_text(size = 13, face = "italic"),
+        plot.title = element_text(size = 35, hjust= 0.5,face = "bold"),
+        panel.background = element_blank(),
+        panel.border = element_rect(colour = "grey", fill = NA, size = 0.8))
 ```
 
 # Discussion
