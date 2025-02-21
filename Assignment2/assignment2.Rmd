@@ -24,8 +24,7 @@ library(tigris)
 
 ## Neighborhood boundaries and analysis units/levels
 
-In this study, I intend to analysis the neighborhoods indicators in the city
-of Philadelphia at the census tract level. Census tracts closely align with neighborhood boundaries and effectively reflect economic and social dynamics. Compared to block-level data, census tracts have  relatively lower margin of errors when using American Community Survey (ACS) data, as the sample size is larger.
+In this study, I intend to analysis the neighborhoods indicators in the city of Philadelphia at the census tract level. Census tracts closely align with neighborhood boundaries and effectively reflect economic and social dynamics. Compared to block-level data, census tracts have  relatively lower margin of errors when using American Community Survey (ACS) data, as the sample size is larger.
 
 However, there are several limitations to this approach. First, neighborhood boundaries don't always align with the census tract boundaries and may cross multiple tracts. Second, census tracts level analysis fails to notice smaller trends within specific neighborhood blocks. For example, in one particular census tract, one block group may have well transit coverage, while another block group may have limited access to public transportation. This can lead to an overgeneralization of neighborhood trends. 
 
@@ -68,6 +67,12 @@ ridership <- read_csv("data/bus.csv")
 The median household income is a key indicator for measuring the residents' neighborhood financial well-being. A neighborhood with a relatively higher median income always indicates residents have sufficient funds to address their daily needs and enjoy a better quality of life. The number of violent crimes is a key indicator of public safety. A lower number of crimes suggests that the neighborhood is safe for everyone. The bus ridership data is a key indicator of public transportation availability. A higher number of bus ridership indicates that the neighborhood has a better public transportation connection and more vibrant economic activities, as visitors and residents frequently flow in and out.
 
 ## Limitations
+There are several limitations in the datasets selection.
+First, the median income values cannot fully represent the neighborhoods socio-economic status. For example, a disparity neighborhood with a high median income may still have a high poverty rate. Property values and poverty rate are all important factors need to take into consideration.
+
+Second, the violent crime data only includes the total number crimes of the neighborhoods and not coverage the crime types. For example, residents experience is much different between a neighborhood with a high number of thefts and a neighborhood with a high number of murder. 
+
+Third, the bus ridership and the bus coverage data may not fully reveals the neighborhood connectivity and accessibility as well. For instance, a neighborhood with well bus coverage may lack of sufficient infrastructure to support biking or driving.To calculate the neighborhood index, we need to coverage as much of data that could reflects the residents quality of life as possible. 
 
 
 # Process & clean the Data
@@ -200,7 +205,7 @@ income_ridership_crime_bus<-income_ridership_crime%>%
   left_join(bus_area, by = "GEOID")
 ```
 
-### Step 6: Composite all individual variable together
+### Step 6: Composite and categorize all individual variable together
 
 fix 0 ridership census tract
 
@@ -238,7 +243,6 @@ ggplot(income_ridership_crime_bus, aes(x = composite))+
        caption = paste("Standard Deviation:", round(sd_val, 2)))+
   geom_vline(xintercept = median_val, color = "red", linetype = "dashed")
 ```
-### Step 7: Categorize the composite variable
 
 Roughly divided the composite variable into 5 categories based the composite varible distribution, median, and standard deviation.
 
