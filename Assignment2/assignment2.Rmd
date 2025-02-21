@@ -187,11 +187,7 @@ intersect$coverage_percentage <- intersect$coverage_area / census_tracts$tract_a
 intersect$percentage<- as.numeric(intersect$coverage_percentage)
 
 bus_area<- intersect%>%
-  mutate(coverage = case_when(
-    percentage < 30 ~ "Low",
-    percentage >= 30 & percentage < 70 ~ "Medium",
-    percentage >= 70 ~ "High"
-  ))%>%
+  mutate(coverage = ntile(percentage, 5))%>%
   select(GEOID, coverage)
 ```
 
@@ -205,6 +201,55 @@ income_ridership_crime_bus<-income_ridership_crime%>%
 ```
 
 ### Step 6: Composite all individual variable together
+
+fix 0 ridership census tract
+
+```{r}
+income_ridership_crime_bus<-income_ridership_crime_bus%>%
+  mutate(total_ridership = ifelse(is.na(total_ridership), 0, total_ridership))
+```
+
+
+categorize each individual variable into 5 categories based on the quantile, and assign the number 1-5 to each of the category
+```{r}
+income_ridership_crime_bus<-income_ridership_crime_bus%>%
+  mutate(income_cat= ntile(income, 5))%>%
+  mutate(crime_cat= ntile(crime, 5))%>%
+  mutate(total_ridership_cat= ntile(total_ridership, 5))
+```
+
+composite and sum up
+
+```{r}
+income_ridership_crime_bus<-income_ridership_crime_bus%>%
+  mutate(composite = income_cat + crime_cat + total_ridership_cat + coverage)
+```
+
+See the distribution of the composite variable
+
+```{r, fig.width=8, fig.height=6}
+median_val <- median(income_ridership_crime_bus$composite)
+
+sd_val <- sd(income_ridership_crime_bus$composite)
+
+ggplot(income_ridership_crime_bus, aes(x = composite))+
+  geom_histogram(binwidth = 1, fill = "skyblue", color = "black")+
+  labs(title = "Distribution of the composite variable", x = "Composite variable", y = "Frequency",
+       caption = paste("Standard Deviation:", round(sd_val, 2)))+
+  geom_vline(xintercept = median_val, color = "red", linetype = "dashed")
+```
+### Step 7: Categorize the composite variable
+
+Roughly divided the composite variable into 5 categories based the composite varible distribution, median, and standard deviation.
+
+```{r}
+income_ridership_crime_bus<-income_ridership_crime_bus%>%
+  mutate(composite_cat= case_when(composite <= 7 ~ "Very Low",
+                                  composite > 7 & composite <= 10 ~ "Low",
+                                  composite > 10 & composite <= 14 ~ "Medium",
+                                  composite > 14 & composite <= 18 ~ "High",
+                                  composite > 18 ~ "High"))
+```
 
 
 # Visulization and Mapping
