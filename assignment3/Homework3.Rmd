@@ -4,7 +4,7 @@ author: "Zhanchao Yang"
 date: "`r Sys.Date()`"
 output: 
   html_document:
-    theme: journal
+    theme: united
     highlight: tango
     toc: true
     toc_float: 
@@ -21,7 +21,7 @@ This assignment explores linear regression modeling using a new dataset, focusin
 ---
 
 ## **1. Load Packages & Data**
-```{r load_packages, message = FALSE}}
+```{r load_packages, message = FALSE}
 #install.packages(c("tidyverse", "broom", "ggplot2", "caret", "car", "MASS"))
 library(tidyverse)
 library(broom)
@@ -48,7 +48,7 @@ summary(boston_data)
 ```
 
 ### **2.2 Scatter Plots for Relationship Exploration**
-```{r scatter_plots}
+```{r scatter_plots, warning = FALSE, message = FALSE}
 ggplot(boston_data, aes(x = rm, y = medv)) +
   geom_point() +
   geom_smooth(method = "lm", color = "red") +
@@ -64,10 +64,6 @@ model <- lm(medv ~ rm + lstat + crim, data = boston_data)
 summary(model)
 ```
 
-### **Interpretation Questions:**
-- What does the coefficient for `rm` suggest about the impact of more rooms on home prices?
-- Does `lstat` negatively or positively affect home value? Is this expected?
-- How well does the model fit the data (look at R² and Adjusted R²)?
 
 ---
 
@@ -120,12 +116,23 @@ Answer the following questions and submit your answer in a nice R Markdown file.
 
 ### **Part 1: Model Interpretation (4 Points)**
 1. What does the coefficient for `rm` mean in the original model? (1 point)
-Answer: 
+
+- The coefficient for `rm` means that for each additional room in a house, the median home value increases by coefficient units, holding other variables constant. In this case, the coefficient is 5.2169, suggesting that each additional room increases the median home value by $5,216.90 on average, with holding other predictors constant.
+
 2. How does `lstat` impact median home value, and why? (1 point)
+
+- The coefficient of the `lstat` is less than 0, which means that the percentage of the lower-income residents is negatively correlate with the median home values. The residents with lower income tends to live in the neighborhood with lower home values. 
+- This negative relationship is expected, because the lower-income residents may not be able to afford expensive houses, so they tend to live in the neighborhood with lower home values.
 
 3. Is crime rate (`crim`) statistically significant? Justify using the p-value. (1 point)
 
+- Yes, the crime rate `crim` is statistically significant. 
+- The p-value for the crime rate coefficient is 0.00139, which is below the 0.05 threshold. This indicates that the crime rate has a statistically significant impact on median home values.
+
 4. How well does the original model explain home values (interpret R² and Adjusted R²)? (1 point)
+
+- Answer: The original model explains 64.6% of the variance in median home values, as indicated by the R² value. The adjusted R² value accounts for the number of predictors in the model. In this case, the adjusted R² value indicates that the model explains 64.4% of the variance in median home values. Overall, the model has a good fit, but still one-third of the variation in home values has not explained by the model.
+
 
 ### **Part 2: Assumption Checks & Model Improvement (4 Points)**
 5. Based on residual plots, is the model violating any OLS assumptions? (1 point)
