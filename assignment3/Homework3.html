@@ -1823,14 +1823,24 @@ model.</li>
 <h3><strong>Part 2: Assumption Checks &amp; Model Improvement (4
 Points)</strong></h3>
 <ol start="5" style="list-style-type: decimal">
-<li>Based on residual plots, is the model violating any OLS assumptions?
-(1 point)</li>
+<li>Based on the residual diagnostics, are there any violations of OLS
+assumptions? (1 point)</li>
 <li>What does the VIF test indicate about multicollinearity? (1
 point)</li>
-<li>After log-transforming <code>lstat</code>, does model performance
-improve? Explain. (1 point)</li>
-<li>Compare RMSE from cross-validation to the model’s residual standard
-error. Which suggests better predictive performance? (1 point)</li>
+</ol>
+<ul>
+<li>Based on the VIF test, there are no obvious multicollinearity issues
+in the model. All VIF values are below 5, indicating that the predictors
+are not highly correlated with each other.</li>
+<li>This suggests that the model met the OLS regression assumption of
+the no multicollinearity among predictors.</li>
+</ul>
+<ol start="7" style="list-style-type: decimal">
+<li><p>After log-transforming <code>lstat</code>, does model performance
+improve? Explain. (1 point)</p></li>
+<li><p>Compare RMSE from cross-validation to the model’s residual
+standard error. Which suggests better predictive performance? (1
+point)</p></li>
 </ol>
 </div>
 <div id="part-3-expanding-the-model-2-points" class="section level3">
@@ -1841,7 +1851,6 @@ Does it improve fit? (1 point)</li>
 <li>Try another predictor from the dataset that you think might be
 relevant. Justify why you selected it and interpret its impact on the
 model. (1 point)</li>
-<li>Wasn’t this fun? (0 Points)</li>
 </ol>
 </div>
 </div>
