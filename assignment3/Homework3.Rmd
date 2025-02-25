@@ -131,19 +131,24 @@ Answer the following questions and submit your answer in a nice R Markdown file.
 
 4. How well does the original model explain home values (interpret R² and Adjusted R²)? (1 point)
 
-- Answer: The original model explains 64.6% of the variance in median home values, as indicated by the R² value. The adjusted R² value accounts for the number of predictors in the model. In this case, the adjusted R² value indicates that the model explains 64.4% of the variance in median home values. Overall, the model has a good fit, but still one-third of the variation in home values has not explained by the model.
+- The original model explains 64.6% of the variance in median home values, as indicated by the R² value. The adjusted R² value accounts for the number of predictors in the model. In this case, the adjusted R² value indicates that the model explains 64.4% of the variance in median home values. Overall, the model has a good fit, but still one-third of the variation in home values has not explained by the model.
 
 
 ### **Part 2: Assumption Checks & Model Improvement (4 Points)**
-5. Based on residual plots, is the model violating any OLS assumptions? (1 point)
+
+5. Based on the residual diagnostics, are there any violations of OLS assumptions? (1 point)
 6. What does the VIF test indicate about multicollinearity? (1 point)
+- Based on the VIF test, there are no obvious multicollinearity issues in the model. All VIF values are below 5, indicating that the predictors are not highly correlated with each other.
+- This suggests that the model met the OLS regression assumption of the no multicollinearity among predictors.
+
 7. After log-transforming `lstat`, does model performance improve? Explain. (1 point)
+
 8. Compare RMSE from cross-validation to the model's residual standard error. Which suggests better predictive performance? (1 point)
 
 ### **Part 3: Expanding the Model (2 Points)**
 9. Add `dis` (distance to employment centers) to the model. Does it improve fit? (1 point)
 10. Try another predictor from the dataset that you think might be relevant. Justify why you selected it and interpret its impact on the model. (1 point)
-11. Wasn't this fun? (0 Points)
+
 
 
 
