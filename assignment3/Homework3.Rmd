@@ -4,7 +4,7 @@ author: "Zhanchao Yang"
 date: "`r Sys.Date()`"
 output: 
   html_document:
-    theme: united
+    theme: journal
     highlight: tango
     toc: true
     toc_float: 
@@ -15,13 +15,12 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## **Introduction**
+# **Introduction**
 This assignment explores linear regression modeling using a new dataset, focusing on assumption checks and model interpretation. Students will fit a regression model, check assumptions, and interpret the results in a structured, easy-to-grade format.
 
 ---
 
-## **1. Load Packages & Data**
-```{r load_packages, message = FALSE}
+```{r load_packages, include=FALSE, message = FALSE}
 #install.packages(c("tidyverse", "broom", "ggplot2", "caret", "car", "MASS"))
 library(tidyverse)
 library(broom)
@@ -31,23 +30,21 @@ library(car)
 library(MASS)
 ```
 
-### **Load New Dataset**
-For this assignment, we will use the built-in `Boston` dataset from the `MASS` package, which contains housing data from different neighborhoods in Boston.
-```{r load_data}
+
+```{r load_data, include= FALSE}
 data("Boston")
 boston_data <- as_tibble(Boston)
 head(boston_data)
 ```
 
----
 
-## **2. Exploratory Data Analysis**
-### **2.1 Summary Statistics**
-```{r summary_stats}
+# **1. Exploratory Data Analysis**
+## **1.1 Summary Statistics**
+```{r summary_stats, results = "hide"}
 summary(boston_data)
 ```
 
-### **2.2 Scatter Plots for Relationship Exploration**
+## **1.2 Scatter Plots for Relationship Exploration**
 ```{r scatter_plots, warning = FALSE, message = FALSE}
 ggplot(boston_data, aes(x = rm, y = medv)) +
   geom_point() +
@@ -57,7 +54,7 @@ ggplot(boston_data, aes(x = rm, y = medv)) +
 
 ---
 
-## **3. Fit a Linear Regression Model**
+# **2. Fit a Linear Regression Model**
 The response variable is `medv` (median home value), and predictors include `rm` (average rooms per house), `lstat` (percentage of lower-income population), and `crim` (crime rate per capita).
 ```{r linear_regression}
 model <- lm(medv ~ rm + lstat + crim, data = boston_data)
@@ -67,8 +64,8 @@ summary(model)
 
 ---
 
-## **4. Checking OLS Assumptions**
-### **4.1 Residual Diagnostics**
+# **3. Checking OLS Assumptions**
+## **3.1 Residual Diagnostics**
 ```{r residual_diagnostics, fig.width=9, fig.height=7}
 par(mfrow = c(2, 2))
 plot(model)
@@ -78,7 +75,7 @@ plot(model)
 - **Scale-Location Plot**: Detects heteroscedasticity.
 - **Residuals vs Leverage**: Identifies influential observations.
 
-### **4.2 Multicollinearity Check**
+## **3.2 Multicollinearity Check**
 ```{r vif_check}
 vif(model)
 ```
@@ -86,7 +83,7 @@ vif(model)
 
 ---
 
-## **5. Model Refinement: Log Transformations**
+# **4. Model Refinement: Log Transformations**
 If assumptions are violated, log-transforming variables can improve the model.
 ```{r log_transform}
 boston_data <- boston_data %>% mutate(
@@ -101,7 +98,7 @@ summary(log_model)
 
 ---
 
-## **6. Model Performance & Cross-Validation**
+# **5. Model Performance & Cross-Validation**
 ```{r cross_validation}
 set.seed(123)
 train_control <- trainControl(method = "cv", number = 10)
@@ -111,10 +108,10 @@ cv_model
 
 ---
 
-## **7. Homework Assignment (10 Points)**
+# *6. Homework Assignment (10 Points)**
 Answer the following questions and submit your answer in a nice R Markdown file.
 
-### **Part 1: Model Interpretation (4 Points)**
+## **Part 1: Model Interpretation (4 Points)**
 1. What does the coefficient for `rm` mean in the original model? (1 point)
 
 - The coefficient for `rm` means that for each additional room in a house, the median home value increases by coefficient units, holding other variables constant. In this case, the coefficient is 5.2169, suggesting that each additional room increases the median home value by $5,216.90 on average, with holding other predictors constant.
@@ -134,7 +131,7 @@ Answer the following questions and submit your answer in a nice R Markdown file.
 - The original model explains 64.6% of the variance in median home values, as indicated by the R² value. The adjusted R² value accounts for the number of predictors in the model. In this case, the adjusted R² value indicates that the model explains 64.4% of the variance in median home values. Overall, the model has a good fit, but still one-third of the variation in home values has not explained by the model.
 
 
-### **Part 2: Assumption Checks & Model Improvement (4 Points)**
+## **Part 2: Assumption Checks & Model Improvement (4 Points)**
 
 5. Based on the residual diagnostics, are there any violations of OLS assumptions? (1 point)
 
@@ -156,22 +153,35 @@ Yes, after log-transforming `lstat`, the model performance  improve. The adjuste
 
 The RMSE from cross-validation is 5.48, while the model's residual standard error is 5.49. The cross validation has a slightly lower RMSE than the model's residual standard error, which suggests that the cross-validation model has a better predictive performance than the original model. The cross-validation was trained on a portion of the data and tested on the remaining data, which avoid the overfitting issue and provide a more accurate estimate of the model's predictive performance.
 
-### **Part 3: Expanding the Model (2 Points)**
+## **Part 3: Expanding the Model (2 Points)**
 9. Add `dis` (distance to employment centers) to the model. Does it improve fit? (1 point)
 ```{r}
 model_dis <- lm(medv ~ rm + lstat + crim + dis, data = boston_data)
 summary(model_dis)
 ```
+```{r}
+vif(model_dis)
+```
+
 Yes, adding the `dis` variable to the model improve the fit. The adjusted R² value of the new model is 0.6549, which is higher than the original model's adjusted R² value of 0.6437. The new model explain more variance in median home values than the original model, which improve the model fits.
 
 10. Try another predictor from the dataset that you think might be relevant. Justify why you selected it and interpret its impact on the model. (1 point)
 
+```{r}
+model_new <- lm(medv ~ rm + lstat + crim + +dis+ age, data = boston_data)
+summary(model_new)
+```
+
+```{r}
+vif(model_new)
+```
+- I added the `age` variable to the model, because I assume that the housing age has potential relationship with the median housing value. 
+
+- The coefficient of the `age` variable is -0.1237, which means that for each additional year of age, the average median home value decreases by 0.027 unit, holding other variables constant. The p-value of the `age` variable is 0.0538, which is slightly above the 0.05 threshold. This indicates that the `age` variable is not statistically significant in predicting median home values.
+- However, the adjusted R² value of the new model is 0.6568, which is higher than the original model's adjusted R² value of 0.6549. The new model explain more variance in median home values than the original model.
+
+Overall, as the `age` variable is not statistically significant, it may not be a good predictor for the median home values. Adding `age` variable, only improve the adjusted R² value by 0.0019. I may consider removing the `age` variable from the model.
 
 
-
-## **Submission Instructions**
-- Submit a **fully documented R script or R Markdown file**.
-- Include **plots and model summaries** where relevant.
-- Provide **concise interpretations** for all responses.
 
 ---
