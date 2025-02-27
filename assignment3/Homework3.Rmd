@@ -137,16 +137,33 @@ Answer the following questions and submit your answer in a nice R Markdown file.
 ### **Part 2: Assumption Checks & Model Improvement (4 Points)**
 
 5. Based on the residual diagnostics, are there any violations of OLS assumptions? (1 point)
+
+- The residual diagnostics plots show that the residuals vs. fitted plot has a slight pattern, indicating that the relationship between the predictors and the response variable may not be linear. The ideal plot should have no pattern and a straight red-line along 0, indicate a linear relationship between predictors and response variable.
+- The Q-Q plot shows that the residuals are not perfectly normally distributed, as the points deviate from the line. In general sense, the residuals is generally normally distributed.
+- The scale-location plot shows that the residuals are general homoscedastic, with few outliers around 20. Residuals are generally spread out evenly across the range of fitted values. 
+
+In summary,the models met the homoscedasticity and normality of the residuals assumptions, but there is a slight violation of the linearity assumption. The multicollinearity check will be conducted via the VIF test.
+
 6. What does the VIF test indicate about multicollinearity? (1 point)
 - Based on the VIF test, there are no obvious multicollinearity issues in the model. All VIF values are below 5, indicating that the predictors are not highly correlated with each other.
 - This suggests that the model met the OLS regression assumption of the no multicollinearity among predictors.
 
 7. After log-transforming `lstat`, does model performance improve? Explain. (1 point)
 
+Yes, after log-transforming `lstat`, the model performance  improve. The adjusted R² value of the log-transformed model is 0.7415, which is higher than the original model's adjusted R² value of 0.6437. This indicate the new log-transformed model explains 74.15% of the variance in logged median household values, while the original model could only explain 64.37% of the variance in median home values. The log-transformed model has a better fit than the original model.
+
 8. Compare RMSE from cross-validation to the model's residual standard error. Which suggests better predictive performance? (1 point)
+
+The RMSE from cross-validation is 5.48, while the model's residual standard error is 5.49. The cross validation has a slightly lower RMSE than the model's residual standard error, which suggests that the cross-validation model has a better predictive performance than the original model. The cross-validation was trained on a portion of the data and tested on the remaining data, which avoid the overfitting issue and provide a more accurate estimate of the model's predictive performance.
 
 ### **Part 3: Expanding the Model (2 Points)**
 9. Add `dis` (distance to employment centers) to the model. Does it improve fit? (1 point)
+```{r}
+model_dis <- lm(medv ~ rm + lstat + crim + dis, data = boston_data)
+summary(model_dis)
+```
+Yes, adding the `dis` variable to the model improve the fit. The adjusted R² value of the new model is 0.6549, which is higher than the original model's adjusted R² value of 0.6437. The new model explain more variance in median home values than the original model, which improve the model fits.
+
 10. Try another predictor from the dataset that you think might be relevant. Justify why you selected it and interpret its impact on the model. (1 point)
 
 
