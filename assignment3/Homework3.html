@@ -1344,34 +1344,34 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ef2929; } 
-code span.an { color: #8f5902; font-weight: bold; font-style: italic; } 
-code span.at { color: #204a87; } 
-code span.bn { color: #0000cf; } 
-code span.cf { color: #204a87; font-weight: bold; } 
-code span.ch { color: #4e9a06; } 
-code span.cn { color: #8f5902; } 
-code span.co { color: #8f5902; font-style: italic; } 
-code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } 
-code span.do { color: #8f5902; font-weight: bold; font-style: italic; } 
-code span.dt { color: #204a87; } 
-code span.dv { color: #0000cf; } 
-code span.er { color: #a40000; font-weight: bold; } 
-code span.ex { } 
-code span.fl { color: #0000cf; } 
-code span.fu { color: #204a87; font-weight: bold; } 
-code span.im { } 
-code span.in { color: #8f5902; font-weight: bold; font-style: italic; } 
-code span.kw { color: #204a87; font-weight: bold; } 
-code span.op { color: #ce5c00; font-weight: bold; } 
-code span.ot { color: #8f5902; } 
-code span.pp { color: #8f5902; font-style: italic; } 
-code span.sc { color: #ce5c00; font-weight: bold; } 
-code span.ss { color: #4e9a06; } 
-code span.st { color: #4e9a06; } 
-code span.va { color: #000000; } 
-code span.vs { color: #4e9a06; } 
-code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.al { color: #ef2929; }
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; }
+code span.at { color: #204a87; }
+code span.bn { color: #0000cf; }
+code span.cf { color: #204a87; font-weight: bold; }
+code span.ch { color: #4e9a06; }
+code span.cn { color: #8f5902; }
+code span.co { color: #8f5902; font-style: italic; }
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; }
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; }
+code span.dt { color: #204a87; }
+code span.dv { color: #0000cf; }
+code span.er { color: #a40000; font-weight: bold; }
+code span.ex { }
+code span.fl { color: #0000cf; }
+code span.fu { color: #204a87; font-weight: bold; }
+code span.im { }
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; }
+code span.kw { color: #204a87; font-weight: bold; }
+code span.op { color: #ce5c00; font-weight: bold; }
+code span.ot { color: #8f5902; }
+code span.pp { color: #8f5902; font-style: italic; }
+code span.sc { color: #ce5c00; font-weight: bold; }
+code span.ss { color: #4e9a06; }
+code span.st { color: #4e9a06; }
+code span.va { color: #000000; }
+code span.vs { color: #4e9a06; }
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; }
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -1601,25 +1601,25 @@ predictors include <code>rm</code> (average rooms per house),
 <code>crim</code> (crime rate per capita).</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(medv <span class="sc">~</span> rm <span class="sc">+</span> lstat <span class="sc">+</span> crim, <span class="at">data =</span> boston_data)</span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code></pre></div>
-<pre><code>## 
+<pre><code>##
 ## Call:
 ## lm(formula = medv ~ rm + lstat + crim, data = boston_data)
-## 
+##
 ## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -17.925  -3.567  -1.157   1.906  29.024 
-## 
+##     Min      1Q  Median      3Q     Max
+## -17.925  -3.567  -1.157   1.906  29.024
+##
 ## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept) -2.56225    3.16602  -0.809  0.41873    
+##             Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept) -2.56225    3.16602  -0.809  0.41873
 ## rm           5.21695    0.44203  11.802  &lt; 2e-16 ***
 ## lstat       -0.57849    0.04767 -12.135  &lt; 2e-16 ***
-## crim        -0.10294    0.03202  -3.215  0.00139 ** 
+## crim        -0.10294    0.03202  -3.215  0.00139 **
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
+##
 ## Residual standard error: 5.49 on 502 degrees of freedom
-## Multiple R-squared:  0.6459, Adjusted R-squared:  0.6437 
+## Multiple R-squared:  0.6459, Adjusted R-squared:  0.6437
 ## F-statistic: 305.2 on 3 and 502 DF,  p-value: &lt; 2.2e-16</code></pre>
 <hr />
 </div>
@@ -1639,7 +1639,7 @@ Leverage</strong>: Identifies influential observations.</p>
 <div id="multicollinearity-check" class="section level2">
 <h2><strong>3.2 Multicollinearity Check</strong></h2>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">vif</span>(model)</span></code></pre></div>
-<pre><code>##       rm    lstat     crim 
+<pre><code>##       rm    lstat     crim
 ## 1.616468 1.941883 1.271372</code></pre>
 <ul>
 <li>VIF values above <strong>5</strong> indicate high
@@ -1659,25 +1659,25 @@ the model.</p>
 <span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a></span>
 <span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>log_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_medv <span class="sc">~</span> rm <span class="sc">+</span> log_lstat <span class="sc">+</span> crim, <span class="at">data =</span> boston_data)</span>
 <span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="fu">summary</span>(log_model)</span></code></pre></div>
-<pre><code>## 
+<pre><code>##
 ## Call:
 ## lm(formula = log_medv ~ rm + log_lstat + crim, data = boston_data)
-## 
+##
 ## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -0.70866 -0.11815 -0.01845  0.11886  0.89289 
-## 
+##      Min       1Q   Median       3Q      Max
+## -0.70866 -0.11815 -0.01845  0.11886  0.89289
+##
 ## Coefficients:
-##              Estimate Std. Error t value Pr(&gt;|t|)    
+##              Estimate Std. Error t value Pr(&gt;|t|)
 ## (Intercept)  3.587817   0.155975  23.003  &lt; 2e-16 ***
 ## rm           0.101366   0.017589   5.763 1.44e-08 ***
 ## log_lstat   -0.464013   0.024455 -18.974  &lt; 2e-16 ***
 ## crim        -0.011523   0.001178  -9.780  &lt; 2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
+##
 ## Residual standard error: 0.2078 on 502 degrees of freedom
-## Multiple R-squared:  0.743,  Adjusted R-squared:  0.7415 
+## Multiple R-squared:  0.743,  Adjusted R-squared:  0.7415
 ## F-statistic: 483.8 on 3 and 502 DF,  p-value: &lt; 2.2e-16</code></pre>
 <ul>
 <li>Compare the R² of both models. Does the transformation improve
@@ -1691,19 +1691,19 @@ fit?</li>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>train_control <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">&quot;cv&quot;</span>, <span class="at">number =</span> <span class="dv">10</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>cv_model <span class="ot">&lt;-</span> <span class="fu">train</span>(medv <span class="sc">~</span> rm <span class="sc">+</span> lstat <span class="sc">+</span> crim, <span class="at">data =</span> boston_data, <span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">trControl =</span> train_control)</span>
 <span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>cv_model</span></code></pre></div>
-<pre><code>## Linear Regression 
-## 
+<pre><code>## Linear Regression
+##
 ## 506 samples
 ##   3 predictor
-## 
+##
 ## No pre-processing
-## Resampling: Cross-Validated (10 fold) 
-## Summary of sample sizes: 455, 456, 456, 456, 456, 456, ... 
+## Resampling: Cross-Validated (10 fold)
+## Summary of sample sizes: 455, 456, 456, 456, 456, 456, ...
 ## Resampling results:
-## 
-##   RMSE      Rsquared   MAE     
+##
+##   RMSE      Rsquared   MAE
 ##   5.487973  0.6455425  3.921115
-## 
+##
 ## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
 <hr />
 </div>
@@ -1827,29 +1827,29 @@ Does it improve fit? (1 point)</li>
 </ol>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>model_dis <span class="ot">&lt;-</span> <span class="fu">lm</span>(medv <span class="sc">~</span> rm <span class="sc">+</span> lstat <span class="sc">+</span> crim <span class="sc">+</span> dis, <span class="at">data =</span> boston_data)</span>
 <span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="fu">summary</span>(model_dis)</span></code></pre></div>
-<pre><code>## 
+<pre><code>##
 ## Call:
 ## lm(formula = medv ~ rm + lstat + crim + dis, data = boston_data)
-## 
+##
 ## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -19.006  -3.099  -1.047   1.885  26.571 
-## 
+##     Min      1Q  Median      3Q     Max
+## -19.006  -3.099  -1.047   1.885  26.571
+##
 ## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  2.23065    3.32214   0.671    0.502    
+##             Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept)  2.23065    3.32214   0.671    0.502
 ## rm           4.97649    0.43885  11.340  &lt; 2e-16 ***
 ## lstat       -0.66174    0.05101 -12.974  &lt; 2e-16 ***
 ## crim        -0.12810    0.03209  -3.992 7.53e-05 ***
 ## dis         -0.56321    0.13542  -4.159 3.76e-05 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
+##
 ## Residual standard error: 5.403 on 501 degrees of freedom
-## Multiple R-squared:  0.6577, Adjusted R-squared:  0.6549 
+## Multiple R-squared:  0.6577, Adjusted R-squared:  0.6549
 ## F-statistic: 240.6 on 4 and 501 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">vif</span>(model_dis)</span></code></pre></div>
-<pre><code>##       rm    lstat     crim      dis 
+<pre><code>##       rm    lstat     crim      dis
 ## 1.645020 2.295404 1.318232 1.406845</code></pre>
 <p>Yes, adding the <code>dis</code> variable to the model improve the
 fit. The adjusted R² value of the new model is 0.6549, which is higher
@@ -1862,30 +1862,30 @@ model. (1 point)</li>
 </ol>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>model_new <span class="ot">&lt;-</span> <span class="fu">lm</span>(medv <span class="sc">~</span> rm <span class="sc">+</span> lstat <span class="sc">+</span> crim <span class="sc">+</span> <span class="sc">+</span>dis<span class="sc">+</span> age, <span class="at">data =</span> boston_data)</span>
 <span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="fu">summary</span>(model_new)</span></code></pre></div>
-<pre><code>## 
+<pre><code>##
 ## Call:
 ## lm(formula = medv ~ rm + lstat + crim + +dis + age, data = boston_data)
-## 
+##
 ## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -19.024  -3.101  -1.004   1.847  27.474 
-## 
+##     Min      1Q  Median      3Q     Max
+## -19.024  -3.101  -1.004   1.847  27.474
+##
 ## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  3.58935    3.38683   1.060   0.2897    
+##             Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept)  3.58935    3.38683   1.060   0.2897
 ## rm           5.10405    0.44261  11.532  &lt; 2e-16 ***
 ## lstat       -0.61926    0.05541 -11.176  &lt; 2e-16 ***
 ## crim        -0.13018    0.03202  -4.065 5.57e-05 ***
 ## dis         -0.77733    0.17466  -4.450 1.06e-05 ***
-## age         -0.02738    0.01416  -1.933   0.0538 .  
+## age         -0.02738    0.01416  -1.933   0.0538 .
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
+##
 ## Residual standard error: 5.388 on 500 degrees of freedom
-## Multiple R-squared:  0.6602, Adjusted R-squared:  0.6568 
+## Multiple R-squared:  0.6602, Adjusted R-squared:  0.6568
 ## F-statistic: 194.3 on 5 and 500 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">vif</span>(model_new)</span></code></pre></div>
-<pre><code>##       rm    lstat     crim      dis      age 
+<pre><code>##       rm    lstat     crim      dis      age
 ## 1.682412 2.723742 1.319717 2.353138 2.765585</code></pre>
 <ul>
 <li><p>I added the <code>age</code> variable to the model, because I

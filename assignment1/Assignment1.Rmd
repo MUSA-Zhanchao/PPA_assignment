@@ -2,7 +2,7 @@
 title: 'MUSA 5080 Assignment 1: Census Data Analysis With R Markdown'
 author: "Zhanchao Yang"
 date: "`r Sys.Date()`"
-output: 
+output:
   prettydoc::html_pretty:
     theme: cayman
     toc: yes
@@ -32,7 +32,7 @@ library(knitr)
 ```{r, message=FALSE, warning=FALSE}
 pop2022 <- get_acs(
   geography="county",
-  variables=c(median_income ="B19013_001", 
+  variables=c(median_income ="B19013_001",
               tot_pop= "B01003_001"),
   state="NY",
   year=2020,
@@ -48,7 +48,7 @@ pop2022 <- get_acs(
 - Identify counties where `MOE_Percentage` is greater than 10%. Flag these counties in a new column called 'Unreliable_Estimates'
 
 ```{r}
-pop2022 <- pop2022 %>% 
+pop2022 <- pop2022 %>%
   mutate(MOE_Percentage = (median_incomeM/ median_incomeE) * 100,
          Unreliable_Estimates = if_else(MOE_Percentage > 10, "Yes", "No"))
 ```
@@ -56,8 +56,8 @@ pop2022 <- pop2022 %>%
 - Using `knitr::kable()`, create a table showing the top 5 counties by MOE percentage along with their median household income, margin of error, and MOE percentage.
 
 ```{r}
-pop2022 %>% 
-  arrange(desc(MOE_Percentage)) %>% 
+pop2022 %>%
+  arrange(desc(MOE_Percentage)) %>%
   select(GEOID,NAME, median_incomeE, median_incomeM, MOE_Percentage) %>%
   slice(1:5) %>%
   knitr::kable()
@@ -77,7 +77,7 @@ The margin of error (MOE) measures the uncertainty associated with the estimate.
   - Black or African American alone (`B03002_004`).
   - Hispanic or Latino (`B03002_012`).
   - Total population (`B03002_001`).
-  
+
 ```{r, message=FALSE, warning=FALSE}
 race2022 <- get_acs(
   geography="tract",
@@ -95,35 +95,35 @@ race2022 <- get_acs(
 
 - Calculate the percentage of each racial group for each county. Reshape the data to long format using `pivot_longer()`
 ```{r}
-race2022 <- race2022 %>% 
+race2022 <- race2022 %>%
   mutate(countyFIPS= substr(GEOID, 1, 5))
 
 race2022couty<-race2022 %>%
   group_by(countyFIPS)%>%
-  summarize(whitetot=sum(whiteE), 
-            blacktot=sum(blackE), 
-            hispanictot=sum(hispanicE), 
+  summarize(whitetot=sum(whiteE),
+            blacktot=sum(blackE),
+            hispanictot=sum(hispanicE),
             tot_pop=sum(tot_popE))%>%
-  mutate(whiteP=whitetot/tot_pop*100, 
-         blackP=blacktot/tot_pop*100, 
+  mutate(whiteP=whitetot/tot_pop*100,
+         blackP=blacktot/tot_pop*100,
          hispanicP=hispanictot/tot_pop*100)%>%
   select(countyFIPS, whiteP, blackP, hispanicP)%>%
-  pivot_longer(cols = c(whiteP, blackP, hispanicP), 
-               names_to = "name", 
+  pivot_longer(cols = c(whiteP, blackP, hispanicP),
+               names_to = "name",
                values_to = "percentage")
 
 ```
 
 - Identify the county with the highest percentage of Hispanic or Latino population and display its name
 ```{r, message=FALSE, warning=FALSE}
-highest_hispanic <- race2022couty %>% 
-  filter(name == "hispanicP") %>% 
-  arrange(desc(percentage)) %>% 
+highest_hispanic <- race2022couty %>%
+  filter(name == "hispanicP") %>%
+  arrange(desc(percentage)) %>%
   slice(1)
 
 fips_name <- read.csv("data/county_fips.csv")
-highest_hispanic_name <- fips_name %>% 
-  filter(County.FIPS == highest_hispanic$countyFIPS) %>% 
+highest_hispanic_name <- fips_name %>%
+  filter(County.FIPS == highest_hispanic$countyFIPS) %>%
   select(County.Name,County.FIPS)
 highest_hispanic_name$County.FIPS<- as.character(highest_hispanic_name$County.FIPS)
 
@@ -137,9 +137,9 @@ left_join(highest_hispanic_name, highest_hispanic, by = c("County.FIPS" = "count
 - Use `group_by()` and `summarize ()` to calculate the average percentage of each racial group across all counties in your state.
 
 ```{r}
-race2022couty %>% 
-  group_by(name) %>% 
-  summarize(avg_percentage = mean(percentage)) %>% 
+race2022couty %>%
+  group_by(name) %>%
+  summarize(avg_percentage = mean(percentage)) %>%
   knitr::kable()
 ```
 

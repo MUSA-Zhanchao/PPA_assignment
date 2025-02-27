@@ -2,12 +2,12 @@
 title: 'Assignment 2: Neighborhood Indicators'
 author: "Zhanchao Yang"
 date: "`r Sys.Date()`"
-output: 
+output:
   html_document:
     theme: journal
     highlight: tango
     toc: true
-    toc_float: 
+    toc_float:
       collapsed: true
 ---
 
@@ -26,7 +26,7 @@ library(tigris)
 
 In this study, I intend to analysis the neighborhoods indicators in the city of Philadelphia at the census tract level. Census tracts closely align with neighborhood boundaries and effectively reflect economic and social dynamics. Compared to block-level data, census tracts have  relatively lower margin of errors when using American Community Survey (ACS) data, as the sample size is larger.
 
-However, there are several limitations to this approach. First, neighborhood boundaries don't always align with the census tract boundaries and may cross multiple tracts. Second, census tracts level analysis fails to notice smaller trends within specific neighborhood blocks. For example, in one particular census tract, one block group may have well transit coverage, while another block group may have limited access to public transportation. This can lead to an overgeneralization of neighborhood trends. 
+However, there are several limitations to this approach. First, neighborhood boundaries don't always align with the census tract boundaries and may cross multiple tracts. Second, census tracts level analysis fails to notice smaller trends within specific neighborhood blocks. For example, in one particular census tract, one block group may have well transit coverage, while another block group may have limited access to public transportation. This can lead to an overgeneralization of neighborhood trends.
 
 ## Datasets selection
 The datasets I used to calculate the economic indicators including following:
@@ -63,27 +63,27 @@ incident<- st_read("data/incident/incidents_part1_part2.shp")
 ridership <- read_csv("data/bus.csv")
 ```
 
-## Justification 
+## Justification
 The median household income is a key indicator for measuring the residents' neighborhood financial well-being. A neighborhood with a relatively higher median income always indicates residents have sufficient funds to address their daily needs and enjoy a better quality of life. The number of violent crimes is a key indicator of public safety. A lower number of crimes suggests that the neighborhood is safe for everyone. The bus ridership data is a key indicator of public transportation availability. A higher number of bus ridership indicates that the neighborhood has a better public transportation connection and more vibrant economic activities, as visitors and residents frequently flow in and out.
 
 ## Limitations
 There are several limitations in the datasets selection.
 First, the median income values cannot fully represent the neighborhoods socio-economic status. For example, a disparity neighborhood with a high median income may still have a high poverty rate. Property values and poverty rate are all important factors need to take into consideration.
 
-Second, the violent crime data only includes the total number crimes of the neighborhoods and not coverage the crime types. For example, residents experience is much different between a neighborhood with a high number of thefts and a neighborhood with a high number of murder. 
+Second, the violent crime data only includes the total number crimes of the neighborhoods and not coverage the crime types. For example, residents experience is much different between a neighborhood with a high number of thefts and a neighborhood with a high number of murder.
 
-Third, the bus ridership and the bus coverage data may not fully reveals the neighborhood connectivity and accessibility as well. For instance, a neighborhood with well bus coverage may lack of sufficient infrastructure to support biking or driving.To calculate the neighborhood index, we need to coverage as much of data that could reflects the residents quality of life as possible. 
+Third, the bus ridership and the bus coverage data may not fully reveals the neighborhood connectivity and accessibility as well. For instance, a neighborhood with well bus coverage may lack of sufficient infrastructure to support biking or driving.To calculate the neighborhood index, we need to coverage as much of data that could reflects the residents quality of life as possible.
 
 
 # Process & clean the Data
 
 ### Cleaning the income data
 
-Convert median income into the CRS 4326 and filter out the census tracts with the missing income data 
+Convert median income into the CRS 4326 and filter out the census tracts with the missing income data
 
 ```{r, messge=FALSE, warning=FALSE}
-income <- income %>% 
-  st_transform(crs = 4326) %>% 
+income <- income %>%
+  st_transform(crs = 4326) %>%
   filter(!is.na(incomeE))%>%
   select(-NAME)
 ```
@@ -92,8 +92,8 @@ income <- income %>%
 
 Remove unnecessary columns and convert the data into the CRS 4326
 ```{r, warning=FALSE, message=FALSE}
-incident <- incident %>% 
-  st_transform(crs = 4326) %>% 
+incident <- incident %>%
+  st_transform(crs = 4326) %>%
   select(text_gener, geometry)
 ```
 
@@ -101,22 +101,22 @@ incident <- incident %>%
 
 Step 1: Based a latitude and longitude of each stop points, converted the csv into a sf object
 ```{r, warning=FALSE, message=FALSE}
-ridership <- ridership %>% 
+ridership <- ridership %>%
   st_as_sf(coords = c("Lon", "Lat"), crs = 4326)
 ```
 
 Step 2: First, calculate a variable called the `workday ridership` by summing the on and off ridership together; Second, calculate another new variable called the `weekend ridership` by summing the on and off ridership of Saturday and Sunday together and divded by 2; Finally, calculate a new variable called the `total ridership` by summing the `workday ridership` and `weekend ridership` together, which reflect the neighborhood dynamics for both weekend and weekdays.
 
 ```{r, warning=FALSE, message=FALSE}
-ridership <- ridership %>% 
+ridership <- ridership %>%
   mutate(workday_ridership = Weekday_On + Weekday_Of,
          weekend_ridership = (Saturday_O + Saturday_1 + Sunday_Ons + Sunday_Off)/2,
-         total_ridership = workday_ridership + weekend_ridership) 
+         total_ridership = workday_ridership + weekend_ridership)
 ```
 
 Step 3: cleaning the data only include the variable necessary for the analysis
 ```{r, warning=FALSE, message=FALSE}
-ridership <- ridership %>% 
+ridership <- ridership %>%
   select(total_ridership, workday_ridership, weekend_ridership, geometry)
 ```
 
@@ -154,11 +154,11 @@ In this analysis, 200 meters is used as the walking distance to calculate the bu
 
 ```{r}
 bus_coverage <- bus_stops %>%
-  st_buffer(dist = 200) %>% 
+  st_buffer(dist = 200) %>%
   st_union()
 ```
 
-### Step 3: Calculate the bus coverage percentage 
+### Step 3: Calculate the bus coverage percentage
 
 intersect the bus coverage with the census tracts
 
@@ -196,7 +196,7 @@ bus_area<- intersect%>%
   select(GEOID,percentage,coverage)
 ```
 
-### Step 5: Join the bus coverage percentage back 
+### Step 5: Join the bus coverage percentage back
 ```{r}
 bus_area<- bus_area%>%
   st_drop_geometry()
@@ -269,14 +269,14 @@ income_ridership_crime_bus<-income_ridership_crime_bus%>%
 ggplot(income_ridership_crime_bus, aes(fill = composite_cat))+
   geom_sf()+
   scale_fill_manual(values = c(
-    "Very Low" = "#0081a7", 
-    "Low" = "#00afb9", 
-    "Medium" = "#fdfcdc", 
-    "High" = "#fed9b7", 
+    "Very Low" = "#0081a7",
+    "Low" = "#00afb9",
+    "Medium" = "#fdfcdc",
+    "High" = "#fed9b7",
     "Very High"="#f07167"),
     breaks = c("Very Low", "Low", "Medium", "High", "Very High")
     )+
-  labs(title = "Neighborhood Index in Philadelphia", 
+  labs(title = "Neighborhood Index in Philadelphia",
        subtitle= "Based on bus ridership and coverage, median income and violent crime number at census tract level", fill = "Neighborhood Index")+
   theme(
         legend.text = element_text(size = 10),
@@ -288,7 +288,7 @@ ggplot(income_ridership_crime_bus, aes(fill = composite_cat))+
         plot.subtitle = element_text(size = 13, face = "italic"),
         plot.title = element_text(size = 35, hjust= 0.5,face = "bold"),
         panel.background = element_blank(),
-        panel.border = element_rect(colour = "grey", fill = NA, size = 0.8)) 
+        panel.border = element_rect(colour = "grey", fill = NA, size = 0.8))
 ```
 
 
@@ -301,12 +301,12 @@ longer<-income_ridership_crime_bus%>%
 ggplot(longer, aes(fill = Values))+
   geom_sf()+
   facet_wrap(~Predictors, ncol = 2)+
-  labs(title = "Neighborhood Indicators in Philadelphia", 
-       subtitle= "Based on bus ridership and coverage, median income and violent crime number at census tract level", 
+  labs(title = "Neighborhood Indicators in Philadelphia",
+       subtitle= "Based on bus ridership and coverage, median income and violent crime number at census tract level",
        fill = "Values")+
   scale_fill_gradientn(
     colors = c( "#0081a7",  "#00afb9", "#fdfcdc", "#fed9b7", "#f07167"),
-    limits = c(1,5),          
+    limits = c(1,5),
     breaks = c(1,5),          # Where to place tick marks
     labels = c("Low", "High")) +
   theme(
@@ -326,7 +326,7 @@ ggplot(longer, aes(fill = Values))+
 
 ## Q1: How things went? What spatial patterns do you observe and do they make sense?
 
-The calculating process went smoothly. The only downside is that it takes too long to calculate the buffer of the bus stops and bus coverage. Also, compare to desktop GIS, like ArcGIS and QGIS, the spatial analysis using R has pros and cons. Using R, we can wrangling data more quickly, especially when dealing with multiple datasets. However, we cannot visualize the layer directly in R, especially during the processing stage. 
+The calculating process went smoothly. The only downside is that it takes too long to calculate the buffer of the bus stops and bus coverage. Also, compare to desktop GIS, like ArcGIS and QGIS, the spatial analysis using R has pros and cons. Using R, we can wrangling data more quickly, especially when dealing with multiple datasets. However, we cannot visualize the layer directly in R, especially during the processing stage.
 
 The spatial patterns of the composite neighborhood index generally make sense. The center city Philadelphia and South Philadelphia generally have better transit connectivity, more vibrant population flows during the day, and generally higher income. In comparison, the Northeastern Philadelphia generally have lower income, less transit connectivity, and higher crime numbers.
 
@@ -334,9 +334,9 @@ The spatial patterns of the composite neighborhood index generally make sense. T
 
 In general, I want the index to measure the overall quality of life in each neighborhood. I think the index capture several key factors contributing to people's quality of life, including income, public transportation accessibility and connectivity, and public safety. It could be useful to people who are new to Philadelphia and want to choose a safe place to live.
 
-However, the index may not fully capture the neighborhood's quality of life. For example, the index does not include the housing price, poverty rate, and other factors. 
+However, the index may not fully capture the neighborhood's quality of life. For example, the index does not include the housing price, poverty rate, and other factors.
 
-But overall, I think the index did a great job in get a people a sense of Philadelphia. 
+But overall, I think the index did a great job in get a people a sense of Philadelphia.
 
 ## Q3: What limitations are there to your index.
 

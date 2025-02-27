@@ -2,12 +2,12 @@
 title: "HW 3: Linear Regression Homework"
 author: "Zhanchao Yang"
 date: "`r Sys.Date()`"
-output: 
+output:
   html_document:
     theme: journal
     highlight: tango
     toc: true
-    toc_float: 
+    toc_float:
       collapsed: true
 ---
 
@@ -118,12 +118,12 @@ Answer the following questions and submit your answer in a nice R Markdown file.
 
 2. How does `lstat` impact median home value, and why? (1 point)
 
-- The coefficient of the `lstat` is less than 0, which means that the percentage of the lower-income residents is negatively correlate with the median home values. The residents with lower income tends to live in the neighborhood with lower home values. 
+- The coefficient of the `lstat` is less than 0, which means that the percentage of the lower-income residents is negatively correlate with the median home values. The residents with lower income tends to live in the neighborhood with lower home values.
 - This negative relationship is expected, because the lower-income residents may not be able to afford expensive houses, so they tend to live in the neighborhood with lower home values.
 
 3. Is crime rate (`crim`) statistically significant? Justify using the p-value. (1 point)
 
-- Yes, the crime rate `crim` is statistically significant. 
+- Yes, the crime rate `crim` is statistically significant.
 - The p-value for the crime rate coefficient is 0.00139, which is below the 0.05. This indicates that the crime rate has a statistically significant impact on median home values.
 
 4. How well does the original model explain home values (interpret R² and Adjusted R²)? (1 point)
@@ -139,7 +139,7 @@ Answer the following questions and submit your answer in a nice R Markdown file.
 
 - The Q-Q plot shows that the residuals are not perfectly normally distributed, especially at the high end. However, in considering the outliers, the residuals are generally normally distributed.
 
-- The scale-location plot shows that the residuals are general homoscedastic, with few outliers around 20. Residuals are generally spread out evenly across the range of fitted values. 
+- The scale-location plot shows that the residuals are general homoscedastic, with few outliers around 20. Residuals are generally spread out evenly across the range of fitted values.
 
 In summary,the models met the homoscedasticity and normality of the residuals assumptions, but there is a slight violation of the linearity assumption. The multicollinearity check will be conducted via the VIF test.
 
@@ -178,7 +178,7 @@ summary(model_new)
 ```{r}
 vif(model_new)
 ```
-- I added the `age` variable to the model, because I assume that the housing age has potential relationship with the median housing value. 
+- I added the `age` variable to the model, because I assume that the housing age has potential relationship with the median housing value.
 
 - The coefficient of the `age` variable is -0.1237, which means that for each additional year of age, the average median home value decreases by 0.027 unit, holding other variables constant. The p-value of the `age` variable is 0.0538, which is slightly above the 0.05 threshold. This indicates that the `age` variable is not statistically significant in predicting median home values.
 - However, the adjusted R² value of the new model is 0.6568, which is higher than the original model's adjusted R² value of 0.6549. The new model explain more variance in median home values than the original model.
