@@ -29,4 +29,3 @@ library(tidycensus)
 ```{r}
 a<-1
 ```
-
