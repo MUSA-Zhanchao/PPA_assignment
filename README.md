@@ -1,6 +1,6 @@
 # MUSA508 PPA Assignment
 
-## Course Description: 
+## Course Description:
 
 This course teaches advanced spatial analysis and an introduction to data
 science/machine learning in the urban planning and public policy realm. The class focuses on real-world
@@ -19,7 +19,7 @@ coding practice. Please bring a (charged) laptop to class to participate in the 
 appreciate it if you dedicate the brief 3-hour timeslot we have together each week to matters concerning this
 class alone. Working on assignments for your other courses is a distraction to everyone.
 
-## Learning Outcomes  
+## Learning Outcomes
 By the end of the semester, students should:
 - Understand how to build a predictive model for public policy decision-making applications.
 - Effectively evaluate the effectiveness, generalizability, and biases of models.
