@@ -7,11 +7,11 @@ You’ve been given a dataset, `studentData.geojson`, containing **property sale
 Your job is to **improve the prediction model** by integrating **locational characteristics** from external data sources (e.g., open data portals for Charlotte). The intern with the **lowest RMSE** will be celebrated! 🎉
 
 ## Assignment Requirements
-### 1. Data Collection & Exploration 
+### 1. Data Collection & Exploration
 1. **Load & Clean Data**:
 - Import studentData.geojson.
 - Check for missing values and outliers.
-  
+
 2. **Feature Engineering**:
 - Transform skewed variables if necessary (e.g., `log(price)`).
 - Create **new spatial features** (distance to parks, crime rates, etc.).
@@ -27,7 +27,7 @@ Your job is to **improve the prediction model** by integrating **locational char
 
 ## 2. Model Building & Evaluation
 
-1. **Train-Test Split** 
+1. **Train-Test Split**
 - Split data into **training (80%) and testing (20%) sets**.
 
 2. **Modeling: Iteratively work on running your OLS model - adding variables and evaluating diagnostics. We don't have to see every iteration! But for your final model:**
@@ -41,8 +41,8 @@ Your job is to **improve the prediction model** by integrating **locational char
 
 - Plot **predicted vs. observed prices**.
 - Map **residuals by neighborhood** to check for spatial bias.
-  
-2. **Spatial Autocorrelation of Residuals** 
+
+2. **Spatial Autocorrelation of Residuals**
 
 - Compute **Moran’s I** to test for **spatial autocorrelation**.
 - If Moran’s I is significant, discuss **why location affects residuals**.
@@ -52,7 +52,7 @@ Your job is to **improve the prediction model** by integrating **locational char
 
 - Discuss where your model performs best and worst.
 
-## Presentation & Markdown Quality 
+## Presentation & Markdown Quality
 Your report should be a **well-organized and visually appealing** R Markdown document:
 
 - Use **clear section headers**.
