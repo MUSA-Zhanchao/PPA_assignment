@@ -17,7 +17,7 @@ Your job is to **improve the prediction model** by integrating **locational char
 - Create **new spatial features** (distance to parks, crime rates, etc.).
 - Consider adding **interaction terms** (e.g., house size × land area), **dummy variables, and engineered categorical variables** (castle!).
 
-3. **mmary Statistics & Correlations**:
+3. **Summary Statistics & Correlations**:
 - Generate a **correlation matrix** to explore relationships.
 - Include **four scatterplots** of home prices vs. key predictors (including at least **two new spatial variables**).
 
