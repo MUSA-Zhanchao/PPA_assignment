@@ -23,9 +23,27 @@ library(sf)
 library(tidycensus)
 ```
 
-# Intriduction
 
+# Introduction
 
-```{r}
-a<-1
+# Data Collection & Exploring
+
+## Load and Clean the Data
+
+```{r, results='hide'}
+house<- st_read("data/studentData.geojson")
 ```
+```{r}
+summary(house)
+```
+```{r}
+house<- house %>%
+  select(price, bedrooms,yearbuilt,fullbaths, halfbaths, shape_Area, totalac, heatedarea, storyheigh, numfirepla, bldggrade,units)  %>%
+  filter(!is.na(price) & !is.na(bedrooms) & !is.na(yearbuilt) & !is.na(fullbaths) & !is.na(halfbaths) & !is.na(shape_Area) & !is.na(totalac) & !is.na(heatedarea) & !is.na(storyheigh) & !is.na(numfirepla) & !is.na(bldggrade) & !is.na(units))
+```
+
+# Model Building & Evaluation
+
+# Spatial Analysis & Residual Diagnostics
+
+# Conclusion

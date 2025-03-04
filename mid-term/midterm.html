@@ -11,7 +11,7 @@
 
 <meta name="author" content="Zhanchao Yang" />
 
-<meta name="date" content="2025-03-02" />
+<meta name="date" content="2025-03-04" />
 
 <title>MUSA 5080 Midterm: Predictive model for home prices in Charlotte, NC</title>
 
@@ -1434,34 +1434,34 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ef2929; }
-code span.an { color: #8f5902; font-weight: bold; font-style: italic; }
-code span.at { color: #204a87; }
-code span.bn { color: #0000cf; }
-code span.cf { color: #204a87; font-weight: bold; }
-code span.ch { color: #4e9a06; }
-code span.cn { color: #8f5902; }
-code span.co { color: #8f5902; font-style: italic; }
-code span.cv { color: #8f5902; font-weight: bold; font-style: italic; }
-code span.do { color: #8f5902; font-weight: bold; font-style: italic; }
-code span.dt { color: #204a87; }
-code span.dv { color: #0000cf; }
-code span.er { color: #a40000; font-weight: bold; }
-code span.ex { }
-code span.fl { color: #0000cf; }
-code span.fu { color: #204a87; font-weight: bold; }
-code span.im { }
-code span.in { color: #8f5902; font-weight: bold; font-style: italic; }
-code span.kw { color: #204a87; font-weight: bold; }
-code span.op { color: #ce5c00; font-weight: bold; }
-code span.ot { color: #8f5902; }
-code span.pp { color: #8f5902; font-style: italic; }
-code span.sc { color: #ce5c00; font-weight: bold; }
-code span.ss { color: #4e9a06; }
-code span.st { color: #4e9a06; }
-code span.va { color: #000000; }
-code span.vs { color: #4e9a06; }
-code span.wa { color: #8f5902; font-weight: bold; font-style: italic; }
+code span.al { color: #ef2929; } 
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.at { color: #204a87; } 
+code span.bn { color: #0000cf; } 
+code span.cf { color: #204a87; font-weight: bold; } 
+code span.ch { color: #4e9a06; } 
+code span.cn { color: #8f5902; } 
+code span.co { color: #8f5902; font-style: italic; } 
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.dt { color: #204a87; } 
+code span.dv { color: #0000cf; } 
+code span.er { color: #a40000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #0000cf; } 
+code span.fu { color: #204a87; font-weight: bold; } 
+code span.im { } 
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.kw { color: #204a87; font-weight: bold; } 
+code span.op { color: #ce5c00; font-weight: bold; } 
+code span.ot { color: #8f5902; } 
+code span.pp { color: #8f5902; font-style: italic; } 
+code span.sc { color: #ce5c00; font-weight: bold; } 
+code span.ss { color: #4e9a06; } 
+code span.st { color: #4e9a06; } 
+code span.va { color: #000000; } 
+code span.vs { color: #4e9a06; } 
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } 
 .sourceCode .row {
 width: 100%;
 }
@@ -1682,17 +1682,182 @@ border-radius: 0px;
 <h1 class="title toc-ignore">MUSA 5080 Midterm: Predictive model for
 home prices in Charlotte, NC</h1>
 <h4 class="author">Zhanchao Yang</h4>
-<h4 class="date">2025-03-02</h4>
+<h4 class="date">2025-03-04</h4>
 
 </div>
 
 
-<div id="intriduction" class="section level1">
-<h1>Intriduction</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>a<span class="ot">&lt;-</span><span class="dv">1</span></span></code></pre></div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+</div>
+<div id="data-collection-exploring" class="section level1">
+<h1>Data Collection &amp; Exploring</h1>
+<div id="load-and-clean-the-data" class="section level2">
+<h2>Load and Clean the Data</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>house<span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">&quot;data/studentData.geojson&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">summary</span>(house)</span></code></pre></div>
+<pre><code>##    lot_num             nc_pin            condo_town   parcel_typ
+##  Length:46183       Length:46183       Min.   :0    Min.   :0   
+##  Class :character   Class :character   1st Qu.:0    1st Qu.:0   
+##  Mode  :character   Mode  :character   Median :0    Median :0   
+##                                        Mean   :0    Mean   :0   
+##                                        3rd Qu.:0    3rd Qu.:0   
+##                                        Max.   :0    Max.   :0   
+##                                                                 
+##      pid              legal_from          commonpid            taxpid         
+##  Length:46183       Min.   :2016-10-22   Length:46183       Length:46183      
+##  Class :character   1st Qu.:2016-10-22   Class :character   Class :character  
+##  Mode  :character   Median :2016-10-22   Mode  :character   Mode  :character  
+##                     Mean   :2017-12-27                                        
+##                     3rd Qu.:2019-08-19                                        
+##                     Max.   :2022-09-19                                        
+##                                                                               
+##     totalac          ownerlastn         ownerfirst         cownerfirs       
+##  Min.   :   0.000   Length:46183       Length:46183       Length:46183      
+##  1st Qu.:   0.000   Class :character   Class :character   Class :character  
+##  Median :   0.121   Mode  :character   Mode  :character   Mode  :character  
+##  Mean   :   1.772                                                           
+##  3rd Qu.:   0.218                                                           
+##  Max.   :9757.440                                                           
+##                                                                             
+##   cownerlast          houseno           houseunit            stdir          
+##  Length:46183       Length:46183       Length:46183       Length:46183      
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##                                                                             
+##     stname             sttype            stsuffix          codemunici       
+##  Length:46183       Length:46183       Length:46183       Length:46183      
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##                                                                             
+##   municipali         mailaddr1          mailaddr2             city          
+##  Length:46183       Length:46183       Length:46183       Length:46183      
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##                                                                             
+##     state             zipcode            dateofsale             price         
+##  Length:46183       Length:46183       Min.   :2020-01-02   Min.   :       0  
+##  Class :character   Class :character   1st Qu.:2020-09-29   1st Qu.:  282000  
+##  Mode  :character   Mode  :character   Median :2021-05-24   Median :  368000  
+##                                        Mean   :2021-05-14   Mean   :  465687  
+##                                        3rd Qu.:2021-12-22   3rd Qu.:  507500  
+##                                        Max.   :2028-07-18   Max.   :75500000  
+##                                                                               
+##      cardno    yearbuilt      heatedarea     cdebuildin       
+##  Min.   :1   Min.   :   0   Min.   :    0   Length:46183      
+##  1st Qu.:1   1st Qu.:1979   1st Qu.: 1608   Class :character  
+##  Median :1   Median :1999   Median : 2161   Mode  :character  
+##  Mean   :1   Mean   :1993   Mean   : 2359                     
+##  3rd Qu.:1   3rd Qu.:2015   3rd Qu.: 2867                     
+##  Max.   :1   Max.   :2022   Max.   :14710                     
+##                                                               
+##   descbuildi         storyheigh         aheatingty         heatedfuel       
+##  Length:46183       Length:46183       Length:46183       Length:46183      
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##                                                                             
+##     actype            extwall           foundation          numfirepla    
+##  Length:46183       Length:46183       Length:46183       Min.   :0.0000  
+##  Class :character   Class :character   Class :character   1st Qu.:1.0000  
+##  Mode  :character   Mode  :character   Mode  :character   Median :1.0000  
+##                                                           Mean   :0.7867  
+##                                                           3rd Qu.:1.0000  
+##                                                           Max.   :7.0000  
+##                                                                           
+##   fireplaces         bldggrade           fullbaths       halfbaths     
+##  Length:46183       Length:46183       Min.   :0.000   Min.   :0.0000  
+##  Class :character   Class :character   1st Qu.:2.000   1st Qu.:0.0000  
+##  Mode  :character   Mode  :character   Median :2.000   Median :1.0000  
+##                                        Mean   :2.282   Mean   :0.5958  
+##                                        3rd Qu.:3.000   3rd Qu.:1.0000  
+##                                        Max.   :9.000   Max.   :4.0000  
+##                                                                        
+##     bedrooms         units            deedbook           deedpage        
+##  Min.   : 0.00   Min.   :  0.0000   Length:46183       Length:46183      
+##  1st Qu.: 3.00   1st Qu.:  1.0000   Class :character   Class :character  
+##  Median : 3.00   Median :  1.0000   Mode  :character   Mode  :character  
+##  Mean   : 3.51   Mean   :  0.9808                                        
+##  3rd Qu.: 4.00   3rd Qu.:  1.0000                                        
+##  Max.   :65.00   Max.   :205.0000                                        
+##                                                                          
+##    grantor           vacantorim         typeofdeed         legalrefer       
+##  Length:46183       Length:46183       Length:46183       Length:46183      
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##                                                                             
+##    taxfire             taxmun           taxspecdis          dateannexe        
+##  Length:46183       Length:46183       Length:46183       Min.   :1986-03-01  
+##  Class :character   Class :character   Class :character   1st Qu.:1999-06-30  
+##  Mode  :character   Mode  :character   Mode  :character   Median :2003-06-30  
+##                                                           Mean   :2004-01-11  
+##                                                           3rd Qu.:2009-06-30  
+##                                                           Max.   :2022-05-09  
+##                                                           NA&#39;s   :35712       
+##   landusecod         physicalde         propertyus         descproper       
+##  Length:46183       Length:46183       Length:46183       Length:46183      
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##                                                                             
+##   ownertype            ownerno   accounttyp         parlegalde       
+##  Length:46183       Min.   :1   Length:46183       Length:46183      
+##  Class :character   1st Qu.:1   Class :character   Class :character  
+##  Mode  :character   Median :1   Mode  :character   Mode  :character  
+##                     Mean   :1                                        
+##                     3rd Qu.:1                                        
+##                     Max.   :1                                        
+##                                                                      
+##   parlanduni          landsequen      shape_Leng        shape_Area     
+##  Length:46183       Min.   :0.000   Min.   :  152.9   Min.   :   1140  
+##  Class :character   1st Qu.:1.000   1st Qu.:  386.5   1st Qu.:   7967  
+##  Mode  :character   Median :1.000   Median :  452.0   Median :  11070  
+##                     Mean   :1.001   Mean   :  504.3   Mean   :  15875  
+##                     3rd Qu.:1.000   3rd Qu.:  551.7   3rd Qu.:  16336  
+##                     Max.   :3.000   Max.   :10798.8   Max.   :3486865  
+##                                                                        
+##    sale_year        musaID       toPredict                  geometry    
+##  Min.   :2020   Min.   :    1   Length:46183       POINT        :46183  
+##  1st Qu.:2020   1st Qu.:11546   Class :character   epsg:4326    :    0  
+##  Median :2021   Median :23092   Mode  :character   +proj=long...:    0  
+##  Mean   :2021   Mean   :23092                                           
+##  3rd Qu.:2021   3rd Qu.:34638                                           
+##  Max.   :2028   Max.   :46183                                           
+## </code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>house<span class="ot">&lt;-</span> house <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="fu">select</span>(price, bedrooms,yearbuilt,fullbaths, halfbaths, shape_Area, totalac, heatedarea, storyheigh, numfirepla, bldggrade,units) </span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co">#filter missing values</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>house<span class="ot">&lt;-</span> house <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(price) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(bedrooms) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(yearbuilt) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(fullbaths) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(halfbaths) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(shape_Area) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(totalac) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(heatedarea) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(storyheigh) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(numfirepla) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(bldggrade) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(units))</span></code></pre></div>
+</div>
+</div>
+<div id="model-building-evaluation" class="section level1">
+<h1>Model Building &amp; Evaluation</h1>
+</div>
+<div id="spatial-analysis-residual-diagnostics" class="section level1">
+<h1>Spatial Analysis &amp; Residual Diagnostics</h1>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAnTVVTQSA1MDgwIE1pZHRlcm06IFByZWRpY3RpdmUgbW9kZWwgZm9yIGhvbWUgcHJpY2VzIGluIENoYXJsb3R0ZSwgTkMnCmF1dGhvcjogIlpoYW5jaGFvIFlhbmciCmRhdGU6ICJgciBTeXMuRGF0ZSgpYCIKb3V0cHV0OgogIGh0bWxfZG9jdW1lbnQ6CiAgICB0aGVtZTogam91cm5hbAogICAgaGlnaGxpZ2h0OiB0YW5nbwogICAgdG9jOiB0cnVlCiAgICBjb2RlX2ZvbGRpbmc6IGhpZGUKICAgIGNvZGVfZG93bmxvYWQ6IHllcwogICAgdG9jX2Zsb2F0OgogICAgICBjb2xsYXBzZWQ6IHRydWUKCi0tLQoKYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0V9CmtuaXRyOjpvcHRzX2NodW5rJHNldChlY2hvID0gVFJVRSkKbGlicmFyeSh0aWR5dmVyc2UpCmxpYnJhcnkoY2FyZXQpCmxpYnJhcnkoZ2djb3JycGxvdCkKbGlicmFyeShzZikKbGlicmFyeSh0aWR5Y2Vuc3VzKQpgYGAKCiMgSW50cmlkdWN0aW9uCgoKYGBge3J9CmE8LTEKYGBgCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAnTVVTQSA1MDgwIE1pZHRlcm06IFByZWRpY3RpdmUgbW9kZWwgZm9yIGhvbWUgcHJpY2VzIGluIENoYXJsb3R0ZSwgTkMnCmF1dGhvcjogIlpoYW5jaGFvIFlhbmciCmRhdGU6ICJgciBTeXMuRGF0ZSgpYCIKb3V0cHV0OgogIGh0bWxfZG9jdW1lbnQ6CiAgICB0aGVtZTogam91cm5hbAogICAgaGlnaGxpZ2h0OiB0YW5nbwogICAgdG9jOiB0cnVlCiAgICBjb2RlX2ZvbGRpbmc6IGhpZGUKICAgIGNvZGVfZG93bmxvYWQ6IHllcwogICAgdG9jX2Zsb2F0OgogICAgICBjb2xsYXBzZWQ6IHRydWUKCi0tLQoKYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0V9CmtuaXRyOjpvcHRzX2NodW5rJHNldChlY2hvID0gVFJVRSkKbGlicmFyeSh0aWR5dmVyc2UpCmxpYnJhcnkoY2FyZXQpCmxpYnJhcnkoZ2djb3JycGxvdCkKbGlicmFyeShzZikKbGlicmFyeSh0aWR5Y2Vuc3VzKQpgYGAKCgojIEludHJvZHVjdGlvbgoKIyBEYXRhIENvbGxlY3Rpb24gJiBFeHBsb3JpbmcKCiMjIExvYWQgYW5kIENsZWFuIHRoZSBEYXRhCgpgYGB7ciwgcmVzdWx0cz0naGlkZSd9CmhvdXNlPC0gc3RfcmVhZCgiZGF0YS9zdHVkZW50RGF0YS5nZW9qc29uIikKYGBgCmBgYHtyfQpzdW1tYXJ5KGhvdXNlKQpgYGAKYGBge3J9CmhvdXNlPC0gaG91c2UgJT4lCiAgc2VsZWN0KHByaWNlLCBiZWRyb29tcyx5ZWFyYnVpbHQsZnVsbGJhdGhzLCBoYWxmYmF0aHMsIHNoYXBlX0FyZWEsIHRvdGFsYWMsIGhlYXRlZGFyZWEsIHN0b3J5aGVpZ2gsIG51bWZpcmVwbGEsIGJsZGdncmFkZSx1bml0cykgCmBgYAoKYGBge3J9CiNmaWx0ZXIgbWlzc2luZyB2YWx1ZXMKaG91c2U8LSBob3VzZSAlPiUKICBmaWx0ZXIoIWlzLm5hKHByaWNlKSAmICFpcy5uYShiZWRyb29tcykgJiAhaXMubmEoeWVhcmJ1aWx0KSAmICFpcy5uYShmdWxsYmF0aHMpICYgIWlzLm5hKGhhbGZiYXRocykgJiAhaXMubmEoc2hhcGVfQXJlYSkgJiAhaXMubmEodG90YWxhYykgJiAhaXMubmEoaGVhdGVkYXJlYSkgJiAhaXMubmEoc3RvcnloZWlnaCkgJiAhaXMubmEobnVtZmlyZXBsYSkgJiAhaXMubmEoYmxkZ2dyYWRlKSAmICFpcy5uYSh1bml0cykpCmBgYAoKIyBNb2RlbCBCdWlsZGluZyAmIEV2YWx1YXRpb24KCiMgU3BhdGlhbCBBbmFseXNpcyAmIFJlc2lkdWFsIERpYWdub3N0aWNzCgojIENvbmNsdXNpb24=</div>
 
 
 </div>
