@@ -1,6 +1,6 @@
 # Midterm assignment instruction
 
-Congratulations! 🎉 You've been hired as an intern at Marie-Antoinette Predictions (MAP) Inc., a company specializing in **spatial predictive modeling**. Your first task? **Build a predictive model for home prices in Charlotte, NC**!
+Congratulations! You've been hired as an intern at Marie-Antoinette Predictions (MAP) Inc., a company specializing in **spatial predictive modeling**. Your first task? **Build a predictive model for home prices in Charlotte, NC**!
 
 You’ve been given a dataset, `studentData.geojson`, containing **property sales data** from Charlotte. However, home prices aren’t just about square footage—**location matters**!
 
