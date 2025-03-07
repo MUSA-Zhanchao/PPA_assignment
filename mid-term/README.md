@@ -35,7 +35,7 @@ Your job is to **improve the prediction model** by integrating **locational char
 - Show and interpret basic model diagnostics
 - Report **Mean Absolute Error (MAE), RMSE, and R²**.
 
-## 3. Spatial Analysis & Residual Diagnostics (🚨 Covering in Class 3/7)
+## 3. Spatial Analysis & Residual Diagnostics
 
 1. **Residual Analysis:**
 
