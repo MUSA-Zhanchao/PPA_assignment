@@ -139,13 +139,55 @@ crime<- crime %>%
   st_transform(crime, crs =st_crs(house))
 ```
 
-**Public transportation coverage data** was collected from the Charlotte/Mecklenburg Quality of Life Explorer. The public transportation coverage data is the Percentage of housing units within 0.5 mile of a transit stop. The public transportation coverage data is collected and cleaned to be used in the model building process.
+Measure the crime rate at census block level and assign to respective house data
 
 ```{r}
+
+```
+
+**Public transportation coverage data** was collected from the Charlotte/Mecklenburg Quality of Life Explorer. The public transportation coverage data is the Percentage of housing units within 0.5 mile of a transit stop. The public transportation coverage data is collected and cleaned to be used in the model building process.
+
+```{r, results='hide'}
 transit <- st_read("data/transportation.geojson")%>%
   select(X2023, geometry)%>%
-  rename(coverage=X2023)
+  rename(transit_coverage=X2023)
 ```
+```{r}
+#spatial join the transit data to the house data
+house <- st_join(house, transit)
+```
+
+**Median household income data** was collected from the American Community Survey. The median household income data is the median household income in the neighborhood. The median household income data is collected and cleaned to be used in the model building process.
+
+```{r, results='hide', warning=FALSE, message=FALSE}
+income<- get_acs(
+  geography = "block group", 
+  variables = c("income"="B19013_001"), 
+  state = "NC", 
+  county = "Mecklenburg", 
+  geometry = TRUE
+  )%>%
+  st_transform(crs =st_crs(house))%>%
+  select(estimate, geometry)
+```
+```{r}
+#spatial join the income data to the house data
+house <- st_join(house, income)
+```
+
+**Tree Canopy data** was collected from the Charlotte/Mecklenburg Quality of Life Explorer. The tree canopy data is the percentage of tree canopy in the neighborhood. The tree canopy data is collected and cleaned to be used in the model building process.
+
+```{r, results='hide'}
+tree <- st_read("data/tree_canopy.geojson")%>%
+  select(X2023, geometry)%>%
+  rename(canopy=X2023)
+```
+
+```{r}
+#spatial join the tree canopy data to the house data
+house <- st_join(house, tree)
+```
+
 
 # Model Building & Evaluation
 
