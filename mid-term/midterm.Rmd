@@ -64,7 +64,7 @@ ggplot(house, aes(x = logprice)) +
 ## Feature engineering
 
 The feature engineering is the process of creating new features from the existing features. The new features are created to improve the model performance. In this analysis, I created the age of the house, from the housing built year. I also created
-the dummy variables for the air conditioning and heating system, the engineered categorical variable mansion. The dummy variables for the air conditioning and heating system are created by checking if the house has air conditioning or heating system, as housing with air conditioning and heating system tends to have higher price. The mansion dummy variable is created by checking if the house has more than 5000 square feet of heated area, more than 3 bedrooms, and more than 3 full baths. The story height of the house is extracted from the story height column by removing the non-numeric characters. 
+the dummy variables for the air conditioning and heating system, the engineered categorical variable mansion. The dummy variables for the air conditioning and heating system are created by checking if the house has air conditioning or heating system, as housing with air conditioning and heating system tends to have higher price. The mansion dummy variable is created by checking if the house has more than 5000 square feet of heated area, more than 3 bedrooms, and more than 3 full baths. The story height of the house is extracted from the story height column by removing the non-numeric characters. I also converted the heatedfuel column to a new column heatfuel by replacing the "NONE" value with NA, as a new categorical variable.
 
 The building grade is converted to a numeric variable by assigning a number to each category based on factors. The new features are created to improve the model performance.
 
@@ -96,8 +96,25 @@ house <- house %>%
       bldggrade == "CUSTOM" ~ 7),
     ac_dummy = ifelse(actype == "AC-NONE", 0, 1),
     heat_dummy = ifelse(heatedfuel == "NONE", 0, 1),
-    mansion= ifelse(heatedarea>5000 & bedrooms>3 & fullbaths>3, 1, 0),
+    mansion= ifelse(heatedarea>5000 & heatedarea<10001 & bedrooms>2 & bedrooms<6 & fullbaths>2, 1, 0),
+    castle= ifelse(heatedarea>10000 & bedrooms>5 & fullbaths>5, 1, 0),
+    house= ifelse(mansion==0 & castle==0, 1, 0),
+    heatfuel = ifelse(heatedfuel == "NONE", NA, heatedfuel)
     )
+```
+
+### Clean up the work
+
+After the primary feature engineering process, I removed the original columns that are not needed for the analysis. The original columns are removed to make the dataset cleaner and easier to work with. The dataset is now ready for the model building process.
+
+```{r}
+house <- house %>%
+  select(-yearbuilt, -actype, -heatedfuel)%>%
+  mutate(type= case_when(
+    house==1 ~ "House",
+    mansion==1 ~ "Mansion",
+    castle==1 ~ "Castle"
+  ))
 ```
 
 
