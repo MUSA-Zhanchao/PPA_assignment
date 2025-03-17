@@ -29,18 +29,81 @@ library(tidycensus)
 # Data Collection & Exploring
 
 ## Load and Clean the Data
+The first step for this analysis start by loading the household data of the Charlotte, NC area. The data is in the geojson format with over 46,000 records of the housing information in Mecklenburg County, NC. 
 
 ```{r, results='hide'}
 house<- st_read("data/studentData.geojson")
 ```
-```{r}
-summary(house)
-```
+The original dataset contain many information that are not closely related with the housing prices, such as zip code, owner's name, tax code. I filtered the datasets that only contains information about the price, bedrooms, yearbuilt, fullbaths, halfbaths, heatedarea, storyheigh, numfirepla, bldggrade, units, heatedfuel, actype, and extwall of the houses. The data is loaded and cleaned by removing the missing values and the houses with price less than 0. For prediction purposes, the price equal or below 0 is not useful.
+
 ```{r}
 house<- house %>%
-  select(price, bedrooms,yearbuilt,fullbaths, halfbaths, shape_Area, totalac, heatedarea, storyheigh, numfirepla, bldggrade,units)  %>%
-  filter(!is.na(price) & !is.na(bedrooms) & !is.na(yearbuilt) & !is.na(fullbaths) & !is.na(halfbaths) & !is.na(shape_Area) & !is.na(totalac) & !is.na(heatedarea) & !is.na(storyheigh) & !is.na(numfirepla) & !is.na(bldggrade) & !is.na(units))
+  select(price, bedrooms,yearbuilt,fullbaths, halfbaths, heatedarea, storyheigh, numfirepla, bldggrade,units, heatedfuel, actype, extwall)  %>%
+  filter(!is.na(price) & !is.na(bedrooms) & !is.na(yearbuilt) & !is.na(fullbaths) & !is.na(halfbaths) & !is.na(heatedarea) & !is.na(storyheigh) & !is.na(numfirepla) & !is.na(bldggrade) & !is.na(units) & !is.na(heatedfuel) & !is.na(actype) & !is.na(extwall))%>%
+  filter(price>0)
 ```
+
+## Check the skewness of the variables
+For the prediction purpose, the normal distribution of the variable matters because it helps ensure the accuracy and reliability of the model. When the variable is normally distributed, it usually means that the erroes or residuals are also normally distributed. 
+
+The histogram of the price shows that the price is right skewed. To make the price more normally distributed, I took the log transformation of the price. The histogram of the log price shows that the log price is more normally distributed than the original price.
+```{r}
+ggplot(house, aes(x = price)) +
+  geom_histogram(fill = "lightblue", bins= 500) +
+  labs(title = "Histogram of Price", x = "Price", y = "Frequency")
+```
+```{r}
+house <- house %>%
+  mutate(logprice = log(price))
+
+ggplot(house, aes(x = logprice)) +
+  geom_histogram(fill = "lightblue", bins= 500) +
+  labs(title = "Histogram of Log Price", x = "Log Price", y = "Frequency")
+```
+
+## Feature engineering
+
+The feature engineering is the process of creating new features from the existing features. The new features are created to improve the model performance. In this analysis, I created the age of the house, from the housing built year. I also created
+the dummy variables for the air conditioning and heating system, the engineered categorical variable mansion. The dummy variables for the air conditioning and heating system are created by checking if the house has air conditioning or heating system, as housing with air conditioning and heating system tends to have higher price. The mansion dummy variable is created by checking if the house has more than 5000 square feet of heated area, more than 3 bedrooms, and more than 3 full baths. The story height of the house is extracted from the story height column by removing the non-numeric characters. 
+
+The building grade is converted to a numeric variable by assigning a number to each category based on factors. The new features are created to improve the model performance.
+
+
+| Grade        | Description                                                     | Typical Examples                                      | Quality & Value Level     |
+|--------------|-----------------------------------------------------------------|-------------------------------------------------------|---------------------------|
+| **Minimum**  | Very basic, minimal standards,limited durability. | Old sheds, simple outbuildings, deteriorating structures | **Lowest**                |
+| **Fair**     | Below-average condition, noticeable wear or deferred maintenance. | Older homes/apartments with deferred maintenance, structures needing renovation | **Below Average**         |
+| **Average**  | Standard construction quality, functional and maintained condition. | Typical single-family homes, standard apartment units | **Moderate**              |
+| **Good**     | Above-average quality construction, good condition. | Newer suburban homes, renovated units, higher-quality commercial buildings | **Above Average**         |
+| **Excellent**| Superior quality, exceptional finishes, and meticulous attention to detail. | High-end residences, luxury condominiums, upscale commercial properties | **High**                  |
+| **Custom**   | Unique or specialized construction, highly personalized design,typically luxury or architecturally significant. | Luxury custom homes, unique historical restorations, architect-designed high-end properties | **Highest or Specialized** |
+
+Source: https://localdocs.charlotte.edu/Tax_Collections/Reports_Studies/
+
+
+```{r}
+house <- house %>%
+  mutate(
+    age = 2022 - yearbuilt,
+    storyheigh = as.numeric(gsub("[^0-9.]", "", storyheigh)),
+    bldggrade = case_when(
+      bldggrade == "MINIMUM" ~ 1,
+      bldggrade == "FAIR" ~ 2,
+      bldggrade == "AVERAGE" ~ 3,
+      bldggrade == "GOOD" ~ 4,
+      bldggrade == "VERY GOOD" ~ 5,
+      bldggrade == "EXCELLENT" ~ 6,
+      bldggrade == "CUSTOM" ~ 7),
+    ac_dummy = ifelse(actype == "AC-NONE", 0, 1),
+    heat_dummy = ifelse(heatedfuel == "NONE", 0, 1),
+    mansion= ifelse(heatedarea>5000 & bedrooms>3 & fullbaths>3, 1, 0),
+    )
+```
+
+
+### Additional geospatial data to predict the housing price
+
+
 
 # Model Building & Evaluation
 
