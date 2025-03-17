@@ -120,7 +120,32 @@ house <- house %>%
 
 ### Additional geospatial data to predict the housing price
 
+Many other factors can affect the housing price that not contains in the given datasets. Many other spatial variables affect the housing price and value as well. For example, the housing values are closely correlate with the crime rates in the neighborhood, median household income and whether the house is close to the public transportation and access to the park and public spaces. All those variables should be included in the prediction model to improve the model performance.
 
+The additional geospatial data is collected from American Community Survey, City of Charlotte open data portal and other sources. The additional geospatial data includes the crime rate, the distance to the public transportation, the distance to the park. The additional geospatial data is collected and cleaned to be used in the model building process.
+
+**Crime data** was collected from the City of Charlotte open data portal from police station. 
+
+```{r}
+crime<- read.csv("data/CMPD.csv")%>%
+  filter(YEAR>=2021)
+```
+
+Transform the crime data to the spatial data and project it to the same projection as the housing data.
+```{r}
+crime<- crime %>%
+  select(LATITUDE_PUBLIC, LONGITUDE_PUBLIC, YEAR)%>%
+  st_as_sf(coords = c("LONGITUDE_PUBLIC", "LATITUDE_PUBLIC"), crs = 4326)%>% 
+  st_transform(crime, crs =st_crs(house))
+```
+
+**Public transportation coverage data** was collected from the Charlotte/Mecklenburg Quality of Life Explorer. The public transportation coverage data is the Percentage of housing units within 0.5 mile of a transit stop. The public transportation coverage data is collected and cleaned to be used in the model building process.
+
+```{r}
+transit <- st_read("data/transportation.geojson")%>%
+  select(X2023, geometry)%>%
+  rename(coverage=X2023)
+```
 
 # Model Building & Evaluation
 
