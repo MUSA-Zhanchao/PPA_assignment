@@ -1658,34 +1658,34 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ef2929; } 
-code span.an { color: #8f5902; font-weight: bold; font-style: italic; } 
-code span.at { color: #204a87; } 
-code span.bn { color: #0000cf; } 
-code span.cf { color: #204a87; font-weight: bold; } 
-code span.ch { color: #4e9a06; } 
-code span.cn { color: #8f5902; } 
-code span.co { color: #8f5902; font-style: italic; } 
-code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } 
-code span.do { color: #8f5902; font-weight: bold; font-style: italic; } 
-code span.dt { color: #204a87; } 
-code span.dv { color: #0000cf; } 
-code span.er { color: #a40000; font-weight: bold; } 
-code span.ex { } 
-code span.fl { color: #0000cf; } 
-code span.fu { color: #204a87; font-weight: bold; } 
-code span.im { } 
-code span.in { color: #8f5902; font-weight: bold; font-style: italic; } 
-code span.kw { color: #204a87; font-weight: bold; } 
-code span.op { color: #ce5c00; font-weight: bold; } 
-code span.ot { color: #8f5902; } 
-code span.pp { color: #8f5902; font-style: italic; } 
-code span.sc { color: #ce5c00; font-weight: bold; } 
-code span.ss { color: #4e9a06; } 
-code span.st { color: #4e9a06; } 
-code span.va { color: #000000; } 
-code span.vs { color: #4e9a06; } 
-code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } 
+code span.al { color: #ef2929; }
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; }
+code span.at { color: #204a87; }
+code span.bn { color: #0000cf; }
+code span.cf { color: #204a87; font-weight: bold; }
+code span.ch { color: #4e9a06; }
+code span.cn { color: #8f5902; }
+code span.co { color: #8f5902; font-style: italic; }
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; }
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; }
+code span.dt { color: #204a87; }
+code span.dv { color: #0000cf; }
+code span.er { color: #a40000; font-weight: bold; }
+code span.ex { }
+code span.fl { color: #0000cf; }
+code span.fu { color: #204a87; font-weight: bold; }
+code span.im { }
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; }
+code span.kw { color: #204a87; font-weight: bold; }
+code span.op { color: #ce5c00; font-weight: bold; }
+code span.ot { color: #8f5902; }
+code span.pp { color: #8f5902; font-style: italic; }
+code span.sc { color: #ce5c00; font-weight: bold; }
+code span.ss { color: #4e9a06; }
+code span.st { color: #4e9a06; }
+code span.va { color: #000000; }
+code span.vs { color: #4e9a06; }
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; }
 .sourceCode .row {
 width: 100%;
 }
@@ -2507,9 +2507,9 @@ variables. The VIF values in the model are below 5, which indicates that
 there is no multicollinearity between the variables.</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>model<span class="ot">&lt;-</span> <span class="fu">lm</span>(logprice <span class="sc">~</span> halfbaths <span class="sc">+</span> heatedarea <span class="sc">+</span> numfirepla <span class="sc">+</span> bldggrade <span class="sc">+</span> units <span class="sc">+</span> age <span class="sc">+</span> ac_dummy <span class="sc">+</span> heat_dummy <span class="sc">+</span> income <span class="sc">+</span> crime <span class="sc">+</span> transit <span class="sc">+</span> canopy <span class="sc">+</span> recreation, <span class="at">data =</span> house)</span>
 <span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a><span class="fu">vif</span>(model)</span></code></pre></div>
-<pre><code>##  halfbaths heatedarea numfirepla  bldggrade      units        age   ac_dummy 
-##   1.199884   2.448252   1.249302   2.023239   1.063245   1.727478   1.176752 
-## heat_dummy     income      crime    transit     canopy recreation 
+<pre><code>##  halfbaths heatedarea numfirepla  bldggrade      units        age   ac_dummy
+##   1.199884   2.448252   1.249302   2.023239   1.063245   1.727478   1.176752
+## heat_dummy     income      crime    transit     canopy recreation
 ##   1.037838   1.784013   1.604203   1.942375   1.382799   1.364279</code></pre>
 </div>
 <div id="scatterplot" class="section level3">

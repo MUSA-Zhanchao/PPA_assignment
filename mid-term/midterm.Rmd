@@ -293,7 +293,7 @@ start_dep  <- min(dependent_rows)
 end_dep    <- max(dependent_rows)
 
 # Create the table using kable and add extra formatting
-kable(summary_stats, caption = "Summary Statistics", 
+kable(summary_stats, caption = "Summary Statistics",
       align = c("l", "l", "l"), booktabs = TRUE, escape = FALSE ) %>%
   add_header_above(c(" " = 1, "Statistics" = 2)) %>%
   kable_styling(full_width = FALSE) %>%
@@ -306,21 +306,21 @@ kable(summary_stats, caption = "Summary Statistics",
 ```{r, fig.width=8, fig.height=6}
 
 predictor_vars <- house[, c("bedrooms", "fullbaths", "halfbaths", "heatedarea", "storyheigh", "numfirepla", "bldggrade", "units", "age", "ac_dummy", "heat_dummy", "income", "crime", "transit", "canopy", "recreation")]%>%st_drop_geometry()
-  
+
 
 cor_matrix <- cor(predictor_vars, use = "complete.obs", method = "pearson")
 
-ggcorrplot(cor_matrix, 
-           method = "square",   
-           type = "lower",      
-           lab = TRUE,       
-           lab_size = 3,      
+ggcorrplot(cor_matrix,
+           method = "square",
+           type = "lower",
+           lab = TRUE,
+           lab_size = 3,
            colors = c("#a4133c", "white", "#a4133c"))+
     labs(title = "Correlation Matrix for all Predictor Variables") +
     theme(plot.subtitle = element_text(size = 9, face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x = element_text(size = 7),
-        axis.text.y = element_text(size = 7), 
+        axis.text.y = element_text(size = 7),
         axis.title = element_text(size = 8))
 ```
 Since there are high correlation between the heated area and full baths, I will remove the full baths from the model building process. The full baths is removed to avoid the multicollinearity between the variables. Similarly, the number of bedrooms and heated area are highly correlated, I will remove the number of bedroom a from the model building process. Storyheight is also removed for the same reason.
@@ -328,21 +328,21 @@ Since there are high correlation between the heated area and full baths, I will 
 After removing, the final correlation matrix is following:
 ```{r, fig.width=8, fig.height=6}
 predictor_vars <- house[, c( "halfbaths", "heatedarea", "numfirepla", "bldggrade", "units", "age", "ac_dummy", "heat_dummy", "income", "crime", "transit", "canopy", "recreation")]%>%st_drop_geometry()
-  
+
 
 cor_matrix <- cor(predictor_vars, use = "complete.obs", method = "pearson")
 
-ggcorrplot(cor_matrix, 
-           method = "square",   
-           type = "lower",      
-           lab = TRUE,       
-           lab_size = 3,      
+ggcorrplot(cor_matrix,
+           method = "square",
+           type = "lower",
+           lab = TRUE,
+           lab_size = 3,
            colors = c("#a4133c", "white", "#a4133c"))+
     labs(title = "Correlation Matrix for all Predictor Variables") +
     theme(plot.subtitle = element_text(size = 9, face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x = element_text(size = 7),
-        axis.text.y = element_text(size = 7), 
+        axis.text.y = element_text(size = 7),
         axis.title = element_text(size = 8))
 house<- house %>%
   dplyr::select(-fullbaths, -storyheigh, -bedrooms)
@@ -359,11 +359,11 @@ vif(model)
 ```{r, fig.width=12, fig.height=6, warning=FALSE, message=FALSE}
 longer<-house %>%
   pivot_longer(cols = c(
-    "halfbaths", 
-    "heatedarea", 
-    "age", 
-    "income", 
-    "crime", 
+    "halfbaths",
+    "heatedarea",
+    "age",
+    "income",
+    "crime",
     "transit"),
                names_to = "Variable",
                values_to = "Value")%>%
@@ -371,22 +371,22 @@ longer<-house %>%
 
 ggplot(longer,aes(x = Value, y = price)) +
   geom_point(color = "black", size= 0.4) +
-  geom_smooth(method = "lm", color = "red", se = FALSE) + 
-  facet_wrap(~ Variable, scales = "free", labeller = as_labeller(c("halfbaths" = "Number of Half Baths", 
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  facet_wrap(~ Variable, scales = "free", labeller = as_labeller(c("halfbaths" = "Number of Half Baths",
                                                                   "heatedarea" = "Heated Area",
                                                                   "age" = "Age of the House",
                                                                   "income" = "Median Household Income",
                                                                   "crime" = "Number of Crime",
                                                                   "transit" = "Transit Coverage"
   )))  +
-  theme_light() +   
+  theme_light() +
   theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x=element_text(size=6),
-        axis.text.y=element_text(size=6), 
+        axis.text.y=element_text(size=6),
         axis.title=element_text(size=8)) +
-  labs(title = "Scatter Plots of Dependent Variable vs. Predictors", 
-       x = "Value", 
+  labs(title = "Scatter Plots of Dependent Variable vs. Predictors",
+       x = "Value",
        y = "House price")
 
 ```
