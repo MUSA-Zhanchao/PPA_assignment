@@ -20,7 +20,13 @@ library(tidyverse)
 library(caret)
 library(ggcorrplot)
 library(sf)
+library(kableExtra)
 library(tidycensus)
+library(tidyverse)
+library(broom)
+library(ggplot2)
+library(car)
+library(MASS)
 ```
 
 
@@ -38,10 +44,17 @@ The original dataset contain many information that are not closely related with 
 
 ```{r}
 house<- house %>%
-  select(price, bedrooms,yearbuilt,fullbaths, halfbaths, heatedarea, storyheigh, numfirepla, bldggrade,units, heatedfuel, actype, extwall)  %>%
-  filter(!is.na(price) & !is.na(bedrooms) & !is.na(yearbuilt) & !is.na(fullbaths) & !is.na(halfbaths) & !is.na(heatedarea) & !is.na(storyheigh) & !is.na(numfirepla) & !is.na(bldggrade) & !is.na(units) & !is.na(heatedfuel) & !is.na(actype) & !is.na(extwall))%>%
+  dplyr::select(price, bedrooms,yearbuilt,fullbaths, halfbaths, heatedarea, storyheigh, numfirepla, bldggrade,units, heatedfuel, actype)  %>%
+  filter(!is.na(price) & !is.na(bedrooms) & !is.na(yearbuilt) & !is.na(fullbaths) & !is.na(halfbaths) & !is.na(heatedarea) & !is.na(storyheigh) & !is.na(numfirepla) & !is.na(bldggrade) & !is.na(units) & !is.na(heatedfuel) & !is.na(actype))%>%
   filter(price>0)
 ```
+
+After checking housing prices, a small number of homes in Charlotte have exceptionally high values, representing clear outliers. These extreme values could significantly distort our model's ability to accurately predict typical housing prices. Therefore, I have excluded all homes valued above 10 million dollars to ensure the robustness and accuracy of our predictive model.
+```{r}
+house<- house %>%
+  filter(price<10000000)
+```
+
 
 ## Check the skewness of the variables
 For the prediction purpose, the normal distribution of the variable matters because it helps ensure the accuracy and reliability of the model. When the variable is normally distributed, it usually means that the erroes or residuals are also normally distributed.
@@ -109,7 +122,7 @@ After the primary feature engineering process, I removed the original columns th
 
 ```{r}
 house <- house %>%
-  select(-yearbuilt, -actype, -heatedfuel)%>%
+  dplyr::select(-yearbuilt, -actype, -heatedfuel)%>%
   mutate(type= case_when(
     house==1 ~ "House",
     mansion==1 ~ "Mansion",
@@ -136,13 +149,14 @@ income<- get_acs(
   )%>%
   st_transform(crs =st_crs(house))%>%
   filter(!is.na(estimate))%>%
-  select(estimate, GEOID, geometry)%>%
-  rename(median_income=estimate)
+  dplyr::select(estimate, GEOID, geometry)%>%
+  rename(income=estimate)
 ```
 
 ```{r}
 #spatial join the income data to the house data
-house <- st_join(house, income)
+house <- st_join(house, income)%>%
+  filter(!is.na(income))
 ```
 
 **Crime data** was collected from the City of Charlotte open data portal from police station.
@@ -155,7 +169,7 @@ crime<- read.csv("data/CMPD.csv")%>%
 Transform the crime data to the spatial data and project it to the same projection as the housing data.
 ```{r}
 crime<- crime %>%
-  select(LATITUDE_PUBLIC, LONGITUDE_PUBLIC, YEAR)%>%
+  dplyr::select(LATITUDE_PUBLIC, LONGITUDE_PUBLIC, YEAR)%>%
   st_as_sf(coords = c("LONGITUDE_PUBLIC", "LATITUDE_PUBLIC"), crs = 4326)%>%
   st_transform(crime, crs =st_crs(house))
 ```
@@ -165,25 +179,26 @@ Measure the crime rate at census block level and assign to respective house data
 ```{r}
 crime_tract<- st_join(house, crime)%>%
   group_by(GEOID)%>%
-  summarise(crime_number=n())
+  summarise(crime=n())
 ```
 
 ```{r}
 house <- st_join(house, crime_tract)%>%
-  select(-GEOID.x, -GEOID.y)%>%
-  filter(!is.na(crime_number))
+  dplyr::select(-GEOID.x, -GEOID.y)%>%
+  filter(!is.na(crime))
 ```
 
 **Public transportation coverage data** was collected from the Charlotte/Mecklenburg Quality of Life Explorer. The public transportation coverage data is the Percentage of housing units within 0.5 mile of a transit stop. The public transportation coverage data is collected and cleaned to be used in the model building process.
 
 ```{r, results='hide'}
 transit <- st_read("data/transportation.geojson")%>%
-  select(X2023, geometry)%>%
-  rename(transit_coverage=X2023)
+  dplyr::select(X2023, geometry)%>%
+  rename(transit=X2023)
 ```
 ```{r}
 #spatial join the transit data to the house data
-house <- st_join(house, transit)
+house <- st_join(house, transit)%>%
+  filter(!is.na(transit))
 ```
 
 
@@ -192,7 +207,7 @@ house <- st_join(house, transit)
 
 ```{r, results='hide'}
 tree <- st_read("data/tree_canopy.geojson")%>%
-  select(X2023, geometry)%>%
+  dplyr::select(X2023, geometry)%>%
   rename(canopy=X2023)
 ```
 
@@ -205,13 +220,177 @@ house <- st_join(house, tree)
 
 ```{r, results='hide'}
 recreation<- st_read("data/recreation.geojson")%>%
-  select(X2023, geometry)%>%
-  rename(recreation_coverage=X2023)
+  dplyr::select(X2023, geometry)%>%
+  rename(recreation=X2023)
 ```
 ```{r}
 #spatial join the recreation data to the house data
-house <- st_join(house, recreation)
+house <- st_join(house, recreation)%>%
+  filter(!is.na(recreation))
 ```
+
+## Summary Statistics and Correlation Matrix
+
+The summary statistics and correlation matrix are calculated to understand the relationship between the variables. The summary statistics show the mean, median, standard deviation, and quantiles of the variables. The correlation matrix shows the correlation between the variables. The correlation matrix is used to understand the relationship between the variables and to identify the multicollinearity between the variables.
+
+### Summary Statistics
+For the summary statistics, I calculated the mean and standard deviation of the variables. The summary statistics are calculated to understand the distribution of the variables. The summary statistics are used to understand the distribution of the variables and to identify the outliers in the data.
+
+```{r chart}
+dependent_var <- "price"
+
+predictors <- c("bedrooms", "fullbaths", "halfbaths", "heatedarea", "storyheigh", "numfirepla", "bldggrade", "units", "age", "income", "crime", "transit", "canopy", "recreation")
+
+summary_stats <- house %>%
+  st_drop_geometry() %>%
+  dplyr::select(all_of(c(dependent_var, predictors))) %>%
+  summarise_all(list(Mean = mean, SD = sd), na.rm = TRUE) %>%
+  pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value") %>%
+  separate(Variable, into = c("Variable", "Stat"), sep = "_") %>%
+  pivot_wider(names_from = Stat, values_from = Value)
+
+
+
+summary_stats <- summary_stats %>%
+  mutate(Variable = case_when(
+    Variable == "price" ~ "House Value",
+    Variable == "bedrooms" ~ "Number of bedrooms",
+    Variable == "fullbaths" ~ "Number of full baths",
+    Variable == "halfbaths" ~ "Number of half baths",
+    Variable == "heatedarea" ~ "House Square footage",
+    Variable == "storyheigh" ~ "Number of stories",
+    Variable == "numfirepla" ~ "Number of fireplaces",
+    Variable == "bldggrade" ~ "Building Grade",
+    Variable == "units" ~ "Number of units",
+    Variable == "age" ~ "Age of the house",
+    Variable == "income" ~ "Median household income",
+    Variable == "crime" ~ "Number of Crime in Census Block group",
+    Variable == "transit" ~ "% Transit Coverage",
+    Variable == "canopy" ~ "% Tree Canopy Coverage",
+    Variable == "recreation" ~ "% Recreation Coverage",
+    TRUE ~ Variable
+  ))
+
+
+
+
+summary_stats <- summary_stats %>%
+  mutate(
+    Mean = round(Mean, 2),
+    SD = round(SD, 2)
+  )
+
+summary_stats <- summary_stats %>%
+  arrange(Variable == "House Value")
+
+predictor_rows <- which(summary_stats$Variable != "House Value")
+dependent_rows <- which(summary_stats$Variable == "House Value")
+
+# Determine the start and end rows for each group
+start_pred <- min(predictor_rows)
+end_pred   <- max(predictor_rows)
+start_dep  <- min(dependent_rows)
+end_dep    <- max(dependent_rows)
+
+# Create the table using kable and add extra formatting
+kable(summary_stats, caption = "Summary Statistics",
+      align = c("l", "l", "l"), booktabs = TRUE, escape = FALSE ) %>%
+  add_header_above(c(" " = 1, "Statistics" = 2)) %>%
+  kable_styling(full_width = FALSE) %>%
+  group_rows("Predictors", start_pred, end_pred) %>%
+  group_rows("Dependent Variable", start_dep, end_dep)%>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = TRUE)
+```
+
+### Correlation Matrix
+```{r, fig.width=8, fig.height=6}
+
+predictor_vars <- house[, c("bedrooms", "fullbaths", "halfbaths", "heatedarea", "storyheigh", "numfirepla", "bldggrade", "units", "age", "ac_dummy", "heat_dummy", "income", "crime", "transit", "canopy", "recreation")]%>%st_drop_geometry()
+
+
+cor_matrix <- cor(predictor_vars, use = "complete.obs", method = "pearson")
+
+ggcorrplot(cor_matrix,
+           method = "square",
+           type = "lower",
+           lab = TRUE,
+           lab_size = 3,
+           colors = c("#a4133c", "white", "#a4133c"))+
+    labs(title = "Correlation Matrix for all Predictor Variables") +
+    theme(plot.subtitle = element_text(size = 9, face = "italic"),
+        plot.title = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 7),
+        axis.text.y = element_text(size = 7),
+        axis.title = element_text(size = 8))
+```
+Since there are high correlation between the heated area and full baths, I will remove the full baths from the model building process. The full baths is removed to avoid the multicollinearity between the variables. Similarly, the number of bedrooms and heated area are highly correlated, I will remove the number of bedroom a from the model building process. Storyheight is also removed for the same reason.
+
+After removing, the final correlation matrix is following:
+```{r, fig.width=8, fig.height=6}
+predictor_vars <- house[, c( "halfbaths", "heatedarea", "numfirepla", "bldggrade", "units", "age", "ac_dummy", "heat_dummy", "income", "crime", "transit", "canopy", "recreation")]%>%st_drop_geometry()
+
+
+cor_matrix <- cor(predictor_vars, use = "complete.obs", method = "pearson")
+
+ggcorrplot(cor_matrix,
+           method = "square",
+           type = "lower",
+           lab = TRUE,
+           lab_size = 3,
+           colors = c("#a4133c", "white", "#a4133c"))+
+    labs(title = "Correlation Matrix for all Predictor Variables") +
+    theme(plot.subtitle = element_text(size = 9, face = "italic"),
+        plot.title = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 7),
+        axis.text.y = element_text(size = 7),
+        axis.title = element_text(size = 8))
+house<- house %>%
+  dplyr::select(-fullbaths, -storyheigh, -bedrooms)
+
+```
+**Check the VIF**
+To ensure the multicollinearity between the variables, I checked the Variance Inflation Factor (VIF) of the variables. The VIF values are calculated to further check the multicollinearity between the variables. The VIF values are used to identify the multicollinearity between the variables. The VIF values above 5 indicate high multicollinearity between the variables. The VIF values are calculated to ensure the multicollinearity between the variables.  The VIF values in the model are below 5, which indicates that there is no multicollinearity between the variables.
+```{r}
+model<- lm(logprice ~ halfbaths + heatedarea + numfirepla + bldggrade + units + age + ac_dummy + heat_dummy + income + crime + transit + canopy + recreation, data = house)
+vif(model)
+```
+### Scatterplot
+
+```{r, fig.width=12, fig.height=6, warning=FALSE, message=FALSE}
+longer<-house %>%
+  pivot_longer(cols = c(
+    "halfbaths",
+    "heatedarea",
+    "age",
+    "income",
+    "crime",
+    "transit"),
+               names_to = "Variable",
+               values_to = "Value")%>%
+  st_drop_geometry()
+
+ggplot(longer,aes(x = Value, y = price)) +
+  geom_point(color = "black", size= 0.4) +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  facet_wrap(~ Variable, scales = "free", labeller = as_labeller(c("halfbaths" = "Number of Half Baths",
+                                                                  "heatedarea" = "Heated Area",
+                                                                  "age" = "Age of the House",
+                                                                  "income" = "Median Household Income",
+                                                                  "crime" = "Number of Crime",
+                                                                  "transit" = "Transit Coverage"
+  )))  +
+  theme_light() +
+  theme(plot.subtitle = element_text(size = 9,face = "italic"),
+        plot.title = element_text(size = 12, face = "bold"),
+        axis.text.x=element_text(size=6),
+        axis.text.y=element_text(size=6),
+        axis.title=element_text(size=8)) +
+  labs(title = "Scatter Plots of Dependent Variable vs. Predictors",
+       x = "Value",
+       y = "House price")
+
+```
+
 
 # Model Building & Evaluation
 
