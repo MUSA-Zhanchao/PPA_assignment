@@ -38,8 +38,8 @@ The original dataset contain many information that are not closely related with 
 
 ```{r}
 house<- house %>%
-  select(price, bedrooms,yearbuilt,fullbaths, halfbaths, heatedarea, storyheigh, numfirepla, bldggrade,units, heatedfuel, actype, extwall)  %>%
-  filter(!is.na(price) & !is.na(bedrooms) & !is.na(yearbuilt) & !is.na(fullbaths) & !is.na(halfbaths) & !is.na(heatedarea) & !is.na(storyheigh) & !is.na(numfirepla) & !is.na(bldggrade) & !is.na(units) & !is.na(heatedfuel) & !is.na(actype) & !is.na(extwall))%>%
+  select(price, bedrooms,yearbuilt,fullbaths, halfbaths, heatedarea, storyheigh, numfirepla, bldggrade,units, heatedfuel, actype)  %>%
+  filter(!is.na(price) & !is.na(bedrooms) & !is.na(yearbuilt) & !is.na(fullbaths) & !is.na(halfbaths) & !is.na(heatedarea) & !is.na(storyheigh) & !is.na(numfirepla) & !is.na(bldggrade) & !is.na(units) & !is.na(heatedfuel) & !is.na(actype))%>%
   filter(price>0)
 ```
 
@@ -212,6 +212,55 @@ recreation<- st_read("data/recreation.geojson")%>%
 #spatial join the recreation data to the house data
 house <- st_join(house, recreation)
 ```
+
+## Summary Statistics and Correlation Matrix
+
+The summary statistics and correlation matrix are calculated to understand the relationship between the variables. The summary statistics show the mean, median, standard deviation, and quantiles of the variables. The correlation matrix shows the correlation between the variables. The correlation matrix is used to understand the relationship between the variables and to identify the multicollinearity between the variables.
+
+### Summary Statistics
+
+### Correlation Matrix
+```{r, fig.width=8, fig.height=6}
+
+predictor_vars <- house[, c("bedrooms", "fullbaths", "halfbaths", "heatedarea", "storyheigh", "numfirepla", "bldggrade", "units", "age", "ac_dummy", "heat_dummy", "median_income", "crime_number", "transit_coverage", "canopy", "recreation_coverage")]%>%st_drop_geometry()
+  
+
+cor_matrix <- cor(predictor_vars, use = "complete.obs", method = "pearson")
+
+ggcorrplot(cor_matrix, 
+           method = "square",   
+           type = "lower",      
+           lab = TRUE,       
+           lab_size = 3,      
+           colors = c("#a4133c", "white", "#a4133c"))+
+    labs(title = "Correlation Matrix for all Predictor Variables") +
+    theme(plot.subtitle = element_text(size = 9, face = "italic"),
+        plot.title = element_text(size = 12, face = "bold"), 
+        axis.text.x = element_text(size = 7),
+        axis.text.y = element_text(size = 7), 
+        axis.title = element_text(size = 8))
+```
+Since there are high correlation between the number of bedrooms and full baths, I will remove the full baths from the model building process. The full baths is removed to avoid the multicollinearity between the variables. 
+```{r}
+predictor_vars <- house[, c("bedrooms", "halfbaths", "heatedarea", "storyheigh", "numfirepla", "bldggrade", "units", "age", "ac_dummy", "heat_dummy", "median_income", "crime_number", "transit_coverage", "canopy", "recreation_coverage")]%>%st_drop_geometry()
+  
+
+cor_matrix <- cor(predictor_vars, use = "complete.obs", method = "pearson")
+
+ggcorrplot(cor_matrix, 
+           method = "square",   
+           type = "lower",      
+           lab = TRUE,       
+           lab_size = 3,      
+           colors = c("#a4133c", "white", "#a4133c"))+
+    labs(title = "Correlation Matrix for all Predictor Variables") +
+    theme(plot.subtitle = element_text(size = 9, face = "italic"),
+        plot.title = element_text(size = 12, face = "bold"), 
+        axis.text.x = element_text(size = 7),
+        axis.text.y = element_text(size = 7), 
+        axis.title = element_text(size = 8))
+```
+
 
 # Model Building & Evaluation
 
