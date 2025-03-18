@@ -29,7 +29,7 @@ library(tidycensus)
 # Data Collection & Exploring
 
 ## Load and Clean the Data
-The first step for this analysis start by loading the household data of the Charlotte, NC area. The data is in the geojson format with over 46,000 records of the housing information in Mecklenburg County, NC. 
+The first step for this analysis start by loading the household data of the Charlotte, NC area. The data is in the geojson format with over 46,000 records of the housing information in Mecklenburg County, NC.
 
 ```{r, results='hide'}
 house<- st_read("data/studentData.geojson")
@@ -44,7 +44,7 @@ house<- house %>%
 ```
 
 ## Check the skewness of the variables
-For the prediction purpose, the normal distribution of the variable matters because it helps ensure the accuracy and reliability of the model. When the variable is normally distributed, it usually means that the erroes or residuals are also normally distributed. 
+For the prediction purpose, the normal distribution of the variable matters because it helps ensure the accuracy and reliability of the model. When the variable is normally distributed, it usually means that the erroes or residuals are also normally distributed.
 
 The histogram of the price shows that the price is right skewed. To make the price more normally distributed, I took the log transformation of the price. The histogram of the log price shows that the log price is more normally distributed than the original price.
 ```{r}
@@ -128,10 +128,10 @@ The additional geospatial data is collected from American Community Survey, City
 
 ```{r, results='hide', warning=FALSE, message=FALSE}
 income<- get_acs(
-  geography = "block group", 
-  variables = c("income"="B19013_001"), 
-  state = "NC", 
-  county = "Mecklenburg", 
+  geography = "block group",
+  variables = c("income"="B19013_001"),
+  state = "NC",
+  county = "Mecklenburg",
   geometry = TRUE
   )%>%
   st_transform(crs =st_crs(house))%>%
@@ -145,7 +145,7 @@ income<- get_acs(
 house <- st_join(house, income)
 ```
 
-**Crime data** was collected from the City of Charlotte open data portal from police station. 
+**Crime data** was collected from the City of Charlotte open data portal from police station.
 
 ```{r}
 crime<- read.csv("data/CMPD.csv")%>%
@@ -156,7 +156,7 @@ Transform the crime data to the spatial data and project it to the same projecti
 ```{r}
 crime<- crime %>%
   select(LATITUDE_PUBLIC, LONGITUDE_PUBLIC, YEAR)%>%
-  st_as_sf(coords = c("LONGITUDE_PUBLIC", "LATITUDE_PUBLIC"), crs = 4326)%>% 
+  st_as_sf(coords = c("LONGITUDE_PUBLIC", "LATITUDE_PUBLIC"), crs = 4326)%>%
   st_transform(crime, crs =st_crs(house))
 ```
 
@@ -201,7 +201,7 @@ tree <- st_read("data/tree_canopy.geojson")%>%
 house <- st_join(house, tree)
 ```
 
-**Approximate distance to the park data** was collected from the Charlotte/Mecklenburg Quality of Life Explorer. The data measure the percentage of housing units within 0.5 mile of an outdoor public recreation area at the census block group level. 
+**Approximate distance to the park data** was collected from the Charlotte/Mecklenburg Quality of Life Explorer. The data measure the percentage of housing units within 0.5 mile of an outdoor public recreation area at the census block group level.
 
 ```{r, results='hide'}
 recreation<- st_read("data/recreation.geojson")%>%
