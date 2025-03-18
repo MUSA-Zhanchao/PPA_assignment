@@ -25,6 +25,7 @@ library(tidycensus)
 library(tidyverse)
 library(broom)
 library(ggplot2)
+library(gridExtra)
 library(car)
 library(MASS)
 ```
@@ -406,7 +407,7 @@ ggplot(longer,aes(x = Value, y = price)) +
 
 ### Dependent Variable- Housing price
 
-```{r, fig.width=10, fig.height=10}
+```{r, fig.width=10, fig.height=10, warning=FALSE,message=FALSE}
 map<-st_join(house, income)%>%
   group_by(GEOID)%>%
   summarise(price=mean(price))%>%
@@ -434,6 +435,95 @@ ggplot(map) +
         plot.title = element_text(size = 20, hjust= 0.5,face = "bold"),
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill = NA, size = 0.8))
+```
+### Key predictors
+
+
+
+
+```{r, fig.width=10, fig.height=10}
+Q1<-ggplot(map) +
+  geom_sf(aes(fill= q5(income)), color='white') +
+  scale_fill_manual(values = flatreds5,
+                     labels = function(x) round(as.numeric(qBr(map, 'income')), 0),
+                     name = 'Income') +
+  labs(title = "Average Household Income by Census Block Group",
+       fill = "Income") +
+    theme(
+        legend.text = element_text(size = 4),
+        legend.title = element_text(size = 5),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        plot.subtitle = element_text(size = 5, face = "italic"),
+        plot.title = element_text(size = 10, hjust= 0.5,face = "bold"),
+        panel.background = element_blank(),
+        panel.border = element_rect(colour = "grey", fill = NA, size = 0.8))
+
+Q2<-ggplot(tree) +
+  geom_sf(aes(fill= q5(canopy)), color='white') +
+  scale_fill_manual(values = flatreds5,
+                     labels = function(x) round(as.numeric(qBr(tree, 'canopy')), 0),
+                     name = '% of Tree Coverage') +
+  labs(title = "Tree Canopy by Neighborhood",
+       fill = "% of Tree Coverage") +
+    theme(
+        legend.text = element_text(size =4),
+        legend.title = element_text(size = 5),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        plot.subtitle = element_text(size = 5, face = "italic"),
+        plot.title = element_text(size = 10, hjust= 0.5,face = "bold"),
+        panel.background = element_blank(),
+        panel.border = element_rect(colour = "grey", fill = NA, size = 0.8))
+
+recreation<-recreation%>% filter(!is.na(recreation))
+Q3<-ggplot(recreation) +
+  geom_sf(aes(fill= q5(recreation)), color='white') +
+  scale_fill_manual(values = flatreds5,
+                     labels = function(x) round(as.numeric(qBr(tree, 'canopy')), 0),
+                     name = '% of Recreation Coverage') +
+  labs(title = "Recreation facilities coverage by Neighborhood",
+       fill = "% of Recreational facilities Coverage") +
+    theme(
+        legend.text = element_text(size = 4),
+        legend.title = element_text(size = 5),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        plot.subtitle = element_text(size = 5, face = "italic"),
+        plot.title = element_text(size = 10, hjust= 0.5,face = "bold"),
+        panel.background = element_blank(),
+        panel.border = element_rect(colour = "grey", fill = NA, size = 0.8))
+
+transit<-transit%>% filter(!is.na(transit))
+
+Q4<-ggplot(transit) +
+  geom_sf(aes(fill= q5(transit)), color='white') +
+  scale_fill_manual(values = flatreds5,
+                     labels = function(x) round(as.numeric(qBr(transit, 'transit')), 0),
+                     name = '% of Transit Coverage') +
+  labs(title = "Public Transit coverage by Neighborhood",
+       fill = "% of Public Transit Coverage") +
+    theme(
+        legend.text = element_text(size = 4),
+        legend.title = element_text(size = 5),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        plot.subtitle = element_text(size = 5, face = "italic"),
+        plot.title = element_text(size = 10, hjust= 0.5,face = "bold"),
+        panel.background = element_blank(),
+        panel.border = element_rect(colour = "grey", fill = NA, size = 0.8))
+
+# Arrange the plots in a 2x2 grid
+grid.arrange(Q1, Q2, Q3, Q4, ncol = 2)
+
 ```
 
 # Model Building & Evaluation
