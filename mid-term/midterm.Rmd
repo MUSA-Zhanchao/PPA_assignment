@@ -29,7 +29,7 @@ library(tidycensus)
 # Data Collection & Exploring
 
 ## Load and Clean the Data
-The first step for this analysis start by loading the household data of the Charlotte, NC area. The data is in the geojson format with over 46,000 records of the housing information in Mecklenburg County, NC. 
+The first step for this analysis start by loading the household data of the Charlotte, NC area. The data is in the geojson format with over 46,000 records of the housing information in Mecklenburg County, NC.
 
 ```{r, results='hide'}
 house<- st_read("data/studentData.geojson")
@@ -44,7 +44,7 @@ house<- house %>%
 ```
 
 ## Check the skewness of the variables
-For the prediction purpose, the normal distribution of the variable matters because it helps ensure the accuracy and reliability of the model. When the variable is normally distributed, it usually means that the erroes or residuals are also normally distributed. 
+For the prediction purpose, the normal distribution of the variable matters because it helps ensure the accuracy and reliability of the model. When the variable is normally distributed, it usually means that the erroes or residuals are also normally distributed.
 
 The histogram of the price shows that the price is right skewed. To make the price more normally distributed, I took the log transformation of the price. The histogram of the log price shows that the log price is more normally distributed than the original price.
 ```{r}
@@ -124,7 +124,28 @@ Many other factors can affect the housing price that not contains in the given d
 
 The additional geospatial data is collected from American Community Survey, City of Charlotte open data portal and other sources. The additional geospatial data includes the crime rate, the distance to the public transportation, the distance to the park. The additional geospatial data is collected and cleaned to be used in the model building process.
 
-**Crime data** was collected from the City of Charlotte open data portal from police station. 
+**Median household income data** was collected from the American Community Survey. The median household income data is the median household income in the neighborhood. The median household income data is collected and cleaned to be used in the model building process.
+
+```{r, results='hide', warning=FALSE, message=FALSE}
+income<- get_acs(
+  geography = "block group",
+  variables = c("income"="B19013_001"),
+  state = "NC",
+  county = "Mecklenburg",
+  geometry = TRUE
+  )%>%
+  st_transform(crs =st_crs(house))%>%
+  filter(!is.na(estimate))%>%
+  select(estimate, GEOID, geometry)%>%
+  rename(median_income=estimate)
+```
+
+```{r}
+#spatial join the income data to the house data
+house <- st_join(house, income)
+```
+
+**Crime data** was collected from the City of Charlotte open data portal from police station.
 
 ```{r}
 crime<- read.csv("data/CMPD.csv")%>%
@@ -135,14 +156,22 @@ Transform the crime data to the spatial data and project it to the same projecti
 ```{r}
 crime<- crime %>%
   select(LATITUDE_PUBLIC, LONGITUDE_PUBLIC, YEAR)%>%
-  st_as_sf(coords = c("LONGITUDE_PUBLIC", "LATITUDE_PUBLIC"), crs = 4326)%>% 
+  st_as_sf(coords = c("LONGITUDE_PUBLIC", "LATITUDE_PUBLIC"), crs = 4326)%>%
   st_transform(crime, crs =st_crs(house))
 ```
 
 Measure the crime rate at census block level and assign to respective house data
 
 ```{r}
+crime_tract<- st_join(house, crime)%>%
+  group_by(GEOID)%>%
+  summarise(crime_number=n())
+```
 
+```{r}
+house <- st_join(house, crime_tract)%>%
+  select(-GEOID.x, -GEOID.y)%>%
+  filter(!is.na(crime_number))
 ```
 
 **Public transportation coverage data** was collected from the Charlotte/Mecklenburg Quality of Life Explorer. The public transportation coverage data is the Percentage of housing units within 0.5 mile of a transit stop. The public transportation coverage data is collected and cleaned to be used in the model building process.
@@ -157,23 +186,7 @@ transit <- st_read("data/transportation.geojson")%>%
 house <- st_join(house, transit)
 ```
 
-**Median household income data** was collected from the American Community Survey. The median household income data is the median household income in the neighborhood. The median household income data is collected and cleaned to be used in the model building process.
 
-```{r, results='hide', warning=FALSE, message=FALSE}
-income<- get_acs(
-  geography = "block group", 
-  variables = c("income"="B19013_001"), 
-  state = "NC", 
-  county = "Mecklenburg", 
-  geometry = TRUE
-  )%>%
-  st_transform(crs =st_crs(house))%>%
-  select(estimate, geometry)
-```
-```{r}
-#spatial join the income data to the house data
-house <- st_join(house, income)
-```
 
 **Tree Canopy data** was collected from the Charlotte/Mecklenburg Quality of Life Explorer. The tree canopy data is the percentage of tree canopy in the neighborhood. The tree canopy data is collected and cleaned to be used in the model building process.
 
@@ -188,6 +201,17 @@ tree <- st_read("data/tree_canopy.geojson")%>%
 house <- st_join(house, tree)
 ```
 
+**Approximate distance to the park data** was collected from the Charlotte/Mecklenburg Quality of Life Explorer. The data measure the percentage of housing units within 0.5 mile of an outdoor public recreation area at the census block group level.
+
+```{r, results='hide'}
+recreation<- st_read("data/recreation.geojson")%>%
+  select(X2023, geometry)%>%
+  rename(recreation_coverage=X2023)
+```
+```{r}
+#spatial join the recreation data to the house data
+house <- st_join(house, recreation)
+```
 
 # Model Building & Evaluation
 
