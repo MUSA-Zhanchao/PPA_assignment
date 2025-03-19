@@ -1,4 +1,10 @@
 # MUSA508 PPA Assignment
+Spring 2025 </br>
+University of Pennsylvania, Weitzman School of Design </br>
+Department of City Planning
+
+Instuctor: Dr. Elizabeth Delmelle </br>
+Creator/Student: Zhanchao Yang
 
 ## Course Description:
 
