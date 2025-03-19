@@ -79,7 +79,7 @@ house<- house %>%
   filter(price<10000000)
 ```
 
-After the primary filtering, the dataset contains about 35,000 records of housing information in Mecklenburg County, NC. 
+After the primary filtering, the dataset contains about 35,000 records of housing information in Mecklenburg County, NC.
 
 ### Check the skewness of the variables
 
