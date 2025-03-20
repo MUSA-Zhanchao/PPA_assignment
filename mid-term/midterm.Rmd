@@ -563,9 +563,10 @@ grid.arrange(Q1, Q2, Q3, Q4, ncol = 2)
 
 # Model Building & Evaluation
 
+In this section, I outline the model building and evaluation process. The modeling process involves iteratively refining an Ordinary Least Squares (OLS) regression model to predict housing prices in Charlotte, NC by assessing variable significance and diagnostic measures. Finally, I evaluate the model fit and predictive reliability using key metrics such as Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and R-squared.
 ## Train-Test Split
 
-In this model building process, I spilt the training and testing datasets based on 80% training and 20% testing to ensure the model have a better predictivity
+In this model building process, I split the training and testing datasets based on 80% training and 20% testing to ensure the model have a better predictability.
 
 ```{r}
 # Set the seed for reproducibility
@@ -579,11 +580,31 @@ test <- house[-train_index, ]
 ```
 
 ## Model Building and Evaluation
+I plug in different type of variables to the model to see which variables are significant, which variables are not, and the overfit of the model including the R-squared, MAE, and RMSE.
 
 ### Initial model
+The initial model includes the key predictors such as the number of half baths, heated area, number of fireplaces, building grade, number of units, age of the house, median household income, number of crimes, transit coverage, tree canopy coverage, and recreation facilities coverage. The initial model is used to establish a baseline for comparison with subsequent models, and do not include any dummy variables or categorical variables.
+
 ```{r}
 model1 <- lm(logprice ~ halfbaths + heatedarea + numfirepla + bldggrade + units + age+ income + crime + transit + canopy + recreation, data = train)
 
+summary_reg1 <- summary(model1)
+coefficients_table <- as.data.frame(summary_reg1$coefficients)
+
+coefficients_table$significance <- ifelse(coefficients_table$`Pr(>|t|)` < 0.001, '***',
+                                         ifelse(coefficients_table$`Pr(>|t|)` < 0.01, '**',
+                                                ifelse(coefficients_table$`Pr(>|t|)` < 0.05, '*',
+                                                       ifelse(coefficients_table$`Pr(>|t|)` < 0.1, '.', ''))))
+
+coefficients_table$p_value <- paste0(round(coefficients_table$`Pr(>|t|)`, digits = 3), coefficients_table$significance)
+
+coefficients_table %>%
+  dplyr::select(Estimate,`Std. Error`,`t value`, p_value) %>%
+  kable(align = "r") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
+```
+
+```{r}
 test<-test%>%
   mutate(predictions = predict(model1, newdata = test),
          actual= logprice,
@@ -611,10 +632,32 @@ results <- data.frame(
 # Print results using kable
 kable(results, caption = "Model Performance Metrics")
 ```
+
 ### Include the dummy variables
+Then, I added the two dummy variables, air conditioning and heating system, to the model to see if the dummy variables are significant to the model. The dummy variables are created to check if the house has air conditioning or heating system, as housing with air conditioning and heating system tends to have higher price.
+
+As the results of the model of mean absolute error (MAE), root mean squared error (RMSE), and R-squared are improved, the dummy variables are significant to the model.
+
 ```{r}
 model2 <- lm(logprice ~ halfbaths + heatedarea + numfirepla + bldggrade + units + age + ac_dummy + heat_dummy + income + crime + transit + canopy + recreation, data = train)
 
+summary_reg2 <- summary(model2)
+coefficients_table <- as.data.frame(summary_reg2$coefficients)
+
+coefficients_table$significance <- ifelse(coefficients_table$`Pr(>|t|)` < 0.001, '***',
+                                         ifelse(coefficients_table$`Pr(>|t|)` < 0.01, '**',
+                                                ifelse(coefficients_table$`Pr(>|t|)` < 0.05, '*',
+                                                       ifelse(coefficients_table$`Pr(>|t|)` < 0.1, '.', ''))))
+
+coefficients_table$p_value <- paste0(round(coefficients_table$`Pr(>|t|)`, digits = 3), coefficients_table$significance)
+
+coefficients_table %>%
+  dplyr::select(Estimate,`Std. Error`,`t value`, p_value) %>%
+  kable(align = "r") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
+```
+
+```{r}
 test<-test%>%
   mutate(predictions = predict(model2, newdata = test),
          actual= logprice,
@@ -642,10 +685,27 @@ results <- data.frame(
 # Print results using kable
 kable(results, caption = "Model Performance Metrics")
 ```
+
 ### Include the Categorical Variables
 ```{r}
 model3 <- lm(logprice ~ halfbaths + heatedarea + numfirepla + bldggrade + units + age+ income + crime + transit + canopy + recreation + type, data = train)
+summary_reg3 <- summary(model3)
+coefficients_table <- as.data.frame(summary_reg3$coefficients)
 
+coefficients_table$significance <- ifelse(coefficients_table$`Pr(>|t|)` < 0.001, '***',
+                                         ifelse(coefficients_table$`Pr(>|t|)` < 0.01, '**',
+                                                ifelse(coefficients_table$`Pr(>|t|)` < 0.05, '*',
+                                                       ifelse(coefficients_table$`Pr(>|t|)` < 0.1, '.', ''))))
+
+coefficients_table$p_value <- paste0(round(coefficients_table$`Pr(>|t|)`, digits = 3), coefficients_table$significance)
+
+coefficients_table %>%
+  dplyr::select(Estimate,`Std. Error`,`t value`, p_value) %>%
+  kable(align = "r") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
+```
+
+```{r}
 test<-test%>%
   mutate(predictions = predict(model3, newdata = test),
          actual= logprice,
@@ -676,8 +736,23 @@ kable(results, caption = "Model Performance Metrics")
 ### Final model
 ```{r}
 model4 <- lm(logprice ~  heatedarea + numfirepla+ bldggrade + units + age+ income + crime + transit + canopy + type+ ac_dummy + heat_dummy, data = train)
-summary(model4)
+
+summary_reg4 <- summary(model4)
+coefficients_table <- as.data.frame(summary_reg4$coefficients)
+
+coefficients_table$significance <- ifelse(coefficients_table$`Pr(>|t|)` < 0.001, '***',
+                                         ifelse(coefficients_table$`Pr(>|t|)` < 0.01, '**',
+                                                ifelse(coefficients_table$`Pr(>|t|)` < 0.05, '*',
+                                                       ifelse(coefficients_table$`Pr(>|t|)` < 0.1, '.', ''))))
+
+coefficients_table$p_value <- paste0(round(coefficients_table$`Pr(>|t|)`, digits = 3), coefficients_table$significance)
+
+coefficients_table %>%
+  dplyr::select(Estimate,`Std. Error`,`t value`, p_value) %>%
+  kable(align = "r") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
 ```
+
 ```{r}
 test<-test%>%
   mutate(predictions = predict(model4, newdata = test),
