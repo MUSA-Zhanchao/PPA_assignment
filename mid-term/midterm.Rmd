@@ -739,6 +739,11 @@ kable(results, caption = "Model Performance Metrics")
 ```
 ### Final model
 Over this kind of circles, I built the final model showing as follow. The final model include some of the essential key predictors and both dummy vairbles and the categorical variables I tested earlier. 
+
+In this case, the coefficient indicate 1 unit increase of one specific predictors, on average the house price change by $(e^{\beta} - 1) \times 100\%$ \(\beta) is the coefficient. The p-value for all the predictors excpet heat dummy is less than 0.0001, which indicate all other variable are statistics signifcant in explaining the variance of the housing price.
+
+The adjusted R square of the model is around 0.60 which indicate the model explain more than 60% of the variance in the housing price, which indicate a great fit for the training datasets.
+
 ```{r}
 model4 <- lm(logprice ~  heatedarea + numfirepla+ bldggrade + units + age+ income + crime + transit + canopy + type+ ac_dummy + heat_dummy, data = train)
 
