@@ -4,7 +4,7 @@ author: "Zhanchao Yang"
 date: "`r Sys.Date()`"
 output:
   html_document:
-    theme: journal
+    theme: cerulean
     highlight: tango
     toc: true
     code_folding: hide
@@ -819,6 +819,12 @@ plot(model5)
 
 # Spatial Analysis & Residual Diagnostics
 
+In this section, I conduct spatial analysis and residual diagnostics to evaluate the spatial patterns and autocorrelation of the residuals in the final model. I use Moran's I to assess the spatial autocorrelation of the residuals and visualize the spatial distribution of the residuals on a map.
+
+## Residual Analysis
+
+The scatter plot of predicted values vs. observed values shows a strong linear relationship between the two, indicating that the model's predictions are close to the actual values. 
+
 ```{r, warning=FALSE, message=FALSE}
 model_final<-lm(logprice ~  heatedarea + numfirepla+ bldggrade + units + age+ income + crime + transit + canopy + type+ ac_dummy + heat_dummy, data = house)
 
@@ -843,6 +849,8 @@ ggplot(house, aes(x = fitted, y = logprice)) +
         axis.title = element_text(size = 8))
 
 ```
+
+The residuals exhibit a distinct spatial pattern. Higher residual values are predominantly concentrated in the central areas of the city. In contrast, the northern sections of the city tend to display comparatively lower residuals. This spatial distribution indicate that  underlying factors that are not included in the model, also play roles in housing price. 
 
 ```{r, fig.width=10, fig.height=10, meassage=FALSE, warning=FALSE}
 residual_map<-st_join(income, house)%>%
@@ -870,6 +878,11 @@ ggplot(residual_map) +
         panel.border = element_rect(colour = "grey", fill = NA, size = 0.8))
 
 ```
+
+## Spatial Autocorrelation of Residuals 
+
+### Moran's I for whole datasets
+
 ```{r, fig.width=10, fig.height=6, message=FALSE, warning=FALSE}
 # Extract the coordinates from the spatial dataframe
 coords <- st_coordinates(test)
@@ -893,6 +906,9 @@ ggplot(as.data.frame(moran$res[c(1:999)]), aes(moran$res[c(1:999)])) +
   theme_minimal()
 
 ```
+
+### Moran's I for the test dataset
+
 ```{r, fig.width=10, fig.height=6, message=FALSE, warning=FALSE}
 # Extract the coordinates from the spatial dataframe
 coords <- st_coordinates(house)
@@ -915,5 +931,7 @@ ggplot(as.data.frame(moran$res[c(1:999)]), aes(moran$res[c(1:999)])) +
        y="Count") +
   theme_minimal()
 ```
+
+## Interpretation & Limitations
 
 # Conclusion
