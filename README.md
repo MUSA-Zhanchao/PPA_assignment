@@ -1,7 +1,8 @@
-# MUSA508 PPA Assignment
-Spring 2025 </br>
-University of Pennsylvania, Weitzman School of Design </br>
-Department of City Planning
+# MUSA508 PPA Assignment - Spring 2025
+Weitzman School of Design, University of Pennsylvania </br>
+Department of City Planning </br>
+Master of City Planning Program </br>
+Master of Urban Spatial Analytics Program
 
 Instuctor: Dr. Elizabeth Delmelle </br>
 Creator/Student: Zhanchao Yang
