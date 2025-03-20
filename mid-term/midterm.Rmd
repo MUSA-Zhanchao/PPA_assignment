@@ -823,7 +823,7 @@ In this section, I conduct spatial analysis and residual diagnostics to evaluate
 
 ## Residual Analysis
 
-The scatter plot of predicted values vs. observed values shows a strong linear relationship between the two, indicating that the model's predictions are close to the actual values. 
+The scatter plot of predicted values vs. observed values shows a strong linear relationship between the two, indicating that the model's predictions are close to the actual values.
 
 ```{r, warning=FALSE, message=FALSE}
 model_final<-lm(logprice ~  heatedarea + numfirepla+ bldggrade + units + age+ income + crime + transit + canopy + type+ ac_dummy + heat_dummy, data = house)
@@ -850,7 +850,7 @@ ggplot(house, aes(x = fitted, y = logprice)) +
 
 ```
 
-The residuals exhibit a distinct spatial pattern. Higher residual values are predominantly concentrated in the central areas of the city. In contrast, the northern sections of the city tend to display comparatively lower residuals. This spatial distribution indicate that  underlying factors that are not included in the model, also play roles in housing price. 
+The residuals exhibit a distinct spatial pattern. Higher residual values are predominantly concentrated in the central areas of the city. In contrast, the northern sections of the city tend to display comparatively lower residuals. This spatial distribution indicate that  underlying factors that are not included in the model, also play roles in housing price.
 
 ```{r, fig.width=10, fig.height=10, meassage=FALSE, warning=FALSE}
 residual_map<-st_join(income, house)%>%
@@ -879,7 +879,7 @@ ggplot(residual_map) +
 
 ```
 
-## Spatial Autocorrelation of Residuals 
+## Spatial Autocorrelation of Residuals
 
 ### Moran's I for whole datasets
 
