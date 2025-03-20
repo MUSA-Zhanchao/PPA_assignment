@@ -324,6 +324,8 @@ kable(summary_stats, caption = "Summary Statistics",
 
 ### Correlation Matrix
 
+The correlation matrix is computed to assess the relationships among the predictors. A high correlation between predictors indicates multicollinearity, which violates one of the key assumptions of the linear regression model.
+
 ```{r, fig.width=8, fig.height=6}
 
 predictor_vars <- house[, c("bedrooms", "fullbaths", "halfbaths", "heatedarea", "storyheigh", "numfirepla", "bldggrade", "units", "age", "ac_dummy", "heat_dummy", "income", "crime", "transit", "canopy", "recreation")]%>%st_drop_geometry()
@@ -345,7 +347,7 @@ ggcorrplot(cor_matrix,
         axis.title = element_text(size = 8))
 ```
 
-Since there are high correlation between the heated area and full baths, I will remove the full baths from the model building process. The full baths is removed to avoid the multicollinearity between the variables. Similarly, the number of bedrooms and heated area are highly correlated, I will remove the number of bedroom a from the model building process. Storyheight is also removed for the same reason.
+Since there is a high correlation between "heated area" and "full baths," I removed "full baths" from the model. For the same reason, I also removed "number of bedrooms" and "Storyheight".
 
 After removing, the final correlation matrix is following:
 ```{r, fig.width=8, fig.height=6}
