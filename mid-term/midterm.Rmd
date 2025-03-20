@@ -30,6 +30,21 @@ library(gridExtra)
 library(car)
 library(caret)
 library(MASS)
+library(tidyverse)
+library(spdep) #for spatial autocorrelation
+library(caret)
+library(ckanr)
+library(FNN)
+library(grid)
+library(gridExtra)
+library(ggcorrplot)
+library(jtools)     # for regression model plots
+library(broom)
+library(tufte)
+library(rmarkdown)
+library(kableExtra)
+library(tidycensus)
+library(RColorBrewer)
 ```
 
 ```{r, include=FALSE}
@@ -85,9 +100,7 @@ After the primary filtering, the dataset contains about 35,000 records of housin
 
 For the prediction purpose, the normal distribution of the variable matters because it helps ensure the accuracy and reliability of the model. When the variable is normally distributed, it usually means that the erroes or residuals are also normally distributed.
 
-The histogram of the price shows that the price is right skewed. To make the price more normally distributed, I took the log transformation of the price. The histogram of the log price shows that the log price is more normally distributed than the original price.
-
-Even though log prices are more normally distributed, using original prices as our dependent variable make more sense in our cases. First, the log transformed price is not perfectly normally distributed based on the histogram. There are still a long left tail. Second, Original prices directly show actual monetary values, which stakeholders or decision-makers can easily understand and apply. Since our goals of the prediction is directly predicting the housing values, the original price is used as the dependent variable in the model building process.
+The histogram of the price shows that the price is right skewed. To make the price more normally distributed, I took the log transformation of the price. The histogram of the log price shows that the log price is more normally distributed than the original price. I used the log price as the dependent variable in the model building process.
 
 ```{r, fig.width=8, fig.height=6}
 ggplot(house, aes(x = price)) +
@@ -102,8 +115,6 @@ ggplot(house, aes(x = logprice)) +
   geom_histogram(fill = "lightblue", bins= 500) +
   labs(title = "Histogram of Log Price", x = "Log Price", y = "Frequency")
 
-house<- house %>%
-  dplyr::select(- logprice)
 ```
 
 ## Step 2: Feature engineering
@@ -246,7 +257,7 @@ The summary statistics and correlation matrix are calculated to understand the r
 For the summary statistics, I calculated the mean and standard deviation of the variables. The summary statistics are calculated to understand the distribution of the variables. The summary statistics are used to understand the distribution of the variables and to identify the outliers in the data.
 
 ```{r chart}
-dependent_var <- "price"
+dependent_var <- "logprice"
 
 predictors <- c("bedrooms", "fullbaths", "halfbaths", "heatedarea", "storyheigh", "numfirepla", "bldggrade", "units", "age", "income", "crime", "transit", "canopy", "recreation")
 
@@ -262,7 +273,7 @@ summary_stats <- house %>%
 
 summary_stats <- summary_stats %>%
   mutate(Variable = case_when(
-    Variable == "price" ~ "House Value",
+    Variable == "logprice" ~ "Log transformed House Value",
     Variable == "bedrooms" ~ "Number of bedrooms",
     Variable == "fullbaths" ~ "Number of full baths",
     Variable == "halfbaths" ~ "Number of half baths",
@@ -290,10 +301,10 @@ summary_stats <- summary_stats %>%
   )
 
 summary_stats <- summary_stats %>%
-  arrange(Variable == "House Value")
+  arrange(Variable == "Log transformed House Value")
 
-predictor_rows <- which(summary_stats$Variable != "House Value")
-dependent_rows <- which(summary_stats$Variable == "House Value")
+predictor_rows <- which(summary_stats$Variable != "Log transformed House Value")
+dependent_rows <- which(summary_stats$Variable == "Log transformed House Value")
 
 # Determine the start and end rows for each group
 start_pred <- min(predictor_rows)
@@ -365,7 +376,7 @@ house<- house %>%
 To ensure the multicollinearity between the variables, I checked the Variance Inflation Factor (VIF) of the variables. The VIF values are calculated to further check the multicollinearity between the variables. The VIF values are used to identify the multicollinearity between the variables. The VIF values above 5 indicate high multicollinearity between the variables. The VIF values are calculated to ensure the multicollinearity between the variables. The VIF values for all the variables in the model are below 3, which indicates that there is no multicollinearity between the variables.
 
 ```{r}
-model<- lm(price ~ halfbaths + heatedarea + numfirepla + bldggrade + units + age + ac_dummy + heat_dummy + income + crime + transit + canopy + recreation, data = house)
+model<- lm(logprice ~ halfbaths + heatedarea + numfirepla + bldggrade + units + age + ac_dummy + heat_dummy + income + crime + transit + canopy + recreation, data = house)
 
 # Compute VIF values
 vif_values <- vif(model)
@@ -552,6 +563,248 @@ train <- house[train_index, ]
 test <- house[-train_index, ]
 ```
 
+## Model Building and Evaluation
+
+### Initial model
+```{r}
+model1 <- lm(logprice ~ halfbaths + heatedarea + numfirepla + bldggrade + units + age+ income + crime + transit + canopy + recreation, data = train)
+
+test<-test%>%
+  mutate(predictions = predict(model1, newdata = test),
+         actual= logprice,
+         error= actual - predictions,
+         abserror= abs(error),
+         ape=(abs(actual-predictions)) / actual)
+
+# Calculate Mean Absolute Error (MAE)
+mae <- mean(test$abserror)
+
+# Calculate Root Mean Squared Error (RMSE)
+rmse <- sqrt(mean((test$actual - test$predictions)^2))
+
+# Calculate R-squared for the test set
+sse <- sum((test$actual - test$predictions)^2)
+sst <- sum((test$actual - mean(test$actual))^2)
+r2 <- 1 - sse/sst
+
+# Print the results
+results <- data.frame(
+  Metric = c("Mean Absolute Error (MAE)", "Root Mean Squared Error (RMSE)", "Test R-squared"),
+  Value = c(round(mae, 5), round(rmse, 5), round(r2, 5))
+)
+
+# Print results using kable
+kable(results, caption = "Model Performance Metrics")
+```
+### Include the dummy variables
+```{r}
+model2 <- lm(logprice ~ halfbaths + heatedarea + numfirepla + bldggrade + units + age + ac_dummy + heat_dummy + income + crime + transit + canopy + recreation, data = train)
+
+test<-test%>%
+  mutate(predictions = predict(model2, newdata = test),
+         actual= logprice,
+         error= actual - predictions,
+         abserror= abs(error),
+         ape=(abs(actual-predictions)) / actual)
+
+# Calculate Mean Absolute Error (MAE)
+mae <- mean(test$abserror)
+
+# Calculate Root Mean Squared Error (RMSE)
+rmse <- sqrt(mean((test$actual - test$predictions)^2))
+
+# Calculate R-squared for the test set
+sse <- sum((test$actual - test$predictions)^2)
+sst <- sum((test$actual - mean(test$actual))^2)
+r2 <- 1 - sse/sst
+
+# Print the results
+results <- data.frame(
+  Metric = c("Mean Absolute Error (MAE)", "Root Mean Squared Error (RMSE)", "Test R-squared"),
+  Value = c(round(mae, 5), round(rmse, 5), round(r2, 5))
+)
+
+# Print results using kable
+kable(results, caption = "Model Performance Metrics")
+```
+### Include the Categorical Variables
+```{r}
+model3 <- lm(logprice ~ halfbaths + heatedarea + numfirepla + bldggrade + units + age+ income + crime + transit + canopy + recreation + type, data = train)
+
+test<-test%>%
+  mutate(predictions = predict(model3, newdata = test),
+         actual= logprice,
+         error= actual - predictions,
+         abserror= abs(error),
+         ape=(abs(actual-predictions)) / actual)
+
+# Calculate Mean Absolute Error (MAE)
+mae <- mean(test$abserror)
+
+# Calculate Root Mean Squared Error (RMSE)
+rmse <- sqrt(mean((test$actual - test$predictions)^2))
+
+# Calculate R-squared for the test set
+sse <- sum((test$actual - test$predictions)^2)
+sst <- sum((test$actual - mean(test$actual))^2)
+r2 <- 1 - sse/sst
+
+# Print the results
+results <- data.frame(
+  Metric = c("Mean Absolute Error (MAE)", "Root Mean Squared Error (RMSE)", "Test R-squared"),
+  Value = c(round(mae, 5), round(rmse, 5), round(r2, 5))
+)
+
+# Print results using kable
+kable(results, caption = "Model Performance Metrics")
+```
+### Final model
+```{r}
+model4 <- lm(logprice ~  heatedarea + numfirepla+ bldggrade + units + age+ income + crime + transit + canopy + type+ ac_dummy + heat_dummy, data = train)
+summary(model4)
+```
+```{r}
+test<-test%>%
+  mutate(predictions = predict(model4, newdata = test),
+         actual= logprice,
+         error= actual - predictions,
+         abserror= abs(error),
+         ape=(abs(actual-predictions)) / actual)
+
+# Calculate Mean Absolute Error (MAE)
+mae <- mean(test$abserror)
+
+# Calculate Root Mean Squared Error (RMSE)
+rmse <- sqrt(mean((test$actual - test$predictions)^2))
+
+# Calculate R-squared for the test set
+sse <- sum((test$actual - test$predictions)^2)
+sst <- sum((test$actual - mean(test$actual))^2)
+r2 <- 1 - sse/sst
+
+# Print the results
+results <- data.frame(
+  Metric = c("Mean Absolute Error (MAE)", "Root Mean Squared Error (RMSE)", "Test R-squared"),
+  Value = c(round(mae, 5), round(rmse, 5), round(r2, 5))
+)
+
+# Print results using kable
+kable(results, caption = "Model Performance Metrics")
+```
+
+
+### model diagnostics
+
+```{r, fig.width=10, fig.height=10}
+par(mfrow = c(2, 2))
+plot(model4)
+```
+
+**Compare with non log transformed price model**
+```{r, fig.width=10, fig.height=10}
+model5 <- lm(price ~  heatedarea + numfirepla+ bldggrade + units + age+ income + crime + transit + canopy + type+ ac_dummy + heat_dummy, data = train)
+
+par(mfrow = c(2, 2))
+plot(model5)
+```
+
 # Spatial Analysis & Residual Diagnostics
+
+```{r, warning=FALSE, message=FALSE}
+model_final<-lm(logprice ~  heatedarea + numfirepla+ bldggrade + units + age+ income + crime + transit + canopy + type+ ac_dummy + heat_dummy, data = house)
+
+fitted_values <- fitted(model_final)
+residuals <- residuals(model_final)
+
+house<- house %>%
+  mutate(fitted = fitted_values,
+         residuals = residuals)
+
+ggplot(house, aes(x = fitted, y = logprice)) +
+  geom_point(color = "black", size = 0.5) +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  labs(title = "Predicted Values vs. Observed Values",
+       x = "Observed Values",
+       y = "Predicted Values") +
+  theme_light() +
+  theme(plot.subtitle = element_text(size = 9, face = "italic"),
+        plot.title = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 7),
+        axis.text.y = element_text(size = 7),
+        axis.title = element_text(size = 8))
+
+```
+
+```{r, fig.width=10, fig.height=10, meassage=FALSE, warning=FALSE}
+residual_map<-st_join(income, house)%>%
+  group_by(GEOID)%>%
+  summarise(residual=mean(residuals))%>%
+  filter(!is.na(residual))
+
+ggplot(residual_map) +
+  geom_sf(aes(fill= q5(residual)), color='white') +
+  scale_fill_manual(values = flatreds5,
+                     labels = function(x) round(as.numeric(qBr(residual_map, 'residual')), 6),
+                     name = 'Residuals') +
+  labs(title = "Residuals Spatial Distribution",
+       fill = "Residuals") +
+    theme(
+        legend.text = element_text(size =8),
+        legend.title = element_text(size = 10),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        plot.subtitle = element_text(size = 8, face = "italic"),
+        plot.title = element_text(size = 20, hjust= 0.5,face = "bold"),
+        panel.background = element_blank(),
+        panel.border = element_rect(colour = "grey", fill = NA, size = 0.8))
+  
+```
+```{r, fig.width=10, fig.height=6, message=FALSE, warning=FALSE}
+# Extract the coordinates from the spatial dataframe
+coords <- st_coordinates(test) 
+
+# Create a neighbor list using k-nearest neighbors (KNN) with k=5
+neighborList <- knn2nb(knearneigh(coords, 5))
+
+# Convert the neighbor list to a spatial weights matrix
+spatialWeights <- nb2listw(neighborList, style="W")
+
+moran <- moran.mc(test$error, spatialWeights, nsim = 999)
+
+ggplot(as.data.frame(moran$res[c(1:999)]), aes(moran$res[c(1:999)])) +
+  geom_histogram(binwidth = 0.01) +
+  geom_vline(aes(xintercept = moran$statistic), colour = "#FA7800",size=1) +
+  scale_x_continuous(limits = c(-1, 1)) +
+  labs(title="Observed and permuted Moran's I",
+       subtitle= "Observed Moran's I in orange",
+       x="Moran's I",
+       y="Count") +
+  theme_minimal()
+
+```
+```{r, fig.width=10, fig.height=6, message=FALSE, warning=FALSE}
+# Extract the coordinates from the spatial dataframe
+coords <- st_coordinates(house) 
+
+# Create a neighbor list using k-nearest neighbors (KNN) with k=5
+neighborList <- knn2nb(knearneigh(coords, 5))
+
+# Convert the neighbor list to a spatial weights matrix
+spatialWeights <- nb2listw(neighborList, style="W")
+
+moran <- moran.mc(house$residuals, spatialWeights, nsim = 999)
+
+ggplot(as.data.frame(moran$res[c(1:999)]), aes(moran$res[c(1:999)])) +
+  geom_histogram(binwidth = 0.01) +
+  geom_vline(aes(xintercept = moran$statistic), colour = "#FA7800",size=1) +
+  scale_x_continuous(limits = c(-1, 1)) +
+  labs(title="Observed and permuted Moran's I",
+       subtitle= "Observed Moran's I in orange",
+       x="Moran's I",
+       y="Count") +
+  theme_minimal()
+```
 
 # Conclusion
