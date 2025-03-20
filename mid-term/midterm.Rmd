@@ -564,6 +564,7 @@ grid.arrange(Q1, Q2, Q3, Q4, ncol = 2)
 # Model Building & Evaluation
 
 In this section, I outline the model building and evaluation process. The modeling process involves iteratively refining an Ordinary Least Squares (OLS) regression model to predict housing prices in Charlotte, NC by assessing variable significance and diagnostic measures. Finally, I evaluate the model fit and predictive reliability using key metrics such as Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and R-squared.
+
 ## Train-Test Split
 
 In this model building process, I split the training and testing datasets based on 80% training and 20% testing to ensure the model have a better predictability.
@@ -636,7 +637,7 @@ kable(results, caption = "Model Performance Metrics")
 ### Include the dummy variables
 Then, I added the two dummy variables, air conditioning and heating system, to the model to see if the dummy variables are significant to the model. The dummy variables are created to check if the house has air conditioning or heating system, as housing with air conditioning and heating system tends to have higher price.
 
-As the results of the model of mean absolute error (MAE), root mean squared error (RMSE), and R-squared are improved. However, the `heat_dummy` variable is not statistics significant, according to the high p-value.
+As the results of the model of mean absolute error (MAE), root mean squared error (RMSE), and R-squared are improved. However, the `heat_dummy` variable is not statistics significant, according to the higher p-value.
 
 ```{r}
 model2 <- lm(logprice ~ halfbaths + heatedarea + numfirepla + bldggrade + units + age + ac_dummy + heat_dummy + income + crime + transit + canopy + recreation, data = train)
@@ -689,7 +690,7 @@ kable(results, caption = "Model Performance Metrics")
 ### Include the Categorical Variables
 After that, I tested a new model only include the key predictors and a categorical variable `type`. The type variable categorize the house into mansion and castle and normal home.
 
-As the results of the model of mean absolute error (MAE), root mean squared error (RMSE), and R-squared are improved from the initial model, but deficient from the dummy variable model. Both of the house type is statistics significant based on lower p-value.
+The new model's mean absolute error (MAE), root mean squared error (RMSE), and R-squared are decreased from the initial model, but are higher than the dummy variable model. The new categorical variable is also statistics significant as indicated by lower p-value.
 
 ```{r}
 model3 <- lm(logprice ~ halfbaths + heatedarea + numfirepla + bldggrade + units + age+ income + crime + transit + canopy + recreation + type, data = train)
@@ -738,11 +739,11 @@ results <- data.frame(
 kable(results, caption = "Model Performance Metrics")
 ```
 ### Final model
-Over this kind of circles, I built the final model showing as follow. The final model include some of the essential key predictors and both dummy vairbles and the categorical variables I tested earlier.
+After twisting the variables, I built the final model showing as follow. The final model include some of the essential key predictors, dummy vairbles, and the categorical variables I tested earlier.
 
-In this case, the coefficient indicate 1 unit increase of one specific predictors, on average the house price change by $(e^{\beta} - 1) \times 100\%$ \(\beta) is the coefficient. The p-value for all the predictors excpet heat dummy is less than 0.0001, which indicate all other variable are statistics signifcant in explaining the variance of the housing price.
+In this case, the coefficient indicate 1 unit increase of one specific predictors, on average the house price change by $(e^{\beta} - 1) \times 100\%$, ${\beta}$ is the coefficient. The p-value for all the predictors except `heat_dummy` is less than 0.0001, which indicate all other variable are statistics significant in explaining the variance of the housing price.
 
-The adjusted R square of the model is around 0.60 which indicate the model explain more than 60% of the variance in the housing price, which indicate a great fit for the training datasets.
+The adjusted R-squared of the model is approximately 0.6644, indicating that the model explains over 66.44% of the variance in housing prices. This suggests a strong fit for the training dataset.
 
 ```{r}
 model4 <- lm(logprice ~  heatedarea + numfirepla+ bldggrade + units + age+ income + crime + transit + canopy + type+ ac_dummy + heat_dummy, data = train)
@@ -762,6 +763,8 @@ coefficients_table %>%
   kable(align = "r") %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
+
+The model also performs well on the testing dataset, as indicated by its error metrics. The **mean absolute error (MAE) of 0.1745**  indicates on average, the model’s predictions are off by about 0.17 units from the actual values. Similarly, the **root mean squared error (RMSE) of 0.2285**. The **R-squared value of 0.683** indicates that the model explains 68.3% of the variation in the testing dataset. Overall, these results suggest that the model makes reasonably accurate predictions with relatively low errors and a strong fit to the data.
 
 ```{r}
 test<-test%>%
@@ -793,14 +796,20 @@ kable(results, caption = "Model Performance Metrics")
 ```
 
 
-### model diagnostics
+#### Model Diagnostics
+
+Based on the four standard diagnostic plots, the residuals vs fitted values plot shows a random pattern around 0. Although the smoother is not perfectly flat, but it does not show a strng systematic curve. The Q-Q plot shows that the residuals are normally distributed, as the points are close to the straight line. There are some points deviate from the diagonal at both tails indicating several potential outliers in the model. The Scale-Location plot shows that the residuals are homoscedastic, as the residuals are evenly distributed. For the residuals vs leverage plot, the red line does not show a strong slope, and the vertical spread is not drastically increasing or decreasing, which met the OLS assumptions of homoscadasticity. **Overall, the OLS regressions' assumptions are met.**
 
 ```{r, fig.width=10, fig.height=10}
 par(mfrow = c(2, 2))
 plot(model4)
 ```
 
-**Compare with non log transformed price model**
+
+**Compare with the model ehich the dependent variable is not log transformed**
+
+I also check the diagnostics chart for non log transformed model. From following charts, we see that the Residual vs Fitted values plot shows a curved trend in the non-log transformed model, indicating that there may be a non linearity relationship or heteroskedasticity. The Q-Q plot shows that the residuals are not normally distributed, as the points deviate from the straight line. The Scale-Location plot shows that the residuals are not homoscedastic, as the residuals are not evenly distributed. The assumptions of the OLS regressions assumptions tend to violate much more significantly in the non-log transformed model than the log transformed model.
+
 ```{r, fig.width=10, fig.height=10}
 model5 <- lm(price ~  heatedarea + numfirepla+ bldggrade + units + age+ income + crime + transit + canopy + type+ ac_dummy + heat_dummy, data = train)
 
