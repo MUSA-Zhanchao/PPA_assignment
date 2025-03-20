@@ -601,7 +601,7 @@ coefficients_table$p_value <- paste0(round(coefficients_table$`Pr(>|t|)`, digits
 coefficients_table %>%
   dplyr::select(Estimate,`Std. Error`,`t value`, p_value) %>%
   kable(align = "r") %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
 ```{r}
@@ -654,7 +654,7 @@ coefficients_table$p_value <- paste0(round(coefficients_table$`Pr(>|t|)`, digits
 coefficients_table %>%
   dplyr::select(Estimate,`Std. Error`,`t value`, p_value) %>%
   kable(align = "r") %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
 ```{r}
@@ -687,7 +687,7 @@ kable(results, caption = "Model Performance Metrics")
 ```
 
 ### Include the Categorical Variables
-After that, I tested a new model only include the key predictors and a categorical variable `type`. The type variable categorize the house into mansion and castle and normal home. 
+After that, I tested a new model only include the key predictors and a categorical variable `type`. The type variable categorize the house into mansion and castle and normal home.
 
 As the results of the model of mean absolute error (MAE), root mean squared error (RMSE), and R-squared are improved from the initial model, but deficient from the dummy variable model. Both of the house type is statistics significant based on lower p-value.
 
@@ -706,7 +706,7 @@ coefficients_table$p_value <- paste0(round(coefficients_table$`Pr(>|t|)`, digits
 coefficients_table %>%
   dplyr::select(Estimate,`Std. Error`,`t value`, p_value) %>%
   kable(align = "r") %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
 ```{r}
@@ -738,7 +738,7 @@ results <- data.frame(
 kable(results, caption = "Model Performance Metrics")
 ```
 ### Final model
-Over this kind of circles, I built the final model showing as follow. The final model include some of the essential key predictors and both dummy vairbles and the categorical variables I tested earlier. 
+Over this kind of circles, I built the final model showing as follow. The final model include some of the essential key predictors and both dummy vairbles and the categorical variables I tested earlier.
 
 In this case, the coefficient indicate 1 unit increase of one specific predictors, on average the house price change by $(e^{\beta} - 1) \times 100\%$ \(\beta) is the coefficient. The p-value for all the predictors excpet heat dummy is less than 0.0001, which indicate all other variable are statistics signifcant in explaining the variance of the housing price.
 
@@ -760,7 +760,7 @@ coefficients_table$p_value <- paste0(round(coefficients_table$`Pr(>|t|)`, digits
 coefficients_table %>%
   dplyr::select(Estimate,`Std. Error`,`t value`, p_value) %>%
   kable(align = "r") %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
 ```{r}
@@ -859,11 +859,11 @@ ggplot(residual_map) +
         plot.title = element_text(size = 20, hjust= 0.5,face = "bold"),
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill = NA, size = 0.8))
-  
+
 ```
 ```{r, fig.width=10, fig.height=6, message=FALSE, warning=FALSE}
 # Extract the coordinates from the spatial dataframe
-coords <- st_coordinates(test) 
+coords <- st_coordinates(test)
 
 # Create a neighbor list using k-nearest neighbors (KNN) with k=5
 neighborList <- knn2nb(knearneigh(coords, 5))
@@ -886,7 +886,7 @@ ggplot(as.data.frame(moran$res[c(1:999)]), aes(moran$res[c(1:999)])) +
 ```
 ```{r, fig.width=10, fig.height=6, message=FALSE, warning=FALSE}
 # Extract the coordinates from the spatial dataframe
-coords <- st_coordinates(house) 
+coords <- st_coordinates(house)
 
 # Create a neighbor list using k-nearest neighbors (KNN) with k=5
 neighborList <- knn2nb(knearneigh(coords, 5))
