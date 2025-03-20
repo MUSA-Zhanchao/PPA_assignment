@@ -636,7 +636,7 @@ kable(results, caption = "Model Performance Metrics")
 ### Include the dummy variables
 Then, I added the two dummy variables, air conditioning and heating system, to the model to see if the dummy variables are significant to the model. The dummy variables are created to check if the house has air conditioning or heating system, as housing with air conditioning and heating system tends to have higher price.
 
-As the results of the model of mean absolute error (MAE), root mean squared error (RMSE), and R-squared are improved, the dummy variables are significant to the model.
+As the results of the model of mean absolute error (MAE), root mean squared error (RMSE), and R-squared are improved. However, the `heat_dummy` variable is not statistics significant, according to the high p-value.
 
 ```{r}
 model2 <- lm(logprice ~ halfbaths + heatedarea + numfirepla + bldggrade + units + age + ac_dummy + heat_dummy + income + crime + transit + canopy + recreation, data = train)
@@ -687,6 +687,10 @@ kable(results, caption = "Model Performance Metrics")
 ```
 
 ### Include the Categorical Variables
+After that, I tested a new model only include the key predictors and a categorical variable `type`. The type variable categorize the house into mansion and castle and normal home. 
+
+As the results of the model of mean absolute error (MAE), root mean squared error (RMSE), and R-squared are improved from the initial model, but deficient from the dummy variable model. Both of the house type is statistics significant based on lower p-value.
+
 ```{r}
 model3 <- lm(logprice ~ halfbaths + heatedarea + numfirepla + bldggrade + units + age+ income + crime + transit + canopy + recreation + type, data = train)
 summary_reg3 <- summary(model3)
@@ -734,6 +738,7 @@ results <- data.frame(
 kable(results, caption = "Model Performance Metrics")
 ```
 ### Final model
+Over this kind of circles, I built the final model showing as follow. The final model include some of the essential key predictors and both dummy vairbles and the categorical variables I tested earlier. 
 ```{r}
 model4 <- lm(logprice ~  heatedarea + numfirepla+ bldggrade + units + age+ income + crime + transit + canopy + type+ ac_dummy + heat_dummy, data = train)
 
