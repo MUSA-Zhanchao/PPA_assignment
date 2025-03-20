@@ -393,6 +393,11 @@ knitr::kable(vif_df, caption = "Variance Inflation Factors for the Model")
 
 ### Scatterplot
 
+Since two spatial data, number of crimes and transit coverage, are aggregated at census block group and neighborhood level and then assigned to individual household based on their geographic location, the house within the same neighborhood have been assigned same number of crime and transit coverage location. Based on the scatterplot, housing prices within the same neighborhood exhibit significant variation, although they share the same transit coverage and crime rates. In this way, there are only weak linear relationship between those two predictors and housing prices.
+
+The other two variable, age of house and heated area, are collected at individual household level. The scatterplot shows that the relationship betwee housing price and age are pretty weak, especially in the lower-left portion, indicating that newer houses show substantial variation in their prices. In addition, there are also many housing at the same age shows variety of different prices. There is pretty clear positive linear relationship between the heated area (square footage of the house) and the housing prices. As the square footage of the house increases, the housing prices also tend to increase.
+
+
 ```{r, fig.width=8, fig.height=6, warning=FALSE, message=FALSE}
 longer<-house %>%
   pivot_longer(cols = c(
@@ -427,6 +432,9 @@ ggplot(longer,aes(x = Value, y = price)) +
 ## Step 4: Mapping
 
 ### Dependent Variable- Housing price
+The housing pattern of Charlotte, NC is visualized using the housing price data. I aggregatd the housing price data by mean housing price at the census block group level
+
+The map illustrates distinct spatial disparities in housing prices across different census block groups in Charlotte, NC. Higher housing prices are concentrated in the central and southern parts of the city, as well as in northern suburban neighborhoods. Conversely, lower housing prices are more prevalent in the northern and western areas of the central city. The map also reveals spatial autocorrelation patterns, where higher housing price and lower housing prices are clustered together.
 
 ```{r, fig.width=10, fig.height=10, warning=FALSE,message=FALSE}
 map<-st_join(house, income)%>%
@@ -460,8 +468,13 @@ ggplot(map) +
 
 ### Key predictors
 
+**Average household income** follows a similar spatial pattern to housing prices, with higher income levels concentrated in the central and southern parts of the city, while lower income levels are more prevalent in the northern and western areas of the central city.
 
+**Tree canopy coverage** is higher in suburban neighborhoods compared to the central city, as suburban areas typically have more green spaces and room for trees.
 
+**Recreation facilities coverage** is greater in central city areas, where public spaces and recreational facilities, such as parks, are more common. In contrast, suburban areas tend to have fewer public spaces and recreational facilities.
+
+**Transit coverage** follows a similar pattern to recreational facilities, with central city areas having higher transit availability than suburban areas.
 
 ```{r, fig.width=10, fig.height=10}
 Q1<-ggplot(map) +
