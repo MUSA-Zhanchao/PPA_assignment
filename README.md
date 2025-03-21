@@ -42,6 +42,6 @@ By the end of the semester, students should:
 
 
 ## Assessment:
-- **Homework Assignments** – There will be 5 homework assignments throughout the semester. Most will be due 2 weeks after they are assigned (except the first one, which is shorter). Please turn your assignments in on time. The work for this course builds on skills taught previously so once you fall behind, it is increasingly difficult to catch up. These will be turned in individually and written up individually.
+- **Homework Assignments** – There will be 5 homework assignments throughout the semester. Most will be due 2 weeks after they are assigned (except the first one, which is shorter). The work for this course builds on skills taught previously so once you fall behind, it is increasingly difficult to catch up. These will be turned in individually and written up individually.
 - **Occasional Low-Stakes Quiz** – These are to ensure that the core concepts I want you to know, you know. They also help me determine what needs to be taught better. They are very low-stakes, and you receive 1 point for doing it and 0 for not doing it (they must be submitted on time). Because you are not graded on how many you got correct, please don’t cheat (a.d.k. ask AI the answer)!! This is your opportunity to let me know you don’t understand something and for me to then try to explain it better.
 - **Midterm & Final Projects** – There will be an applied, larger midterm and final project. Both will be group-based.
