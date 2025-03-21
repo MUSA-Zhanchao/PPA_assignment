@@ -936,4 +936,17 @@ The Moran's I test results for both the whole and testing datasets show that the
 
 ## Interpretation & Limitations
 
+### Perform well
+The final model perfrom relative well to predict the house price with lower values in the northern part of the cities and the household with extreme higher values categorized as castle or mansions.
+
+## Limitations
+
+The model doesn't perform well with house have relative higher values, mainly concentrated in the southern part of cities. There are many other factors not included in the model that may influence the housing prices, such as the quality of the house, the neighborhood, and the local amenities. The model also does not account for the impact of external factors such as economic conditions, market trends, and policy changes. The model may also be affected by the spatial autocorrelation of the residuals, indicating that there are spatial factors influencing housing prices that are not captured by the model.
+
+## Further improvment
+
+To further improve the model, first, it is important to have a more comprehensive datasets that contains more variables such as income, structure at the individual household level. Second, aSecond, it is important to address the spatial autocorrelation of the residuals by incorporating spatial factors that influence housing prices. Third, it is important to consider the impact of external factors such as market trends, new development projects, like TOD, and policy.
+
 # Conclusion
+
+In conclusion, my model is effective in predicting property values in the city of Charlotte only to a certain extent. While I am able to fit a model that account for variations of sale price in terms of their internal characteristics, spatial locations, as well as nearby amenities, there are still many limitations in this prediction model. First, many spatial data is aggregated at the census block group level rather than at individual household. Second, the model does not account for the impact of external factors such as economic conditions, market trends, and policy changes. Third, the model may be affected by the spatial autocorrelation of the residuals, indicating that there are spatial factors influencing housing prices that are not captured by the model. Despite these limitations, the model provides a useful framework for understanding the factors that influence housing prices in Charlotte, NC, and can be used as a starting point for further research and analysis.
