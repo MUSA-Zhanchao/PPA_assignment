@@ -937,7 +937,7 @@ The Moran's I test results for both the whole and testing datasets show that the
 ## Interpretation & Limitations
 
 ### Perform well
-The final model perfrom relative well to predict the house price with lower values in the northern part of the cities and the household with extreme higher values categorized as castle or mansions. 
+The final model perfrom relative well to predict the house price with lower values in the northern part of the cities and the household with extreme higher values categorized as castle or mansions.
 
 ## Limitations
 
@@ -945,7 +945,7 @@ The model doesn't perform well with house have relative higher values, mainly co
 
 ## Further improvment
 
-To further improve the model, first, it is important to have a more comprehensive datasets that contains more variables such as income, structure at the individual household level. Second, aSecond, it is important to address the spatial autocorrelation of the residuals by incorporating spatial factors that influence housing prices. Third, it is important to consider the impact of external factors such as market trends, new development projects, like TOD, and policy. 
+To further improve the model, first, it is important to have a more comprehensive datasets that contains more variables such as income, structure at the individual household level. Second, aSecond, it is important to address the spatial autocorrelation of the residuals by incorporating spatial factors that influence housing prices. Third, it is important to consider the impact of external factors such as market trends, new development projects, like TOD, and policy.
 
 # Conclusion
 
