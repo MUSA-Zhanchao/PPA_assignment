@@ -881,8 +881,9 @@ ggplot(residual_map) +
 
 ## Spatial Autocorrelation of Residuals
 
-### Moran's I for whole datasets
+To further assess the autocorrelation of the residuals, I perform a Moran's I test on the residuals of the final model. Moran's I quantifies spatial autocorrelation, checking whether the residuals display clustering patterns. This test helps determine the presence of spatial autocorrelation in the residuals of the final model.
 
+### Moran's I for whole datasets
 ```{r, fig.width=10, fig.height=6, message=FALSE, warning=FALSE}
 # Extract the coordinates from the spatial dataframe
 coords <- st_coordinates(test)
@@ -908,7 +909,6 @@ ggplot(as.data.frame(moran$res[c(1:999)]), aes(moran$res[c(1:999)])) +
 ```
 
 ### Moran's I for the test dataset
-
 ```{r, fig.width=10, fig.height=6, message=FALSE, warning=FALSE}
 # Extract the coordinates from the spatial dataframe
 coords <- st_coordinates(house)
@@ -931,6 +931,8 @@ ggplot(as.data.frame(moran$res[c(1:999)]), aes(moran$res[c(1:999)])) +
        y="Count") +
   theme_minimal()
 ```
+
+The Moran's I test results for both the whole and testing datasets show that the observed Moran's I value is significantly higher than the permuted values, which indicate the presence of spatial autocorrelation in the residuals. This suggests that the residuals are not randomly distributed across the city, but rather display clustering patterns. The presence of spatial autocorrelation in the residuals indicates that there are spatial factors influencing housing prices that are not captured by the model.
 
 ## Interpretation & Limitations
 
