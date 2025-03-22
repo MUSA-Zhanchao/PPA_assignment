@@ -13,7 +13,7 @@ This course teaches advanced spatial analysis and an introduction to data
 science/machine learning in the urban planning and public policy realm. The class focuses on real-world
 spatial analysis applications and, in combination with introductory machine learning, provide students with a
 modern framework for efficiently allocating limited resources across space. Unlike its private sector
-counterpart, data science in the public or non-profit sector isn't strictly about optimization - it requires
+counterpart, data science in the public or non-profit sector isn't strictly about optimization - it requires the
 understanding of public goods, governance, and issues of equity. We explore use cases in transportation,
 housing, public health, land use, criminal justice, and other domains. We will learn novel approaches for
 understanding and avoiding risks of "algorithmic bias" against communities/people of color as well as
