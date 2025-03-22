@@ -950,3 +950,5 @@ To further improve the model, first, it is important to have a more comprehensiv
 # Conclusion
 
 In conclusion, my model is effective in predicting property values in the city of Charlotte only to a certain extent. While I am able to fit a model that account for variations of sale price in terms of their internal characteristics, spatial locations, as well as nearby amenities, there are still many limitations in this prediction model. First, many spatial data is aggregated at the census block group level rather than at individual household. Second, the model does not account for the impact of external factors such as economic conditions, market trends, and policy changes. Third, the model may be affected by the spatial autocorrelation of the residuals, indicating that there are spatial factors influencing housing prices that are not captured by the model. Despite these limitations, the model provides a useful framework for understanding the factors that influence housing prices in Charlotte, NC, and can be used as a starting point for further research and analysis.
+
+# [Back to Main Page](https://zyang91.github.io/MUSA5080showcase/)

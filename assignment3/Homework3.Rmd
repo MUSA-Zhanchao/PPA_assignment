@@ -186,5 +186,5 @@ vif(model_new)
 Overall, as the `age` variable is not statistically significant, it may not be a good predictor for the median home values. Adding `age` variable, only improve the adjusted R² value by 0.0019. I may consider removing the `age` variable from the model.
 
 
+# [Back to Main Page](https://zyang91.github.io/MUSA5080showcase/)
 
----

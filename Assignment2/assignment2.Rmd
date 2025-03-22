@@ -341,3 +341,5 @@ But overall, I think the index did a great job in get a people a sense of Philad
 ## Q3: What limitations are there to your index.
 
 As mentioned before, the index cannot get the detailed vibe within each census tracts. There may be some internal differences within each census tracts. Second, only four variable could not cover everything people need to know about the neighborhood. For example, the index does not include the housing price, poverty rate, and other factors. Lastly, some predictors or index variables are closely correlated. For example, the bus coverage and bus ridership are closely correlated, as a neighborhood with better bus coverage may have higher bus ridership. This may lean to issues of multicollinearity.
+
+# [Back to Main Page](https://zyang91.github.io/MUSA5080showcase/)
