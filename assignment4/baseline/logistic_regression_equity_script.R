@@ -58,5 +58,3 @@ print(group_metric_summary)
 # - Which group has higher sensitivity? Specificity?
 # - Would a different threshold affect groups differently? (try the exercise again with 0.75 cutoff)
 # - Are there equity implications of this model's performance?
-
-
