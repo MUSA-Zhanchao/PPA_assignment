@@ -1,5 +1,5 @@
 ---
-title: "Assignment 4"
+title: "Assignment 4:  Logistic Regression for Parole Reform"
 author: "Zhanchao Yang"
 date: "2025-04-04"
 output: pdf_document
@@ -8,6 +8,14 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(caret)
+library(pROC)
 
+data<-read.csv("data/NIJ_s_Recidivism_Challenge_Full_Dataset_20240407.csv")
 ```
 
+# Scenario
+
+The Governor of Georgia wants to replace subjective parole decisions with a consistent, data-driven policy. You’ve been hired to develop a logistic regression model to predict the risk of recidivism — and recommend a cutoff value that will be adopted statewide.
+
+# Sensitivity vs. Specificity
