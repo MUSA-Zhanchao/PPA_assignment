@@ -123,8 +123,7 @@ model <- glm(recidivism_yes ~ Age_at_Release + Gang_Affiliated + Percent_Days_Em
 ```{r}
 coeff_table <- summary(model)$coefficients
 
-kable(coeff_table, 
+kable(coeff_table,
       caption = "Logistic Regression Coefficient Summary",
       digits = 3)
 ```
-
