@@ -7,6 +7,7 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+options(scipen = 999)
 library(tidyverse)
 library(caret)
 library(pROC)
@@ -27,3 +28,93 @@ The Governor of Georgia wants to replace subjective parole decisions with a cons
 In my opinion, sensitivity should be prioritized over specificity in this scenario. In parole reform, the primary goal is to reduce recidivism and ensure that individuals released from prison do not pose a threat to public safety. Prioritizing sensitivity means that we take extra caution by keeping those who are likely to re-offend in custody, even if it detains some individuals who might not actually commit another crime. The government could then offer compensation to those later proven innocent after the jury and trial.
 
 In a different scenario, specificity may be more important than the sensitivity. For example, some crucial resources like prison are limited or government is losing trust from the public as too many innocent people was detained. In this case, the government may want to prioritize specificity to ensure that individuals who are not likely to re-offend are not unnecessarily detained. This would help maintain public trust and ensure that resources are allocated efficiently.
+
+# Data exploration and Data cleaning
+
+## Data cleaning
+
+```{r}
+recidivism_ga <- data %>%
+  mutate(recidivism_yes = if_else(Recidivism_Within_3years == "true", 1, 0))
+
+recidivism_ga <- na.omit(recidivism_ga)
+```
+
+## Training and Testing Partition
+```{r}
+set.seed(1234)
+trainIndex <- createDataPartition(as.factor(recidivism_ga$recidivism_yes), p = 0.7, list = FALSE)
+train <- recidivism_ga[trainIndex, ]
+test <- recidivism_ga[-trainIndex, ]
+```
+
+## Key predictors
+
+- **Age at Release**: Age at release is a significant predictor of recidivism. Younger individuals are more likely to re-offend compared to older individuals. 
+
+```{r}
+ggplot(recidivism_ga, aes(x = Age_at_Release, fill = factor(recidivism_yes))) +
+  geom_bar(stat = "count", position = "dodge", alpha = 0.5) +
+  labs(title = "Age at Release vs Recidivism", 
+       x = "Age at Release", 
+       y = "Count",
+       fill = "Recidivism") +
+  theme_minimal()
+
+
+```
+- **Gang Affiliated**: Gang affiliation is a significant predictor of recidivism. Individuals who are affiliated with gangs are more likely to re-offend compared to those who are not.
+
+```{r}
+ggplot(recidivism_ga, aes(x = Gang_Affiliated, fill = factor(recidivism_yes))) +
+  geom_bar(stat = "count", position = "dodge", alpha = 0.5) +
+  labs(title = "Gang Affiliated vs Recidivism", 
+       x = "Gang Affiliated", 
+       y = "Count",
+       fill = "Recidivism") +
+  theme_minimal()
+```
+
+- **Percent Days Employed**: Percent days employed is a significant predictor of recidivism. Individuals who are employed for a higher percentage of days are less likely to re-offend compared to those who are unemployed.
+```{r}
+ggplot(recidivism_ga, aes(x = factor(recidivism_yes), y = Percent_Days_Employed, fill = factor(recidivism_yes))) +
+  geom_boxplot() +
+  labs(title = "Percent Days Employed vs Recidivism", 
+       x = "Recidivism", 
+       y = "Percent Days Employed") +
+  theme_minimal()
+
+
+```
+**Education Level**: Education level is a significant predictor of recidivism. Individuals with higher education levels are less likely to re-offend compared to those with lower education levels.
+```{r}
+ggplot(recidivism_ga, aes(x = Education_Level, fill = factor(recidivism_yes))) +
+  geom_bar(stat = "count", position = "dodge", alpha = 0.5) +
+  labs(title = "Education Level vs Recidivism", 
+       x = "Education Level", 
+       y = "Count",
+       fill = "Recidivism") +
+  theme_minimal()
+```
+**Prison Offense**: Prison offense is a significant predictor of recidivism. Individuals with more serious offenses like murder are more likely to re-offend compared to those with less serious offenses.
+```{r}
+ggplot(recidivism_ga, aes(x = Prison_Offense, fill = factor(recidivism_yes))) +
+  geom_bar(stat = "count", position = "dodge", alpha = 0.5) +
+  labs(title = "Education Level vs Recidivism", 
+       x = "Education Level", 
+       y = "Count",
+       fill = "Recidivism") +
+  theme_minimal()
+```
+
+## Final Model
+
+After testing several key predictors, I got the final model as following:
+
+```{r,warning=FALSE}
+model <- glm(recidivism_yes ~ Age_at_Release + Gang_Affiliated + Percent_Days_Employed 
+             + Prison_Offense + Education_Level ,
+             data = train, family = "binomial")
+summary(model)
+```
+

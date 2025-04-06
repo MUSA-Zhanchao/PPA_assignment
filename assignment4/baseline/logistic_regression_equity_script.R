@@ -25,6 +25,7 @@ trainIndex <- createDataPartition(recidivism_ga$recidivism_yes, p = 0.7, list = 
 train <- recidivism_ga[trainIndex, ]
 test <- recidivism_ga[-trainIndex, ]
 
+
 # STEP 5: Fit logistic regression model
 model <- glm(recidivism_yes ~ Age_at_Release + Gang_Affiliated + Percent_Days_Employed,
              data = train, family = "binomial")
