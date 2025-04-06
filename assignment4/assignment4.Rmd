@@ -50,13 +50,13 @@ test <- recidivism_ga[-trainIndex, ]
 
 ## Key predictors
 
-- **Age at Release**: Age at release is a significant predictor of recidivism. Younger individuals are more likely to re-offend compared to older individuals. 
+- **Age at Release**: Age at release is a significant predictor of recidivism. Younger individuals are more likely to re-offend compared to older individuals.
 
 ```{r}
 ggplot(recidivism_ga, aes(x = Age_at_Release, fill = factor(recidivism_yes))) +
   geom_bar(stat = "count", position = "dodge", alpha = 0.5) +
-  labs(title = "Age at Release vs Recidivism", 
-       x = "Age at Release", 
+  labs(title = "Age at Release vs Recidivism",
+       x = "Age at Release",
        y = "Count",
        fill = "Recidivism") +
   theme_minimal()
@@ -68,8 +68,8 @@ ggplot(recidivism_ga, aes(x = Age_at_Release, fill = factor(recidivism_yes))) +
 ```{r}
 ggplot(recidivism_ga, aes(x = Gang_Affiliated, fill = factor(recidivism_yes))) +
   geom_bar(stat = "count", position = "dodge", alpha = 0.5) +
-  labs(title = "Gang Affiliated vs Recidivism", 
-       x = "Gang Affiliated", 
+  labs(title = "Gang Affiliated vs Recidivism",
+       x = "Gang Affiliated",
        y = "Count",
        fill = "Recidivism") +
   theme_minimal()
@@ -79,8 +79,8 @@ ggplot(recidivism_ga, aes(x = Gang_Affiliated, fill = factor(recidivism_yes))) +
 ```{r}
 ggplot(recidivism_ga, aes(x = factor(recidivism_yes), y = Percent_Days_Employed, fill = factor(recidivism_yes))) +
   geom_boxplot() +
-  labs(title = "Percent Days Employed vs Recidivism", 
-       x = "Recidivism", 
+  labs(title = "Percent Days Employed vs Recidivism",
+       x = "Recidivism",
        y = "Percent Days Employed") +
   theme_minimal()
 
@@ -90,8 +90,8 @@ ggplot(recidivism_ga, aes(x = factor(recidivism_yes), y = Percent_Days_Employed,
 ```{r}
 ggplot(recidivism_ga, aes(x = Education_Level, fill = factor(recidivism_yes))) +
   geom_bar(stat = "count", position = "dodge", alpha = 0.5) +
-  labs(title = "Education Level vs Recidivism", 
-       x = "Education Level", 
+  labs(title = "Education Level vs Recidivism",
+       x = "Education Level",
        y = "Count",
        fill = "Recidivism") +
   theme_minimal()
@@ -100,8 +100,8 @@ ggplot(recidivism_ga, aes(x = Education_Level, fill = factor(recidivism_yes))) +
 ```{r}
 ggplot(recidivism_ga, aes(x = Prison_Offense, fill = factor(recidivism_yes))) +
   geom_bar(stat = "count", position = "dodge", alpha = 0.5) +
-  labs(title = "Education Level vs Recidivism", 
-       x = "Education Level", 
+  labs(title = "Education Level vs Recidivism",
+       x = "Education Level",
        y = "Count",
        fill = "Recidivism") +
   theme_minimal()
@@ -112,9 +112,8 @@ ggplot(recidivism_ga, aes(x = Prison_Offense, fill = factor(recidivism_yes))) +
 After testing several key predictors, I got the final model as following:
 
 ```{r,warning=FALSE}
-model <- glm(recidivism_yes ~ Age_at_Release + Gang_Affiliated + Percent_Days_Employed 
+model <- glm(recidivism_yes ~ Age_at_Release + Gang_Affiliated + Percent_Days_Employed
              + Prison_Offense + Education_Level ,
              data = train, family = "binomial")
 summary(model)
 ```
-
