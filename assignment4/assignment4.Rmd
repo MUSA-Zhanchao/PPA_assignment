@@ -11,6 +11,7 @@ options(scipen = 999)
 library(tidyverse)
 library(caret)
 library(pROC)
+library(knitr)
 library(tinytex)
 
 data<-read.csv("data/NIJ_s_Recidivism_Challenge_Full_Dataset_20240407.csv")
@@ -52,7 +53,7 @@ test <- recidivism_ga[-trainIndex, ]
 
 - **Age at Release**: Age at release is a significant predictor of recidivism. Younger individuals are more likely to re-offend compared to older individuals.
 
-```{r}
+```{r, echo=FALSE, fig.width=7, fig.height=4}
 ggplot(recidivism_ga, aes(x = Age_at_Release, fill = factor(recidivism_yes))) +
   geom_bar(stat = "count", position = "dodge", alpha = 0.5) +
   labs(title = "Age at Release vs Recidivism",
@@ -63,9 +64,10 @@ ggplot(recidivism_ga, aes(x = Age_at_Release, fill = factor(recidivism_yes))) +
 
 
 ```
+
 - **Gang Affiliated**: Gang affiliation is a significant predictor of recidivism. Individuals who are affiliated with gangs are more likely to re-offend compared to those who are not.
 
-```{r}
+```{r, echo=FALSE, fig.width=7, fig.height=4}
 ggplot(recidivism_ga, aes(x = Gang_Affiliated, fill = factor(recidivism_yes))) +
   geom_bar(stat = "count", position = "dodge", alpha = 0.5) +
   labs(title = "Gang Affiliated vs Recidivism",
@@ -76,18 +78,19 @@ ggplot(recidivism_ga, aes(x = Gang_Affiliated, fill = factor(recidivism_yes))) +
 ```
 
 - **Percent Days Employed**: Percent days employed is a significant predictor of recidivism. Individuals who are employed for a higher percentage of days are less likely to re-offend compared to those who are unemployed.
-```{r}
+
+```{r, echo=FALSE, fig.width=7, fig.height=4}
 ggplot(recidivism_ga, aes(x = factor(recidivism_yes), y = Percent_Days_Employed, fill = factor(recidivism_yes))) +
-  geom_boxplot() +
+  geom_boxplot(width=0.2) +
   labs(title = "Percent Days Employed vs Recidivism",
        x = "Recidivism",
        y = "Percent Days Employed") +
-  theme_minimal()
-
-
+  theme_minimal()+
+  theme(legend.position = "none")
 ```
-**Education Level**: Education level is a significant predictor of recidivism. Individuals with higher education levels are less likely to re-offend compared to those with lower education levels.
-```{r}
+
+- **Education Level**: Education level is a significant predictor of recidivism. Individuals with higher education levels are less likely to re-offend compared to those with lower education levels.
+```{r, echo=FALSE, fig.width=7, fig.height=4}
 ggplot(recidivism_ga, aes(x = Education_Level, fill = factor(recidivism_yes))) +
   geom_bar(stat = "count", position = "dodge", alpha = 0.5) +
   labs(title = "Education Level vs Recidivism",
@@ -96,8 +99,9 @@ ggplot(recidivism_ga, aes(x = Education_Level, fill = factor(recidivism_yes))) +
        fill = "Recidivism") +
   theme_minimal()
 ```
-**Prison Offense**: Prison offense is a significant predictor of recidivism. Individuals with more serious offenses like murder are more likely to re-offend compared to those with less serious offenses.
-```{r}
+
+- **Prison Offense**: Prison offense is a significant predictor of recidivism. Individuals with more serious offenses like murder are more likely to re-offend compared to those with less serious offenses.
+```{r, echo=FALSE, fig.width=7, fig.height=4}
 ggplot(recidivism_ga, aes(x = Prison_Offense, fill = factor(recidivism_yes))) +
   geom_bar(stat = "count", position = "dodge", alpha = 0.5) +
   labs(title = "Education Level vs Recidivism",
@@ -115,5 +119,12 @@ After testing several key predictors, I got the final model as following:
 model <- glm(recidivism_yes ~ Age_at_Release + Gang_Affiliated + Percent_Days_Employed
              + Prison_Offense + Education_Level ,
              data = train, family = "binomial")
-summary(model)
 ```
+```{r}
+coeff_table <- summary(model)$coefficients
+
+kable(coeff_table, 
+      caption = "Logistic Regression Coefficient Summary",
+      digits = 3)
+```
+
