@@ -136,4 +136,7 @@ kable(coeff_table,
 
 ### Interpretation of the coefficients
 
-- **Age at Release**:
+- **Age at Release: Age at release 43-47**: An odd ratio 0.652 indicates that individuals aged 43-47 are approximately 0.65 times of the odds of recidivism compared to individuals aged 18-22 (the reference category). In other words, older individuals is associated with a lower likelihood of recidivism as the odd ratio less than 1.
+- **Gang Affiliated: Yes**: An odd ratio 3.735 indicates that individuals who are gang affiliated are approximately 3.735 times of the odds of recidivism compared to individuals who are unknown. In other words, gang affiliation is associated with a higher likelihood of recidivism as the odd ratio greater than 1.
+- **Percent Days Employed**: An odd ratio 0.253 indicates that individuals with a 1% increase in the percentage of days employed are approximately 0.253 times of the odds of recidivism compared to individuals with a lower percentage of days employed. In other words, higher employment is associated with a lower likelihood of recidivism as the odd ratio less than 1.
+- **Education Level: less than high school diploma**: An odd ratio 1.220 indicates that individuals with less than a high school diploma are approximately 1.220 times of the odds of recidivism compared to individuals with a bachelor degree (the reference category). In other words, lower education level is associated with a higher likelihood of recidivism as the odd ratio greater than 1.
