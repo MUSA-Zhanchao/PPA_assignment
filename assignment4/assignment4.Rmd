@@ -123,7 +123,17 @@ model <- glm(recidivism_yes ~ Age_at_Release + Gang_Affiliated + Percent_Days_Em
 ```{r}
 coeff_table <- summary(model)$coefficients
 
+# Calculate the Odds Ratios by exponentiating the coefficient estimates
+odds_ratio <- exp(coeff_table[, "Estimate"])
+
+# Append the odds_ratio as a new column to your coefficients table
+coeff_table <- cbind(coeff_table, Odds_Ratio = odds_ratio)
+
 kable(coeff_table,
       caption = "Logistic Regression Coefficient Summary",
       digits = 3)
 ```
+
+### Interpretation of the coefficients
+
+- **Age at Release**:
