@@ -157,7 +157,7 @@ confusionMatrix(as.factor(test_preds1), as.factor(test$recidivism_yes), positive
 
 ## Threshold 0.5 and model evaluation
 
-Confusion matrix for the threshold 0.5 is shown below. In contrast with the first one, the 0.5 threshold provide a balance between the sensitivity and specificity.  Thus, the model also has a better precision in overall prediction. The model has a sensitivity of 0.75, specificity of 0.5400 , and a 0.666 overall precision. 
+Confusion matrix for the threshold 0.5 is shown below. In contrast with the first one, the 0.5 threshold provide a balance between the sensitivity and specificity.  Thus, the model also has a better precision in overall prediction. The model has a sensitivity of 0.75, specificity of 0.5400 , and a 0.666 overall precision.
 
 ```{r}
 test_probs2 <- predict(model, newdata = test, type = "response")
@@ -179,7 +179,7 @@ confusionMatrix(as.factor(test_preds3), as.factor(test$recidivism_yes), positive
 
 ## Threshold Comparison and AUC
 
-Overall, adjust the threshold adjusts the balance between sensitivity and specificity. The threshold of 0.25 provides a high sensitivity but low specificity, making it useful for identifying high-risk individuals. The threshold of 0.5 provides a balance between sensitivity and specificity, making it useful for overall prediction. The threshold of 0.75 provides a high specificity but low sensitivity, making it useful for identifying low-risk individuals. In this specific case, I would prefer to the first or the second model threshold, as the first priority is to prevent the criminal to re-offend and efficient using our limited detention spaces. 
+Overall, adjust the threshold adjusts the balance between sensitivity and specificity. The threshold of 0.25 provides a high sensitivity but low specificity, making it useful for identifying high-risk individuals. The threshold of 0.5 provides a balance between sensitivity and specificity, making it useful for overall prediction. The threshold of 0.75 provides a high specificity but low sensitivity, making it useful for identifying low-risk individuals. In this specific case, I would prefer to the first or the second model threshold, as the first priority is to prevent the criminal to re-offend and efficient using our limited detention spaces.
 
 ```{r, echo=FALSE}
 # Load required library
@@ -203,10 +203,10 @@ results <- data.frame(Threshold = numeric(),
 for(th in thresholds) {
   # Create predicted classes based on the current threshold
   test_preds <- ifelse(test_probs4 > th, 1, 0)
-  
+
   # Get the confusion matrix for the current threshold
   cm <- confusionMatrix(as.factor(test_preds), as.factor(test$recidivism_yes), positive = "1")
-  
+
   # Append the metrics to the results data frame
   results <- rbind(results,
                    data.frame(Threshold = th,
@@ -226,5 +226,3 @@ The overall AUC of the model is 0.75, which indicates that the model has a good 
 roc_obj <- roc(test$recidivism_yes, test_probs1)
 plot(roc_obj, col = "blue", main = "ROC Curve with AUC", print.auc = TRUE, print.auc.x = 0.5, print.auc.y = 0.3)
 ```
-
-
