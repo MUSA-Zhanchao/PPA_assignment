@@ -142,8 +142,12 @@ kable(coeff_table,
 - **Education Level: less than high school diploma**: An odd ratio 1.220 indicates that individuals with less than a high school diploma are approximately 1.220 times of the odds of recidivism compared to individuals with a bachelor degree (the reference category). In other words, lower education level is associated with a higher likelihood of recidivism as the odd ratio greater than 1.
 
 # Cuteoff Exploration
+In this section, I test different thresholds to see how the model performs. I use 0.25, 0.5, and 0.75 as the thresholds to see how the model performs. Different thresholds lead to different balance between sensitivity and specificity. I use the confusion matrix to evaluate the model performance at different thresholds.
 
 ## Threshold 0.25 and model evaluation
+
+Confusion matrix for the threshold 0.25 is shown below. The model has a sensitivity of 0.99, specificity of 0.06, and a 0.598 overall precision. This model presents a high sensitivity, meaning it is very good at identifying individuals who are likely to re-offend (true positive). However, the specificity is low, indicating that many individuals who are not likely to re-offend are incorrectly classified as recidivists (true negative). This model is useful for identifying high-risk individuals but may lead to unnecessary detentions of low-risk individuals.
+
 ```{r, meassage=FALSE}
 test_probs1 <- predict(model, newdata = test, type = "response")
 threshold1 <- 0.25
@@ -152,6 +156,9 @@ confusionMatrix(as.factor(test_preds1), as.factor(test$recidivism_yes), positive
 ```
 
 ## Threshold 0.5 and model evaluation
+
+Confusion matrix for the threshold 0.5 is shown below. In contrast with the first one, the 0.5 threshold provide a balance between the sensitivity and specificity.  Thus, the model also has a better precision in overall prediction. The model has a sensitivity of 0.75, specificity of 0.5400 , and a 0.666 overall precision. 
+
 ```{r}
 test_probs2 <- predict(model, newdata = test, type = "response")
 threshold2 <- 0.5
@@ -160,6 +167,9 @@ confusionMatrix(as.factor(test_preds2), as.factor(test$recidivism_yes), positive
 ```
 
 ## Threshold 0.75 and model evaluation
+
+Confusion matrix for the threshold 0.75 is shown below. The model has a sensitivity of 0.28, specificity of 0.90, and a 0.54 overall precision. This model presents a high specificity, meaning it is very good at identifying individuals who are not likely to re-offend (true negative). However, the sensitivity is low, indicating that many individuals who are likely to re-offend are incorrectly classified as non-recidivists (true positive). This model is useful for identifying low-risk individuals but may lead to release of high-risk individuals who likely to re-offend.
+
 ```{r}
 test_probs3 <- predict(model, newdata = test, type = "response")
 threshold3 <- 0.75
@@ -168,6 +178,9 @@ confusionMatrix(as.factor(test_preds3), as.factor(test$recidivism_yes), positive
 ```
 
 ## Threshold Comparison and AUC
+
+Overall, adjust the threshold adjusts the balance between sensitivity and specificity. The threshold of 0.25 provides a high sensitivity but low specificity, making it useful for identifying high-risk individuals. The threshold of 0.5 provides a balance between sensitivity and specificity, making it useful for overall prediction. The threshold of 0.75 provides a high specificity but low sensitivity, making it useful for identifying low-risk individuals. In this specific case, I would prefer to the first or the second model threshold, as the first priority is to prevent the criminal to re-offend and efficient using our limited detention spaces. 
+
 ```{r, echo=FALSE}
 # Load required library
 library(caret)
@@ -207,8 +220,11 @@ kable(results, caption = "Comparison of Model Performance at Different Threshold
 
 ```
 
+The overall AUC of the model is 0.75, which indicates that the model has a good ability to distinguish between recidivists and non-recidivists. It also shows the different cut-off values and their corresponding sensitivity and specificity.
+
 ```{r, message=FALSE}
 roc_obj <- roc(test$recidivism_yes, test_probs1)
 plot(roc_obj, col = "blue", main = "ROC Curve with AUC", print.auc = TRUE, print.auc.x = 0.5, print.auc.y = 0.3)
 ```
+
 
