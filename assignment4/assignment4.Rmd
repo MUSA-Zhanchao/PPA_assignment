@@ -140,3 +140,75 @@ kable(coeff_table,
 - **Gang Affiliated: Yes**: An odd ratio 3.735 indicates that individuals who are gang affiliated are approximately 3.735 times of the odds of recidivism compared to individuals who are unknown. In other words, gang affiliation is associated with a higher likelihood of recidivism as the odd ratio greater than 1.
 - **Percent Days Employed**: An odd ratio 0.253 indicates that individuals with a 1% increase in the percentage of days employed are approximately 0.253 times of the odds of recidivism compared to individuals with a lower percentage of days employed. In other words, higher employment is associated with a lower likelihood of recidivism as the odd ratio less than 1.
 - **Education Level: less than high school diploma**: An odd ratio 1.220 indicates that individuals with less than a high school diploma are approximately 1.220 times of the odds of recidivism compared to individuals with a bachelor degree (the reference category). In other words, lower education level is associated with a higher likelihood of recidivism as the odd ratio greater than 1.
+
+# Cuteoff Exploration
+
+## Threshold 0.25 and model evaluation
+```{r, meassage=FALSE}
+test_probs1 <- predict(model, newdata = test, type = "response")
+threshold1 <- 0.25
+test_preds1 <- ifelse(test_probs1 > threshold1, 1, 0)
+confusionMatrix(as.factor(test_preds1), as.factor(test$recidivism_yes), positive = "1")
+```
+
+## Threshold 0.5 and model evaluation
+```{r}
+test_probs2 <- predict(model, newdata = test, type = "response")
+threshold2 <- 0.5
+test_preds2 <- ifelse(test_probs2 > threshold2, 1, 0)
+confusionMatrix(as.factor(test_preds2), as.factor(test$recidivism_yes), positive = "1")
+```
+
+## Threshold 0.75 and model evaluation
+```{r}
+test_probs3 <- predict(model, newdata = test, type = "response")
+threshold3 <- 0.75
+test_preds3 <- ifelse(test_probs3 > threshold3, 1, 0)
+confusionMatrix(as.factor(test_preds3), as.factor(test$recidivism_yes), positive = "1")
+```
+
+## Threshold Comparison and AUC
+```{r, echo=FALSE}
+# Load required library
+library(caret)
+library(knitr)
+
+# Assume your model has been trained and you already have test_probs3 computed as:
+test_probs4 <- predict(model, newdata = test, type = "response")
+
+# Define the thresholds we want to compare
+thresholds <- c(0.25, 0.5, 0.75)
+
+# Initialize an empty data frame to store the performance metrics
+results <- data.frame(Threshold = numeric(),
+                      Accuracy = numeric(),
+                      Sensitivity = numeric(),
+                      Specificity = numeric(),
+                      stringsAsFactors = FALSE)
+
+# Loop over each threshold
+for(th in thresholds) {
+  # Create predicted classes based on the current threshold
+  test_preds <- ifelse(test_probs4 > th, 1, 0)
+  
+  # Get the confusion matrix for the current threshold
+  cm <- confusionMatrix(as.factor(test_preds), as.factor(test$recidivism_yes), positive = "1")
+  
+  # Append the metrics to the results data frame
+  results <- rbind(results,
+                   data.frame(Threshold = th,
+                              Accuracy = round(cm$overall["Accuracy"], 3),
+                              Sensitivity = round(cm$byClass["Sensitivity"], 3),
+                              Specificity = round(cm$byClass["Specificity"], 3)))
+}
+row.names(results) <- c("Threshold 1", "Threshold 2", "Threshold 3")
+# Display the results in a nice table
+kable(results, caption = "Comparison of Model Performance at Different Thresholds")
+
+```
+
+```{r, message=FALSE}
+roc_obj <- roc(test$recidivism_yes, test_probs1)
+plot(roc_obj, col = "blue", main = "ROC Curve with AUC", print.auc = TRUE, print.auc.x = 0.5, print.auc.y = 0.3)
+```
+
