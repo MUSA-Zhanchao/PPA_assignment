@@ -274,14 +274,14 @@ kable(group_metric_summary2 %>% rename(Age=Age_at_Release), caption = "Equity Au
 ### Scnerio 1: Cost of recidivism (released and then reoffernds)
 
 A false negative occurs when an individual is predicted to be low risks and released. However, then commits another offense after release. There are two major costs associated with this scenario:
-- **Direct Criminal Justice Costs**: This includes the costs associated with criminal justice system, including police investigation, prosecutions, and trail-related expenses. 
+- **Direct Criminal Justice Costs**: This includes the costs associated with criminal justice system, including police investigation, prosecutions, and trail-related expenses.
 - **Victim and Social Costs**: this includes the costs associated with the crime itself, including property damage, medical expenses, lost productivity, and even people lose their life. In addition, there are additional social influences , like people lose trusts to the justice system, a places where the crime happen faces economic decline, and the community is less safe.
 - **Total Cost**: The total cost of recidivism is the sum of the direct criminal justice costs and the victim and social costs is hard to estimate. The average cost of recidivism is estimated to be around $100,000 per individual, but also varies between crime types.
 
 ### Scenario 2: Cost of false positive (detained someone in jail unnecessarily)
 
 A false positive occurs when an individual is predicted to be high risks and detained. However, they were misclassfied as high risks and not likely to re-offense. Only one costs associated with this scenario:
-- **Cost of Detention**: This includes the costs associated with detaining an individual in jail, including housing, food, medical care, and other expenses. The average cost of detention is estimated to be around $30,000 per year per individual. Depends on prosecution timeline, the average time in jail for suspect waiting for trail is also varies. 
+- **Cost of Detention**: This includes the costs associated with detaining an individual in jail, including housing, food, medical care, and other expenses. The average cost of detention is estimated to be around $30,000 per year per individual. Depends on prosecution timeline, the average time in jail for suspect waiting for trail is also varies.
 
 ## Step 2: Estimate the benefits
 
