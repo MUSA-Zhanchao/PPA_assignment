@@ -256,4 +256,3 @@ group_metric_summary2 <- test %>%
 kable(group_metric_summary2 %>% rename(Age=Age_at_Release), caption = "Equity Audit by Age Group")
 
 ```
-
