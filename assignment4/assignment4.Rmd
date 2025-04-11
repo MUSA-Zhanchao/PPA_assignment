@@ -229,6 +229,12 @@ plot(roc_obj, col = "blue", main = "ROC Curve with AUC", print.auc = TRUE, print
 
 # Equity Audit by Race and Age Group
 
+## Equity Audit by Race
+
+Our model didn't include the race as predictors to avoid bias. However, the results of the matrix still indicate that the model perform dramatically differently regarding people from different race group. 
+
+As shown in the table below, the model perform similarly in overall precision (around 70%). However, the model has a relative high sensitivity and low specificity in predicting the black population than the white population. The model has a sensitivity of 0.802 and specificity of 0.486 which indicates the black population group are more likely to be misclassified as recidivists (higher true positive). Black population are more likely to detained rather than release. In contrast, the model has a sensitivity of 0.70 and specificity of 0.61 in predicting the white population group. This indicates that the chances for white population to be misclassfied as recidivists is lower than black population. Although we didn;t include any race related predictors in the model, the model still present a bias against the black population group.
+
 ```{r}
 group_metric_summary <- test %>%
   mutate(pred = test_preds2, prob = test_probs2) %>%
@@ -241,6 +247,10 @@ group_metric_summary <- test %>%
   )
 kable(group_metric_summary, caption = "Equity Audit by Race")
 ```
+
+## Equity Audit by Age Group
+
+The model include the age group as a predictors as younger population are more likely to re-offend. For the precision,the model perform well when the people age is younger than older. In addition, younger population group has a relative higher sensitivity and lower specificity than older population group. The model has a sensitivity of 0.903 and specificity of 0.176 in predicting the younger population group (18-22). This indicates that the younger population group are more likely to be misclassified as recidivists (higher true positive). In other words, younger population group are more likely to be detained rather than release. In contrast, the model has a sensitivity of 0.503 and specificity of 0.709  in predicting the older population group (48 or older). This indicates that the chances for older population to be misclassfied as non-recidivists is higher. In other words, older population group are more likely to be release rather than detained. This also indicates the model is potentially biased against the younger population group and have more room to improve.
 
 ```{r}
 group_metric_summary2 <- test %>%
