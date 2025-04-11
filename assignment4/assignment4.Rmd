@@ -231,7 +231,7 @@ plot(roc_obj, col = "blue", main = "ROC Curve with AUC", print.auc = TRUE, print
 
 ## Equity Audit by Race
 
-Our model didn't include the race as predictors to avoid bias. However, the results of the matrix still indicate that the model perform dramatically differently regarding people from different race group. 
+Our model didn't include the race as predictors to avoid bias. However, the results of the matrix still indicate that the model perform dramatically differently regarding people from different race group.
 
 As shown in the table below, the model perform similarly in overall precision (around 70%). However, the model has a relative high sensitivity and low specificity in predicting the black population than the white population. The model has a sensitivity of 0.802 and specificity of 0.486 which indicates the black population group are more likely to be misclassified as recidivists (higher true positive). Black population are more likely to detained rather than release. In contrast, the model has a sensitivity of 0.70 and specificity of 0.61 in predicting the white population group. This indicates that the chances for white population to be misclassfied as recidivists is lower than black population. Although we didn;t include any race related predictors in the model, the model still present a bias against the black population group.
 
