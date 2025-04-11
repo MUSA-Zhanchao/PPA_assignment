@@ -223,7 +223,7 @@ kable(results, caption = "Comparison of Model Performance at Different Threshold
 The overall AUC of the model is 0.75, which indicates that the model has a good ability to distinguish between recidivists and non-recidivists. It also shows the different cut-off values and their corresponding sensitivity and specificity.
 
 ```{r, message=FALSE}
-roc_obj <- roc(test$recidivism_yes, test_probs1)
+roc_obj <- roc(test$recidivism_yes, test_probs2)
 plot(roc_obj, col = "blue", main = "ROC Curve with AUC", print.auc = TRUE, print.auc.x = 0.5, print.auc.y = 0.3)
 ```
 
@@ -266,3 +266,49 @@ group_metric_summary2 <- test %>%
 kable(group_metric_summary2 %>% rename(Age=Age_at_Release), caption = "Equity Audit by Age Group")
 
 ```
+
+# Cost-Benefit Analysis
+
+## Step 1; Estimate the cost
+
+### Scnerio 1: Cost of recidivism (released and then reoffernds)
+
+A false negative occurs when an individual is predicted to be low risks and released. However, then commits another offense after release. There are two major costs associated with this scenario:
+- **Direct Criminal Justice Costs**: This includes the costs associated with criminal justice system, including police investigation, prosecutions, and trail-related expenses.
+- **Victim and Social Costs**: this includes the costs associated with the crime itself, including property damage, medical expenses, lost productivity, and even people lose their life. In addition, there are additional social influences , like people lose trusts to the justice system, a places where the crime happen faces economic decline, and the community is less safe.
+- **Total Cost**: The total cost of recidivism is the sum of the direct criminal justice costs and the victim and social costs is hard to estimate. The average cost of recidivism is estimated to be around $100,000 per individual, but also varies between crime types.
+
+### Scenario 2: Cost of false positive (detained someone in jail unnecessarily)
+
+A false positive occurs when an individual is predicted to be high risks and detained. However, they were misclassfied as high risks and not likely to re-offense. Only one costs associated with this scenario:
+- **Cost of Detention**: This includes the costs associated with detaining an individual in jail, including housing, food, medical care, and other expenses. The average cost of detention is estimated to be around $30,000 per year per individual. Depends on prosecution timeline, the average time in jail for suspect waiting for trail is also varies.
+
+## Step 2: Estimate the benefits
+
+### Scenario 1: Benefits of preventing recidivism
+
+The benefits of preventing recidivism to make sure the individuals who are likely to re-offend are not released include:
+- Avoid extra cost of re-offense
+- Community become safer
+
+### Scenario 2: Benefits of releasing low-risk individuals
+
+The benefits of releasing low-risk individuals include:
+- Government save costs on extra detention costs
+- People are released can create economic benefits to the society (go to work and make money)
+
+## Step 3: Balancing costs and cutoff
+
+The best way to balance the costs is to minimize the total costs. Basically, the total costs is the sum of the costs associated with false negatives and false positives. The total cost can be calculated as follows:
+$$
+\text{Total Cost} = \left( FNR \cdot \text{Cost}_{\text{Recidivism}} \right) + \left( FPR \cdot \text{Cost}_{\text{Detention}} \right)
+$$
+Where:
+- FNR: False Negative Rate
+- FPR: False Positive Rate
+- Cost_Recidivism: Cost of recidivism
+- Cost_Detention: Cost of detention
+
+Since the costs associated with false negative are roughly 3- 3.5 times higher than the false positive, the cutoff should set to be more conservatively (less than 0.5 and greater 0.25).
+
+# Policy recommendation
