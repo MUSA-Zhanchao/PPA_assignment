@@ -179,7 +179,7 @@ confusionMatrix(as.factor(test_preds3), as.factor(test$recidivism_yes), positive
 
 ## Threshold Comparison and AUC
 
-Overall, adjust the threshold adjusts the balance between sensitivity and specificity. In general, when set the threshold bigger, the sensitivity decreases and the specificity increases. The threshold of 0.25 provides a high sensitivity but low specificity. The threshold of 0.5 provides a balance between sensitivity and specificity. The threshold of 0.75 provides a high specificity but low sensitivity. In this specific case, I would prefer to the first or the second model threshold, as the first priority is to prevent the criminal to re-offend and efficient using our limited detention spaces. 
+Overall, adjust the threshold adjusts the balance between sensitivity and specificity. In general, when set the threshold bigger, the sensitivity decreases and the specificity increases. The threshold of 0.25 provides a high sensitivity but low specificity. The threshold of 0.5 provides a balance between sensitivity and specificity. The threshold of 0.75 provides a high specificity but low sensitivity. In this specific case, I would prefer to the first or the second model threshold, as the first priority is to prevent the criminal to re-offend and efficient using our limited detention spaces.
 
 ```{r, echo=FALSE}
 # Load required library
