@@ -315,6 +315,6 @@ Since the costs associated with false negative are roughly 3- 3.5 times higher t
 
 I recommend the government to set the cutoff threshold to 0.5 for following reason:
 
-- **Overall performance**: The threshold of 0.5 provides a balance between sensitivity and specificity and an overall greater precision compared to threshold 0.25 and 0.75. 
+- **Overall performance**: The threshold of 0.5 provides a balance between sensitivity and specificity and an overall greater precision compared to threshold 0.25 and 0.75.
 - **Economic benefits**: The threshold of 0.5 provides a balance between the costs associated with false negatives and false positives. The government can save costs on extra detention costs and avoid the costs associated with recidivism.
 - **Equity between different groups**: The threshold of 0.5 provides a general balance between specificity and sensitivity between racial group. First, the model not include the racial group as a predictors to avoid racial bias.Second, although the black population is more likely to be detained based on the model performance, the threshold of 0.5 provides a generalize balance between detention and release (0.802 vs. 0.486). Since the cost associate the false release would be higher, the difference between sensitivity and specificity is acceptable. In addition, since age group at release are included as a predictors, the younger age group are more likely to be detained based on the model performance. However, younger generation is more likely to re-offend based on the data, the model is acceptable.
