@@ -543,4 +543,3 @@ week_predictions %>%
        y="Mean Absolute Error (Trips)")+
   plotTheme
 ```
-
