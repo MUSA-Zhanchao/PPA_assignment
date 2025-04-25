@@ -66,6 +66,22 @@ palette5 <- c("#eff3ff","#bdd7e7","#6baed6","#3182bd","#08519c")
 palette4 <- c("#D2FBD4","#92BCAB","#527D82","#123F5A")
 palette2 <- c("#6baed6","#08519c")
 ```
+# Introduction
+
+## Bike Share Systems Role in Urban Mobilities
+
+Bike share system are one of the critical components of urban mobility. They provide a flexible and convenient mode of transportation for short trips, reducing congestion and promoting sustainable travel. The systems are designed to be user-friendly, with easy access to bikes and docking stations, making them an attractive option for commuters and tourists alike. At the same time, bike sharing systems fill a gap in the public transportation system, providing a last-mile solution for users who need to travel short distances. By integrating bike sharing with other modes of transportation, such as buses and trains, cities can create a more efficient and sustainable transportation network.
+
+## Rebalancing Problems in Bike Sharing Systems
+
+One of the key operational challenges in bike-share system is to maintain a balanced distribution across stations and times to meet user demands. Some stations frequently experience bike shortages where the users cannot get a bike from the docks when they need them. However, some stations frequently experience surpluses where the users cannot return the bikes to the docks when they need them. This rebalance issues become extremely serious during the peak hours due to assymetric commuting patterns. Without timely rebalancing, users may find it difficult to rent or return bikes on timly manners, leading to user dissatisfaction and reduced ridership. Efficient reblancing ahead of user demands ensures the system's availability and reliability, which also involves real-time data analysis and prediction.
+
+## Proposed Rebalancing Strategies
+
+To address this issue, we propose a data-driven approach to predict the bike demand across each stations and time intervals. By analyzing historical data, we can identify patterns and trends in bike usage, allowing us to make informed decisions about where and when to redistribute bikes. This approach not only improves the efficiency of the bike-share system but also enhances the overall user experience by ensuring that bikes are available when and where they are needed. Predictions will be made several hours in advance using the models that incorporate features such as time of day, day of week, historical usage patterns, weather conditions, and current station capacity. By leveraging these data sources, we can optimize the distribution of bikes across the system, reducing the likelihood of shortages and surpluses.
+
+The model will be focused rebalance efforts on the stations in Philadelphia, PA. The model will be trained using the historical bike share data for the month of May, 2022. The model will be used to predict the bike demand for the next 24 hours, and the results will be used to inform rebalancing efforts.
+
 
 ```{r}
 weather.Panel <-
