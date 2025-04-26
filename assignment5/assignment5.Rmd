@@ -552,6 +552,13 @@ ride.Test <- filter(ride.panel, week < 20)
 ```
 
 ## Model Training
+We trained five different models using the training dataset with different focus:
+
+- `reg1`: A baseline temporal model captures the daily and weekly temperatures effects on trip counts, with hourly fixed effects to capture the cyclical nature of bike share demand.
+- `reg2`: A spatial model captures the spatial effects of bike share demand, with weekly and weekend fixed effects to capture the cyclical nature of bike share demand.
+- `reg3`: A temporal and spatial model captures the daily and weekly temperatures and percipitation effects on trip counts, with hourly fixed effects to capture the cyclical nature of bike share demand.
+- `reg4`: A autoregressive temporal and spatial model captures the daily and weekly temperatures and percipitation effects on trip counts, with hourly fixed effects to capture the cyclical nature of bike share demand, and lagged features to capture the serial correlation.
+- `reg5`: Add holiday adjustment for `reg4` model to capture the holiday effects on trip counts, with hourly fixed effects to capture the cyclical nature of bike share demand, and lagged features to capture the serial correlation.
 
 ```{r, message=FALSE, warning=FALSE}
 reg1 <-
@@ -576,18 +583,19 @@ reg5 <-
 ```
 
 ## Model Validation
+
+We used the time based validation to evaluate the five different model performance. The validation is done by calculating the mean absolute error (MAE) and standard deviation of absolute error (RMSE) for each model. The MAE and RMSE are calculated for each week in the test set. The results are then summarized in following table.
+
+The table shows that the `reg4` and `reg5` models yield the same and lowest MAE and RMSE on both week 18 and week 19 (testing datasets), which indicate a better performance than the other models. Since the `reg5` model is more complex than the `reg4` model, we can conclude that the `reg4` model is the best model for predicting bike share demand in Philadelphia and adding additional holiday effects doesn't improve the model performance.  
+
 ```{r, message=FALSE, warning=FALSE}
 ride.Test.weekNest <-
   ride.Test %>%
   nest(-week)
-```
 
-```{r}
 model_pred <- function(dat, fit){
    pred <- predict(fit, newdata = dat)}
-```
 
-```{r}
 week_predictions <-
   ride.Test.weekNest %>%
     mutate(ATime_FE = map(.x = data, fit = reg1, .f = model_pred),
@@ -600,8 +608,7 @@ week_predictions <-
            Absolute_Error = map2(Observed, Prediction,  ~ abs(.x - .y)),
            MAE = map_dbl(Absolute_Error, mean, na.rm = TRUE),
            sd_AE = map_dbl(Absolute_Error, sd, na.rm = TRUE))
-```
-```{r}
+
 week_predictions %>%
   select(week, Regression, MAE, sd_AE) %>%
   arrange(week, Regression) %>%
@@ -623,9 +630,6 @@ week_predictions %>%
   )
 ```
 
-# Model Evaluation and Rebalancing Plan
-
-## Model Evaluation
 
 ```{r, message=FALSE, warning=FALSE, fig.width=10, fig.height=6}
 week_predictions %>%
@@ -638,6 +642,9 @@ week_predictions %>%
   plotTheme
 ```
 
+# Model Evaluation and Rebalancing Plan
+
+## Model evaluation
 
 
 ```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=8}
