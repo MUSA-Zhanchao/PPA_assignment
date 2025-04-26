@@ -586,7 +586,7 @@ reg5 <-
 
 We used the time based validation to evaluate the five different model performance. The validation is done by calculating the mean absolute error (MAE) and standard deviation of absolute error (RMSE) for each model. The MAE and RMSE are calculated for each week in the test set. The results are then summarized in following table.
 
-The table shows that the `reg4` and `reg5` models yield the same and lowest MAE and RMSE on both week 18 and week 19 (testing datasets), which indicate a better performance than the other models. Since the `reg5` model is more complex than the `reg4` model, we can conclude that the `reg4` model is the best model for predicting bike share demand in Philadelphia and adding additional holiday effects doesn't improve the model performance.  
+The table shows that the `reg4` and `reg5` models yield the same and lowest MAE and RMSE on both week 18 and week 19 (testing datasets), which indicate a better performance than the other models. Since the `reg5` model is more complex than the `reg4` model, we can conclude that the `reg4` model is the best model for predicting bike share demand in Philadelphia and adding additional holiday effects doesn't improve the model performance.
 
 ```{r, message=FALSE, warning=FALSE}
 ride.Test.weekNest <-
@@ -637,7 +637,7 @@ week_predictions %>%
 
 ## Model evaluation
 
-As shown above and in the following chart, the `reg4` and `reg5` models yield the same and lowest MAE and RMSE on both week 18 and week 19 (testing datasets), which indicate a better performance than the other models. In the following section, we check the model performance by comparing the predicted and observed trip counts from the temporal and spatial aspects. 
+As shown above and in the following chart, the `reg4` and `reg5` models yield the same and lowest MAE and RMSE on both week 18 and week 19 (testing datasets), which indicate a better performance than the other models. In the following section, we check the model performance by comparing the predicted and observed trip counts from the temporal and spatial aspects.
 
 ```{r, message=FALSE, warning=FALSE, fig.width=10, fig.height=6}
 week_predictions %>%
@@ -651,9 +651,9 @@ week_predictions %>%
 ```
 
 ### Temporal Evalution
-In this section, we compare the predicted and observed trip counts from the temporal aspect. We plot the predicted and observed trip counts for each model across different time period to check whether the model capture the temporal effects of bike share demand. 
+In this section, we compare the predicted and observed trip counts from the temporal aspect. We plot the predicted and observed trip counts for each model across different time period to check whether the model capture the temporal effects of bike share demand.
 
-- `reg1`: the baseline model 1 effectively capture the temporal effects of bike share demand, but mostly during one single day, but it fails to capture the different demand across weekday and weekend. 
+- `reg1`: the baseline model 1 effectively capture the temporal effects of bike share demand, but mostly during one single day, but it fails to capture the different demand across weekday and weekend.
 - `reg2`: the spatial model 2 didn't capture the temporal effect of the bike share demand, because the model only capture the spatial effects of bike share demand, but not the temporal effects.
 - `reg3`: similar to model 1, the temporal and spatial model 3 effectively capture the temporal effects during different time period of one day for bike share demand, but it fails to capture the different demand across weekday and weekend.
 - `reg4`: the autoregressive model 4 effectively capture the temporal effects of bike share demand not only across different time intervals of one day, but also across different weekdays and weekends.
@@ -847,7 +847,7 @@ week_predictions %>%
 
 ### Socio-Economic Factors
 
-In addition, although the current model include weather, temporal variable, temporal lagged variables, and even holiday effects, the model do omit the critical socio-economic and land-use factors that may also influence the bikeshare demand. As shown in following charts, median household income, public transportation access and percentage of racial group all show a correlation with the error term of the models, which indicate the model may be improved by including these variables. 
+In addition, although the current model include weather, temporal variable, temporal lagged variables, and even holiday effects, the model do omit the critical socio-economic and land-use factors that may also influence the bikeshare demand. As shown in following charts, median household income, public transportation access and percentage of racial group all show a correlation with the error term of the models, which indicate the model may be improved by including these variables.
 
 ```{r, warning=FALSE, message=FALSE, fig.width=10, fig.height= 4}
 week_predictions %>%
@@ -890,7 +890,7 @@ week_predictions %>%
 ```
 
 ### Potential improvment
-For potential model improvement, the bikeshare data were considered count data, which not strictly considered as continuous variable. The relationship between the count data and the predictors are not perfect linear relationship. The model could be improved by using Poisson regression or Negative Binomial regression, which are more suitable for count data and reduce heterogeneity. 
+For potential model improvement, the bikeshare data were considered count data, which not strictly considered as continuous variable. The relationship between the count data and the predictors are not perfect linear relationship. The model could be improved by using Poisson regression or Negative Binomial regression, which are more suitable for count data and reduce heterogeneity.
 
 In addition, enrich the feature set with the socio-economic and land-use, and experiment with interaction terms (e.g., **hour × precipitation, station × holiday**) or tree-based learners (e.g., gradient boosting) to capture nonlinearities—steps that together should reduce central-city MAE and better handle demand surges.
 
@@ -898,7 +898,7 @@ In addition, enrich the feature set with the socio-economic and land-use, and ex
 
 Based on the model predictions described above, the rebalancing strategy can be significantly enhanced by targeting both when and where bike shortages or surpluses are most likely to occur. The `reg4` model incorporating spatial, temporal, and lagged demand features, predicts bike-share usage at the station-hour level with strong accuracy. This allows operators to allocate rebalancing trucks proactively toward high-demand stations during critical periods, especially during PM rush hours. Since the ridership is higher in Philadelphia’s dense downtown core, most of the bikes will need to put back into the central cities areas. By anticipating demand peaks several hours ahead, managers can schedule truck deployments more efficiently to avoid both bike shortages at high-usage stations and overflow at popular return stations.
 
-Additionally, the model’s time-specific forecasts could support dynamic incentive programs. For instance, users could be encouraged through discounts or credits to pick up bikes from surplus stations or return bikes to deficit stations, based on near-future predictions. This dual approach—targeted truck reallocation and demand-shaping incentives—can help maintain a better system balance, improve user satisfaction, and reduce the operational burden on rebalancing teams. 
+Additionally, the model’s time-specific forecasts could support dynamic incentive programs. For instance, users could be encouraged through discounts or credits to pick up bikes from surplus stations or return bikes to deficit stations, based on near-future predictions. This dual approach—targeted truck reallocation and demand-shaping incentives—can help maintain a better system balance, improve user satisfaction, and reduce the operational burden on rebalancing teams.
 
 # Conclusion
 
