@@ -88,7 +88,7 @@ The model will be focused rebalance efforts on the stations in Philadelphia, PA.
 
 ### Bike data
 
-The bike share data is obtained from the Indego. The data includes information on bike trips, including start and end times, start and end stations, and bike IDs. The data is cleaned and preprocessed to remove any duplicates or missing values. The data is then aggregated to hourly intervals to create a time series of bike demand for each station. May 2022 data was selected for this analysis as the temporal frame. 
+The bike share data is obtained from the Indego. The data includes information on bike trips, including start and end times, start and end stations, and bike IDs. The data is cleaned and preprocessed to remove any duplicates or missing values. The data is then aggregated to hourly intervals to create a time series of bike demand for each station. May 2022 data was selected for this analysis as the temporal frame.
 
 ```{r, message=FALSE, warning=FALSE}
 bike<-read.csv("data/indego-trips-2022-q2.csv")
@@ -108,7 +108,7 @@ may<-may%>%
 
 ### Population data
 
-At the same time, census tract geometries of the entire Philadelphia county was acquired from the US Census Bureau to provide the geographic zone boundaries for further analysis if needed. 
+At the same time, census tract geometries of the entire Philadelphia county was acquired from the US Census Bureau to provide the geographic zone boundaries for further analysis if needed.
 
 ```{r, results='hide', message=FALSE, warning=FALSE}
 philCensus <-
@@ -146,7 +146,7 @@ philTracts <-
   st_sf
 ```
 
-Since the raw bikeshare data is a non-spatial layer, only containing latitute and longitude of the start and end stations, we need to join the bikeshare data with the census tract data to obtain the census tract information for each trip. The `st_join` function from the `sf` package is used to perform a spatial join between the bikeshare data and the census tract data. We are only interested in the start location of each ride because we want to predict the capacity of each station when the user need a bike to start the ride. This requires us to filter out rows with missing latitude and longitude. 
+Since the raw bikeshare data is a non-spatial layer, only containing latitute and longitude of the start and end stations, we need to join the bikeshare data with the census tract data to obtain the census tract information for each trip. The `st_join` function from the `sf` package is used to perform a spatial join between the bikeshare data and the census tract data. We are only interested in the start location of each ride because we want to predict the capacity of each station when the user need a bike to start the ride. This requires us to filter out rows with missing latitude and longitude.
 ```{r}
 dat_census <- st_join(may %>%
           filter(is.na(start_lon) == FALSE &
@@ -180,8 +180,8 @@ The following map shows all the starting point of the rides in Philadelphia duri
 ggplot()+
   geom_sf(data = philTracts %>%
           st_transform(crs=4326), fill="white")+
-  geom_point(data = may, aes(x=start_lon, y = start_lat), 
-            color = "#6E0E0A", alpha = 1, size = 0.3) + 
+  geom_point(data = may, aes(x=start_lon, y = start_lat),
+            color = "#6E0E0A", alpha = 1, size = 0.3) +
   ylim(min(may$start_lat), max(may$start_lat))+
   xlim(min(may$start_lon), max(may$start_lon)) +
   labs(title = "Location of Rides Starting Points in Philadelphia")+
@@ -220,14 +220,14 @@ ggplot(dat_census %>%
        x="Date",
        y="Number of trips")+
     theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x=element_text(size=8),
-        axis.text.y=element_text(size=8), 
-        axis.title=element_text(size=10), 
+        axis.text.y=element_text(size=8),
+        axis.title=element_text(size=10),
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8))
 ```
-Then, we visualize the distribution of trips by stations at each hour in May. The distribution is right skewed, where most stations have zero or very few number of trips each hour. However, there are few stations that have a very high number of trips each hour on particular day in May 2022. 
+Then, we visualize the distribution of trips by stations at each hour in May. The distribution is right skewed, where most stations have zero or very few number of trips each hour. However, there are few stations that have a very high number of trips each hour on particular day in May 2022.
 
 ```{r, fig.width=8, fig.height=6}
 ggplot(dat_census %>%
@@ -238,10 +238,10 @@ ggplot(dat_census %>%
        x="Trip Counts",
        y="Number of Stations")+
     theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x=element_text(size=8),
-        axis.text.y=element_text(size=8), 
-        axis.title=element_text(size=10), 
+        axis.text.y=element_text(size=8),
+        axis.title=element_text(size=10),
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8))
 ```
@@ -250,7 +250,7 @@ ggplot(dat_census %>%
 
 We perform feature engineering using `lubrudate` package to extract temporal information for each usage. the usage was calculating into 60 min and 15 min interval based on staring time for each ride. And then, the ride was further categorize into "Overnight", "AM Rush", "Mid-Day" and "PM Rush" based on the hour of the day and into weekday and weekend based on the day of the week.
 
-We visualize the distribution of the mean number trips at each station during different time intervals of the day. During the PM rush hour, the average number of trips is the highest, followed by the mid-day and AM rush hour. The overnight period has the lowest average number of trips, with only few station with an average of 3 trips or more. 
+We visualize the distribution of the mean number trips at each station during different time intervals of the day. During the PM rush hour, the average number of trips is the highest, followed by the mid-day and AM rush hour. The overnight period has the lowest average number of trips, with only few station with an average of 3 trips or more.
 
 
 ```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=6}
@@ -272,15 +272,15 @@ dat_census %>%
        y="Frequency")+
   facet_wrap(~time_of_day)+
     theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x=element_text(size=8),
-        axis.text.y=element_text(size=8), 
-        axis.title=element_text(size=10), 
+        axis.text.y=element_text(size=8),
+        axis.title=element_text(size=10),
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8))
 ```
 
-After that, we visualize the distribution of the mean number of trips at each station during different days of the week. From the chart, we can see that the Monday, Tuesday, Wednesday, and Thursday shows similar temporal patterns, with similar and highest number of trips by the time of the day. The Friday and Sturday shows similar patterns, with smaller number of people utilize the system. And, Sunday shows a uniquepeak pattern than any other weekdays or weekends.But in general, lowest trip count occur in the early morning while highest trip count occur in the late afternoon. 
+After that, we visualize the distribution of the mean number of trips at each station during different days of the week. From the chart, we can see that the Monday, Tuesday, Wednesday, and Thursday shows similar temporal patterns, with similar and highest number of trips by the time of the day. The Friday and Sturday shows similar patterns, with smaller number of people utilize the system. And, Sunday shows a uniquepeak pattern than any other weekdays or weekends.But in general, lowest trip count occur in the early morning while highest trip count occur in the late afternoon.
 ```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE}
 ggplot(dat_census %>% mutate(hour = hour(start_time)))+
      geom_freqpoly(aes(hour, color = dotw), binwidth = 3,lwd=0.8)+
@@ -288,10 +288,10 @@ ggplot(dat_census %>% mutate(hour = hour(start_time)))+
        x="Hour",
        y="Trip Counts")+
     theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x=element_text(size=8),
-        axis.text.y=element_text(size=8), 
-        axis.title=element_text(size=10), 
+        axis.text.y=element_text(size=8),
+        axis.title=element_text(size=10),
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8))
 ```
@@ -305,10 +305,10 @@ ggplot(dat_census %>%
        x="Hour",
        y="Trip Counts")+
     theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x=element_text(size=8),
-        axis.text.y=element_text(size=8), 
-        axis.title=element_text(size=10), 
+        axis.text.y=element_text(size=8),
+        axis.title=element_text(size=10),
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8))
 ```
@@ -349,26 +349,26 @@ May in Philadelphia was characterized by steadily warming spring days—morning 
 grid.arrange(
   ggplot(weather.Panel, aes(interval60,Precipitation)) + geom_line() +
   labs(title="Percipitation", x="Hour", y="Perecipitation") + theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x=element_text(size=8),
-        axis.text.y=element_text(size=8), 
-        axis.title=element_text(size=10), 
+        axis.text.y=element_text(size=8),
+        axis.title=element_text(size=10),
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8)),
   ggplot(weather.Panel, aes(interval60,Wind_Speed)) + geom_line() +
     labs(title="Wind Speed", x="Hour", y="Wind Speed") +theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x=element_text(size=8),
-        axis.text.y=element_text(size=8), 
-        axis.title=element_text(size=10), 
+        axis.text.y=element_text(size=8),
+        axis.title=element_text(size=10),
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8)),
   ggplot(weather.Panel, aes(interval60,Temperature)) + geom_line() +
     labs(title="Temperature", x="Hour", y="Temperature") +theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x=element_text(size=8),
-        axis.text.y=element_text(size=8), 
-        axis.title=element_text(size=10), 
+        axis.text.y=element_text(size=8),
+        axis.title=element_text(size=10),
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8)),
   top="Weather Data - Philadelphia (PHL) - May, 2022")
@@ -432,52 +432,52 @@ With the study panel, we could perform some exploratory analysis to prepare for 
 
 ```{r, message=FALSE, warning=FALSE, fig.width=10, fig.height=4}
 ride.panel %>%
-  group_by(interval60) %>% 
+  group_by(interval60) %>%
   summarize(Trip_Count = mean(Trip_Count),
             Temperature = first(Temperature)) %>%
   mutate(week = week(interval60)) %>%
-  ggplot(aes(Temperature, Trip_Count)) + 
+  ggplot(aes(Temperature, Trip_Count)) +
     geom_point(color = "black") + geom_smooth(method = "lm", se= FALSE, color="#124E78") +
-    facet_wrap(~week, ncol=8) + 
+    facet_wrap(~week, ncol=8) +
     labs(title="Trip Count As a Fuction of Temperature by Week",
-         x="Temperature", y="Mean Trip Count") + 
+         x="Temperature", y="Mean Trip Count") +
   theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x = element_blank(),
-    axis.ticks.x = element_blank(), 
-        axis.text.y=element_text(size=8), 
-        axis.title=element_text(size=10), 
+    axis.ticks.x = element_blank(),
+        axis.text.y=element_text(size=8),
+        axis.title=element_text(size=10),
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8))
 ```
 
-We would also like to see the relationship between the trip counts and the wind speed. The figure below shows in the first two weeks, there is a generally negative linear relationship between wind speed and trip counts. However, in the last two weeks, the relationship is positive. These non-constant relationship may indicate that the wind speed is not the sole predictors influence the ridership. 
+We would also like to see the relationship between the trip counts and the wind speed. The figure below shows in the first two weeks, there is a generally negative linear relationship between wind speed and trip counts. However, in the last two weeks, the relationship is positive. These non-constant relationship may indicate that the wind speed is not the sole predictors influence the ridership.
 
 ```{r, message=FALSE, warning=FALSE, fig.width=10, fig.height=4}
 ride.panel %>%
-  group_by(interval60) %>% 
+  group_by(interval60) %>%
   summarize(Trip_Count = mean(Trip_Count),
             Wind = first(Wind_Speed)) %>%
   mutate(week = week(interval60)) %>%
-  ggplot(aes(Wind, Trip_Count)) + 
+  ggplot(aes(Wind, Trip_Count)) +
     geom_point(color = "black") + geom_smooth(method = "lm", se= FALSE, color="#124E78") +
-    facet_wrap(~week, ncol=8) + 
+    facet_wrap(~week, ncol=8) +
     labs(title="Trip Count As a Fuction of Wind by Week",
-         x="Wind Speed", y="Mean Trip Count") + 
+         x="Wind Speed", y="Mean Trip Count") +
   theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x = element_blank(),
-    axis.ticks.x = element_blank(), 
-        axis.text.y=element_text(size=8), 
-        axis.title=element_text(size=10), 
+    axis.ticks.x = element_blank(),
+        axis.text.y=element_text(size=8),
+        axis.title=element_text(size=10),
         panel.background = element_blank(),
-        panel.border = element_rect(colour = "grey", fill=NA, size=0.8)) + 
+        panel.border = element_rect(colour = "grey", fill=NA, size=0.8)) +
     theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x = element_blank(),
-    axis.ticks.x = element_blank(), 
-        axis.text.y=element_text(size=8), 
-        axis.title=element_text(size=10), 
+    axis.ticks.x = element_blank(),
+        axis.text.y=element_text(size=8),
+        axis.title=element_text(size=10),
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8))
 ```
@@ -523,20 +523,20 @@ corr_df %>%
 
 ```{r,message=FALSE, warning=FALSE, fig.width=10, fig.height=4}
 as.data.frame(ride.panel) %>%
-    group_by(interval60) %>% 
+    group_by(interval60) %>%
     summarise_at(vars(starts_with("lag"), "Trip_Count"), mean, na.rm = TRUE) %>%
     gather(Variable, Value, -interval60, -Trip_Count) %>%
   ggplot(aes(x = Value , y = Trip_Count)) +
     geom_point(size = 1, color = "black") + geom_smooth(method = "lm", se= FALSE, color="#124E78") +
   facet_wrap(~Variable, ncol = 6)+
   labs(x = "Variable", y = "Correlation", title = "Correlation Between Serial Lag Trips and Trip Count") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x = element_blank(),
-    axis.ticks.x = element_blank(), 
-        axis.text.y=element_text(size=8), 
-        axis.title=element_text(size=10), 
+    axis.ticks.x = element_blank(),
+        axis.text.y=element_text(size=8),
+        axis.title=element_text(size=10),
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8))
 ```
@@ -642,10 +642,10 @@ week_predictions %>%
       facet_wrap(~Regression, ncol=1) +
       labs(title = "Predicted/Observed bike share time series", subtitle = "Philadelphia; A test set of 2 weeks",  x = "Hour", y= "Station Trips") +
         theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x=element_text(size=8),
-        axis.text.y=element_text(size=8), 
-        axis.title=element_text(size=10), 
+        axis.text.y=element_text(size=8),
+        axis.title=element_text(size=10),
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8))
 ```
@@ -762,10 +762,10 @@ week_predictions %>%
   labs(title="Errors as a function of socio-economic variables",
        y="Mean Absolute Error (Trips)")+
     theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x=element_text(size=8),
-        axis.text.y=element_text(size=8), 
-        axis.title=element_text(size=10), 
+        axis.text.y=element_text(size=8),
+        axis.title=element_text(size=10),
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8))
 ```
