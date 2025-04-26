@@ -541,12 +541,17 @@ as.data.frame(ride.panel) %>%
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8))
 ```
 
+# Model Training and Validation
 
+## Data Splitting
+We split the data into a training set and a test set. The training set includes data from week 20 to week 22, while the test set includes data from week 18 to week 19. The training set is used to train the model, while the test set is used to validate the model. By doing time based splitting, we preserve the natural temporal order, prevent any leakage of information from one period into another. This could ensure that our validation genuinely reflects the model’s ability to generalize to unseen time intervals.
 
 ```{r}
 ride.Train <- filter(ride.panel, week >= 20)
 ride.Test <- filter(ride.panel, week < 20)
 ```
+
+## Model Training
 
 ```{r, message=FALSE, warning=FALSE}
 reg1 <-
@@ -570,6 +575,7 @@ reg5 <-
      data=ride.Train)
 ```
 
+## Model Validation
 ```{r, message=FALSE, warning=FALSE}
 ride.Test.weekNest <-
   ride.Test %>%
@@ -602,7 +608,7 @@ week_predictions %>%
   kable(
     format = "html",
     digits = 2,
-    col.names = c("Week", "Model", "Mean Absolute Error", "SD of Absolute Error"),
+    col.names = c("Week", "Model", "Mean Absolute Error (MAE)", "SD of Absolute Error (RMSE)"),
     caption = "Weekly MAE and Standard Deviation of Absolute Errors by Regression Model"
   ) %>%
   kable_styling(
@@ -617,6 +623,10 @@ week_predictions %>%
   )
 ```
 
+# Model Evaluation and Rebalancing Plan
+
+## Model Evaluation
+
 ```{r, message=FALSE, warning=FALSE, fig.width=10, fig.height=6}
 week_predictions %>%
   dplyr::select(week, Regression, MAE) %>%
@@ -627,6 +637,8 @@ week_predictions %>%
     labs(title = "Mean Absolute Errors by model specification and week") +
   plotTheme
 ```
+
+
 
 ```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=8}
 week_predictions %>%
@@ -769,3 +781,5 @@ week_predictions %>%
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8))
 ```
+
+# Conclusion
