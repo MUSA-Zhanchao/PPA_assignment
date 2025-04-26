@@ -541,12 +541,24 @@ as.data.frame(ride.panel) %>%
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8))
 ```
 
+# Model Training and Validation
 
+## Data Splitting
+We split the data into a training set and a test set. The training set includes data from week 20 to week 22, while the test set includes data from week 18 to week 19. The training set is used to train the model, while the test set is used to validate the model. By doing time based splitting, we preserve the natural temporal order, prevent any leakage of information from one period into another. This could ensure that our validation genuinely reflects the model’s ability to generalize to unseen time intervals.
 
 ```{r}
 ride.Train <- filter(ride.panel, week >= 20)
 ride.Test <- filter(ride.panel, week < 20)
 ```
+
+## Model Training
+We trained five different models using the training dataset with different focus:
+
+- `reg1`: A baseline temporal model captures the daily and weekly temperatures effects on trip counts, with hourly fixed effects to capture the cyclical nature of bike share demand.
+- `reg2`: A spatial model captures the spatial effects of bike share demand, with weekly and weekend fixed effects to capture the cyclical nature of bike share demand.
+- `reg3`: A temporal and spatial model captures the daily and weekly temperatures and percipitation effects on trip counts, with hourly fixed effects to capture the cyclical nature of bike share demand.
+- `reg4`: A autoregressive temporal and spatial model captures the daily and weekly temperatures and percipitation effects on trip counts, with hourly fixed effects to capture the cyclical nature of bike share demand, and lagged features to capture the serial correlation.
+- `reg5`: Add holiday adjustment for `reg4` model to capture the holiday effects on trip counts, with hourly fixed effects to capture the cyclical nature of bike share demand, and lagged features to capture the serial correlation.
 
 ```{r, message=FALSE, warning=FALSE}
 reg1 <-
@@ -570,18 +582,20 @@ reg5 <-
      data=ride.Train)
 ```
 
+## Model Validation
+
+We used the time based validation to evaluate the five different model performance. The validation is done by calculating the mean absolute error (MAE) and standard deviation of absolute error (RMSE) for each model. The MAE and RMSE are calculated for each week in the test set. The results are then summarized in following table.
+
+The table shows that the `reg4` and `reg5` models yield the same and lowest MAE and RMSE on both week 18 and week 19 (testing datasets), which indicate a better performance than the other models. Since the `reg5` model is more complex than the `reg4` model, we can conclude that the `reg4` model is the best model for predicting bike share demand in Philadelphia and adding additional holiday effects doesn't improve the model performance.
+
 ```{r, message=FALSE, warning=FALSE}
 ride.Test.weekNest <-
   ride.Test %>%
   nest(-week)
-```
 
-```{r}
 model_pred <- function(dat, fit){
    pred <- predict(fit, newdata = dat)}
-```
 
-```{r}
 week_predictions <-
   ride.Test.weekNest %>%
     mutate(ATime_FE = map(.x = data, fit = reg1, .f = model_pred),
@@ -594,15 +608,14 @@ week_predictions <-
            Absolute_Error = map2(Observed, Prediction,  ~ abs(.x - .y)),
            MAE = map_dbl(Absolute_Error, mean, na.rm = TRUE),
            sd_AE = map_dbl(Absolute_Error, sd, na.rm = TRUE))
-```
-```{r}
+
 week_predictions %>%
   select(week, Regression, MAE, sd_AE) %>%
   arrange(week, Regression) %>%
   kable(
     format = "html",
     digits = 2,
-    col.names = c("Week", "Model", "Mean Absolute Error", "SD of Absolute Error"),
+    col.names = c("Week", "Model", "Mean Absolute Error (MAE)", "SD of Absolute Error (RMSE)"),
     caption = "Weekly MAE and Standard Deviation of Absolute Errors by Regression Model"
   ) %>%
   kable_styling(
@@ -617,6 +630,7 @@ week_predictions %>%
   )
 ```
 
+
 ```{r, message=FALSE, warning=FALSE, fig.width=10, fig.height=6}
 week_predictions %>%
   dplyr::select(week, Regression, MAE) %>%
@@ -627,6 +641,11 @@ week_predictions %>%
     labs(title = "Mean Absolute Errors by model specification and week") +
   plotTheme
 ```
+
+# Model Evaluation and Rebalancing Plan
+
+## Model evaluation
+
 
 ```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=8}
 week_predictions %>%
@@ -769,3 +788,5 @@ week_predictions %>%
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8))
 ```
+
+# Conclusion
