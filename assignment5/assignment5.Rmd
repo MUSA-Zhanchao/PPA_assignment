@@ -631,6 +631,14 @@ week_predictions %>%
 ```
 
 
+
+
+# Model Evaluation and Rebalancing Plan
+
+## Model evaluation
+
+As shown above and in the following chart, the `reg4` and `reg5` models yield the same and lowest MAE and RMSE on both week 18 and week 19 (testing datasets), which indicate a better performance than the other models. In the following section, we check the model performance by comparing the predicted and observed trip counts from the temporal and spatial aspects.
+
 ```{r, message=FALSE, warning=FALSE, fig.width=10, fig.height=6}
 week_predictions %>%
   dplyr::select(week, Regression, MAE) %>%
@@ -642,10 +650,14 @@ week_predictions %>%
   plotTheme
 ```
 
-# Model Evaluation and Rebalancing Plan
+### Temporal Evalution
+In this section, we compare the predicted and observed trip counts from the temporal aspect. We plot the predicted and observed trip counts for each model across different time period to check whether the model capture the temporal effects of bike share demand.
 
-## Model evaluation
-
+- `reg1`: the baseline model 1 effectively capture the temporal effects of bike share demand, but mostly during one single day, but it fails to capture the different demand across weekday and weekend.
+- `reg2`: the spatial model 2 didn't capture the temporal effect of the bike share demand, because the model only capture the spatial effects of bike share demand, but not the temporal effects.
+- `reg3`: similar to model 1, the temporal and spatial model 3 effectively capture the temporal effects during different time period of one day for bike share demand, but it fails to capture the different demand across weekday and weekend.
+- `reg4`: the autoregressive model 4 effectively capture the temporal effects of bike share demand not only across different time intervals of one day, but also across different weekdays and weekends.
+- `reg5`: adding the holiday effects to model 4 doesn't improve the model performance from the temporal aspect. These may be possible that there are no holiday present during the test period or there are no significant different demand for bike share during holidays.
 
 ```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=8}
 week_predictions %>%
@@ -668,15 +680,20 @@ week_predictions %>%
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8))
 ```
-```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=8}
-week_predictions %>%
+
+### Spatial Evaluation
+In this section, we compare the predicted and observed trip counts from the spatial aspect. We plot the predicted and observed trip counts for each model across different stations to check whether the model capture the spatial effects of bike share demand.
+
+The map below shows that the Mean Absolute Error (MAE) of the predicted trip counts for each model across different stations. It reveals that substantially larger errors in the central urban core than in outlying areas. This pattern likely reflects the dense clustering of trip origins downtown, a unique spatial characteristic that all models fail to capture adequately.
+```{r, message=FALSE, warning=FALSE, fig.width=10, fig.height=10}
+plot1<-week_predictions %>%
     mutate(interval60 = map(data, pull, interval60),
            start_station = map(data, pull, start_station),
            start_lat = map(data, pull, start_lat),
            start_lon = map(data, pull, start_lon)) %>%
     select(interval60, start_station, start_lon, start_lat, Observed, Prediction, Regression) %>%
     unnest() %>%
-  filter(Regression == "ETime_Space_FE_timeLags_holidayLags") %>%
+  filter(Regression == "DTime_Space_FE_timeLags") %>%
   group_by(start_station, start_lon, start_lat) %>%
   summarize(MAE = mean(abs(Observed-Prediction), na.rm = TRUE))%>%
 ggplot(.)+
@@ -687,36 +704,114 @@ ggplot(.)+
   discrete = FALSE, option = "D")+
   ylim(min(dat_census$start_lat), max(dat_census$start_lat))+
   xlim(min(dat_census$start_lon), max(dat_census$start_lon))+
-  labs(title="Mean Abs Error, Test Set, Model 5")+
+  labs(title="Mean Abs Error, Test Set, Model 4")+
   mapTheme
-```
-```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=8}
-week_predictions %>%
+
+plot2<-week_predictions %>%
     mutate(interval60 = map(data, pull, interval60),
            start_station = map(data, pull, start_station),
            start_lat = map(data, pull, start_lat),
-           start_lon = map(data, pull, start_lon),
-           dotw = map(data, pull, dotw)) %>%
-    select(interval60, start_station, start_lon,
-           start_lat, Observed, Prediction, Regression,
-           dotw) %>%
+           start_lon = map(data, pull, start_lon)) %>%
+    select(interval60, start_station, start_lon, start_lat, Observed, Prediction, Regression) %>%
     unnest() %>%
-  filter(Regression == "ETime_Space_FE_timeLags_holidayLags")%>%
-  mutate(weekend = ifelse(dotw %in% c("Sun", "Sat"), "Weekend", "Weekday"),
-         time_of_day = case_when(hour(interval60) < 7 | hour(interval60) > 18 ~ "Overnight",
-                                 hour(interval60) >= 7 & hour(interval60) < 10 ~ "AM Rush",
-                                 hour(interval60) >= 10 & hour(interval60) < 15 ~ "Mid-Day",
-                                 hour(interval60) >= 15 & hour(interval60) <= 18 ~ "PM Rush"))%>%
-  ggplot()+
-  geom_point(aes(x= Observed, y = Prediction))+
-    geom_smooth(aes(x= Observed, y= Prediction), method = "lm", se = FALSE, color = "red")+
-    geom_abline(slope = 1, intercept = 0)+
-  facet_grid(time_of_day~weekend)+
-  labs(title="Observed vs Predicted",
-       x="Observed trips",
-       y="Predicted trips")+
-  plotTheme
+  filter(Regression == "CTime_Space_FE") %>%
+  group_by(start_station, start_lon, start_lat) %>%
+  summarize(MAE = mean(abs(Observed-Prediction), na.rm = TRUE))%>%
+ggplot(.)+
+  geom_sf(data = philCensus, color = "grey", fill = "transparent")+
+  geom_point(aes(x = start_lon, y = start_lat, color = MAE),
+             fill = "transparent", alpha = 0.7)+
+  scale_colour_viridis(direction = -1,
+  discrete = FALSE, option = "D")+
+  ylim(min(dat_census$start_lat), max(dat_census$start_lat))+
+  xlim(min(dat_census$start_lon), max(dat_census$start_lon))+
+  labs(title="Mean Abs Error, Test Set, Model 3")+
+  mapTheme
+
+plot3<-week_predictions %>%
+    mutate(interval60 = map(data, pull, interval60),
+           start_station = map(data, pull, start_station),
+           start_lat = map(data, pull, start_lat),
+           start_lon = map(data, pull, start_lon)) %>%
+    select(interval60, start_station, start_lon, start_lat, Observed, Prediction, Regression) %>%
+    unnest() %>%
+  filter(Regression == "BSpace_FE") %>%
+  group_by(start_station, start_lon, start_lat) %>%
+  summarize(MAE = mean(abs(Observed-Prediction), na.rm = TRUE))%>%
+ggplot(.)+
+  geom_sf(data = philCensus, color = "grey", fill = "transparent")+
+  geom_point(aes(x = start_lon, y = start_lat, color = MAE),
+             fill = "transparent", alpha = 0.7)+
+  scale_colour_viridis(direction = -1,
+  discrete = FALSE, option = "D")+
+  ylim(min(dat_census$start_lat), max(dat_census$start_lat))+
+  xlim(min(dat_census$start_lon), max(dat_census$start_lon))+
+  labs(title="Mean Abs Error, Test Set, Model 2")+
+  mapTheme
+
+plot4<- week_predictions %>%
+    mutate(interval60 = map(data, pull, interval60),
+           start_station = map(data, pull, start_station),
+           start_lat = map(data, pull, start_lat),
+           start_lon = map(data, pull, start_lon)) %>%
+    select(interval60, start_station, start_lon, start_lat, Observed, Prediction, Regression) %>%
+    unnest() %>%
+  filter(Regression == "ATime_FE") %>%
+  group_by(start_station, start_lon, start_lat) %>%
+  summarize(MAE = mean(abs(Observed-Prediction), na.rm = TRUE))%>%
+ggplot(.)+
+  geom_sf(data = philCensus, color = "grey", fill = "transparent")+
+  geom_point(aes(x = start_lon, y = start_lat, color = MAE),
+             fill = "transparent", alpha = 0.7)+
+  scale_colour_viridis(direction = -1,
+  discrete = FALSE, option = "D")+
+  ylim(min(dat_census$start_lat), max(dat_census$start_lat))+
+  xlim(min(dat_census$start_lon), max(dat_census$start_lon))+
+  labs(title="Mean Abs Error, Test Set, Model 1")+
+  mapTheme
+
+plot5<- week_predictions %>%
+    mutate(interval60 = map(data, pull, interval60),
+           start_station = map(data, pull, start_station),
+           start_lat = map(data, pull, start_lat),
+           start_lon = map(data, pull, start_lon)) %>%
+    select(interval60, start_station, start_lon, start_lat, Observed, Prediction, Regression) %>%
+    unnest() %>%
+  filter(Regression == "ETime_Space_FE_timeLags_holidayLags") %>%
+  group_by(start_station, start_lon, start_lat) %>%
+  summarize(MAE = mean(abs(Observed-Prediction), na.rm = TRUE))%>%
+  ggplot(.)+
+  geom_sf(data = philCensus, color = "grey", fill = "transparent")+
+  geom_point(aes(x = start_lon, y = start_lat, color = MAE),
+             fill = "transparent", alpha = 0.7)+
+  scale_colour_viridis(direction = -1,
+  discrete = FALSE, option = "D")+
+  ylim(min(dat_census$start_lat), max(dat_census$start_lat))+
+  xlim(min(dat_census$start_lon), max(dat_census$start_lon))+
+  labs(title="Mean Abs Error, Test Set, Model 5")+
+  mapTheme
+
+library(gridExtra)
+library(grid)
+library(ggpubr)
+library(patchwork)
+
+
+library(patchwork)
+
+plot4 + plot3 + plot3 + plot1 + plot5 +
+  plot_layout(ncol = 3) +
+  plot_annotation(
+    title = "Mean Absolute Errors, Test Set",
+    theme = theme(plot.title = element_text(size = 12, face = "bold"))
+  )
+
+
 ```
+## Error Exploration
+
+The spatial MAE panels reveal that prediction errors concentrate in the city’s core—most notably during weekday AM and PM rush—where MAE frequently. By contrast, mid‐day and overnight intervals show uniformly low errors, reflecting both lower absolute volumes and more regular demand patterns. Weekend rush periods also exhibit smaller MAE than weekday peaks. These patterns point to systematic under‐ or over‐prediction where trip starts are both densest and most volatile, and where simple lag‐based linear effects struggle to capture sudden surges or drop‐offs in usage.
+
 ```{r, message=FALSE, warning=FALSE, fig.width=12, fig.height=10}
 week_predictions %>%
     mutate(interval60 = map(data, pull, interval60),
@@ -749,6 +844,11 @@ week_predictions %>%
   mapTheme
 
 ```
+
+### Socio-Economic Factors
+
+In addition, although the current model include weather, temporal variable, temporal lagged variables, and even holiday effects, the model do omit the critical socio-economic and land-use factors that may also influence the bikeshare demand. As shown in following charts, median household income, public transportation access and percentage of racial group all show a correlation with the error term of the models, which indicate the model may be improved by including these variables.
+
 ```{r, warning=FALSE, message=FALSE, fig.width=10, fig.height= 4}
 week_predictions %>%
     mutate(interval60 = map(data, pull, interval60),
@@ -788,5 +888,16 @@ week_predictions %>%
         panel.background = element_blank(),
         panel.border = element_rect(colour = "grey", fill=NA, size=0.8))
 ```
+
+### Potential improvment
+For potential model improvement, the bikeshare data were considered count data, which not strictly considered as continuous variable. The relationship between the count data and the predictors are not perfect linear relationship. The model could be improved by using Poisson regression or Negative Binomial regression, which are more suitable for count data and reduce heterogeneity.
+
+In addition, enrich the feature set with the socio-economic and land-use, and experiment with interaction terms (e.g., **hour × precipitation, station × holiday**) or tree-based learners (e.g., gradient boosting) to capture nonlinearities—steps that together should reduce central-city MAE and better handle demand surges.
+
+## Rabalancing Application
+
+Based on the model predictions described above, the rebalancing strategy can be significantly enhanced by targeting both when and where bike shortages or surpluses are most likely to occur. The `reg4` model incorporating spatial, temporal, and lagged demand features, predicts bike-share usage at the station-hour level with strong accuracy. This allows operators to allocate rebalancing trucks proactively toward high-demand stations during critical periods, especially during PM rush hours. Since the ridership is higher in Philadelphia’s dense downtown core, most of the bikes will need to put back into the central cities areas. By anticipating demand peaks several hours ahead, managers can schedule truck deployments more efficiently to avoid both bike shortages at high-usage stations and overflow at popular return stations.
+
+Additionally, the model’s time-specific forecasts could support dynamic incentive programs. For instance, users could be encouraged through discounts or credits to pick up bikes from surplus stations or return bikes to deficit stations, based on near-future predictions. This dual approach—targeted truck reallocation and demand-shaping incentives—can help maintain a better system balance, improve user satisfaction, and reduce the operational burden on rebalancing teams.
 
 # Conclusion
